@@ -1,31 +1,40 @@
-import { ResumeForm } from "@/components/resume/ResumeForm";
-import { ResumePreview } from "@/components/resume/ResumePreview";
+"use client"
+
+import { Layout, Typography } from "antd"
+import { ResumePreview } from "@/components/resume/ResumePreview"
+import { EditorShell } from "@/components/resume/sections/EditorShell"
+
+const { Header, Content } = Layout
+const { Title, Text } = Typography
 
 export default function EditorPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-slate-100">
-      <header className="border-b bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold tracking-tight">
-            Resume Builder
-          </h1>
-          <span className="text-sm text-slate-500">
-            MVP · Local state (Zustand)
-          </span>
-        </div>
-      </header>
-
-      <section className="flex-1">
-        <div className="max-w-6xl mx-auto px-6 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white rounded-xl shadow-sm border p-4 lg:p-6">
-            <ResumeForm />
-          </div>
-
-          <div className="bg-slate-50 rounded-xl border p-4 lg:p-6 overflow-auto">
-            <ResumePreview />
+    <Layout className="min-h-screen bg-slate-100">
+      <Header className="bg-white border-b border-slate-200">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6">
+          <div className="py-3">
+            <Title level={4} className="!mb-0">
+              Конструктор резюме
+            </Title>
+            <Text type="secondary" className="text-xs">
+              Заполняй данные слева и сразу смотри превью справа.
+            </Text>
           </div>
         </div>
-      </section>
-    </main>
-  );
+      </Header>
+
+      <Content className="py-6">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 lg:flex-row">
+          <div className="w-full lg:w-[52%]">
+            <EditorShell />
+          </div>
+          <div className="w-full lg:w-[48%]">
+            <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:p-6">
+              <ResumePreview />
+            </div>
+          </div>
+        </div>
+      </Content>
+    </Layout>
+  )
 }
