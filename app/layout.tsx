@@ -47,6 +47,12 @@ export default function RootLayout({
                 >
                   Редактор
                 </Link>
+                                <Link
+                  href={`/${locale}/profile`}
+                  className="text-slate-600 hover:text-slate-900"
+                >
+                  Профиль
+                </Link>
               </nav>
             </div>
           </header>
