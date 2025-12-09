@@ -1,6 +1,7 @@
 "use client"
 
 import { useResumeStore } from "@/store/useResumeStore"
+import { useCurrentLocale } from "@/lib/useCurrentLocale"
 import {
   Button,
   Checkbox,
@@ -15,7 +16,54 @@ import {
 const { TextArea } = Input
 const { Text } = Typography
 
+const messages = {
+  ru: {
+    sectionTitle: "Опыт работы",
+    sectionSubtitle: "Укажи самые релевантные позиции за последние годы.",
+    addButton: "Добавить место работы",
+    emptyState:
+      "Пока нет ни одной записи. Нажми «Добавить место работы», чтобы начать заполнять опыт.",
+    itemTitle: (index: number) => `Опыт #${index}`,
+    delete: "Удалить",
+    company: "Компания",
+    companyPlaceholder: "ООО «Рога и Копыта»",
+    position: "Должность",
+    positionPlaceholder: "Frontend Developer",
+    location: "Локация",
+    locationPlaceholder: "Москва / Remote",
+    startDate: "Начало",
+    endDate: "Окончание",
+    currentCheckbox: "Работаю здесь сейчас",
+    description: "Краткое описание, задачи и достижения",
+    descriptionPlaceholder:
+      "Опиши 3–6 пунктов: чем занимался, каких результатов добился, с чем работал.",
+  },
+  en: {
+    sectionTitle: "Work experience",
+    sectionSubtitle: "List the most relevant positions from recent years.",
+    addButton: "Add experience",
+    emptyState:
+      "No experience added yet. Click “Add experience” to start filling it in.",
+    itemTitle: (index: number) => `Experience #${index}`,
+    delete: "Delete",
+    company: "Company",
+    companyPlaceholder: "Acme Inc.",
+    position: "Position",
+    positionPlaceholder: "Frontend Developer",
+    location: "Location",
+    locationPlaceholder: "Berlin / Remote",
+    startDate: "Start date",
+    endDate: "End date",
+    currentCheckbox: "I currently work here",
+    description: "Short description, responsibilities and achievements",
+    descriptionPlaceholder:
+      "Describe 3–6 bullet points: what you did, results achieved, tech stack.",
+  },
+} as const
+
 export function ExperienceSection() {
+  const locale = useCurrentLocale()
+  const t = messages[locale]
   const { resume, addExperience, updateExperience, removeExperience } =
     useResumeStore()
 
@@ -24,21 +72,20 @@ export function ExperienceSection() {
       <div className="flex items-center justify-between gap-2">
         <Space direction="vertical" size={2}>
           <Text className="text-sm font-semibold text-slate-900">
-            Опыт работы
+            {t.sectionTitle}
           </Text>
           <Text type="secondary" className="text-xs">
-            Укажи самые релевантные позиции за последние годы.
+            {t.sectionSubtitle}
           </Text>
         </Space>
         <Button size="small" type="primary" onClick={addExperience}>
-          Добавить место работы
+          {t.addButton}
         </Button>
       </div>
 
       {resume.experience.length === 0 && (
         <p className="rounded-lg border border-dashed border-slate-200 bg-slate-50 px-3 py-3 text-xs text-slate-500">
-          Пока нет ни одной записи. Нажми «Добавить место работы», чтобы начать
-          заполнять опыт.
+          {t.emptyState}
         </p>
       )}
 
@@ -50,14 +97,14 @@ export function ExperienceSection() {
           >
             <div className="flex items-center justify-between gap-2">
               <Text className="text-xs font-medium text-slate-600">
-                Опыт #{index + 1}
+                {t.itemTitle(index + 1)}
               </Text>
               <button
                 type="button"
                 className="text-xs text-slate-400 hover:text-red-500"
                 onClick={() => removeExperience(item.id)}
               >
-                Удалить
+                {t.delete}
               </button>
             </div>
 
@@ -65,11 +112,11 @@ export function ExperienceSection() {
               <Col xs={24} md={12}>
                 <Space direction="vertical" size={4} className="w-full">
                   <Text className="text-xs font-medium text-slate-700">
-                    Компания
+                    {t.company}
                   </Text>
                   <Input
                     size="middle"
-                    placeholder="ООО «Рога и Копыта»"
+                    placeholder={t.companyPlaceholder}
                     value={item.company}
                     onChange={(e) =>
                       updateExperience(item.id, { company: e.target.value })
@@ -80,11 +127,11 @@ export function ExperienceSection() {
               <Col xs={24} md={12}>
                 <Space direction="vertical" size={4} className="w-full">
                   <Text className="text-xs font-medium text-slate-700">
-                    Должность
+                    {t.position}
                   </Text>
                   <Input
                     size="middle"
-                    placeholder="Frontend Developer"
+                    placeholder={t.positionPlaceholder}
                     value={item.position}
                     onChange={(e) =>
                       updateExperience(item.id, { position: e.target.value })
@@ -95,11 +142,11 @@ export function ExperienceSection() {
               <Col xs={24} md={12}>
                 <Space direction="vertical" size={4} className="w-full">
                   <Text className="text-xs font-medium text-slate-700">
-                    Локация
+                    {t.location}
                   </Text>
                   <Input
                     size="middle"
-                    placeholder="Москва / Remote"
+                    placeholder={t.locationPlaceholder}
                     value={item.location}
                     onChange={(e) =>
                       updateExperience(item.id, { location: e.target.value })
@@ -112,7 +159,7 @@ export function ExperienceSection() {
                   <Col span={12}>
                     <Space direction="vertical" size={4} className="w-full">
                       <Text className="text-xs font-medium text-slate-700">
-                        Начало
+                        {t.startDate}
                       </Text>
                       <Input
                         size="middle"
@@ -129,7 +176,7 @@ export function ExperienceSection() {
                   <Col span={12}>
                     <Space direction="vertical" size={4} className="w-full">
                       <Text className="text-xs font-medium text-slate-700">
-                        Окончание
+                        {t.endDate}
                       </Text>
                       <Input
                         size="middle"
@@ -159,17 +206,17 @@ export function ExperienceSection() {
                 }
               />
               <Text className="text-xs text-slate-600">
-                Работаю здесь сейчас
+                {t.currentCheckbox}
               </Text>
             </div>
 
             <Space direction="vertical" size={4} className="w-full pt-1">
               <Text className="text-xs font-medium text-slate-700">
-                Краткое описание, задачи и достижения
+                {t.description}
               </Text>
               <TextArea
                 autoSize={{ minRows: 4, maxRows: 8 }}
-                placeholder="Опиши 3–6 пунктов: чем занимался, каких результатов добился, с чем работал."
+                placeholder={t.descriptionPlaceholder}
                 value={item.description}
                 onChange={(e) =>
                   updateExperience(item.id, { description: e.target.value })
