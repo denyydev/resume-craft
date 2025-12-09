@@ -4,21 +4,29 @@ import { useResumeStore } from "@/store/useResumeStore"
 import type { TemplateKey } from "@/types/resume"
 
 const templateLabels: Record<TemplateKey, { title: string; subtitle: string }> = {
-  default: {
-    title: "Classic",
-    subtitle: "Two-column layout with sidebar",
-  },
   classic: {
     title: "Classic",
-    subtitle: "Two-column layout with sidebar",
+    subtitle: "Sidebar layout with dark accent",
   },
   minimal: {
     title: "Minimal",
-    subtitle: "Clean one-column layout",
+    subtitle: "Clean single-column layout",
   },
   modern: {
     title: "Modern",
-    subtitle: "Colored header and avatar",
+    subtitle: "Compact two-column layout",
+  },
+  simple: {
+    title: "Simple",
+    subtitle: "Straightforward single-column resume",
+  },
+  timeline: {
+    title: "Timeline",
+    subtitle: "Experience-focused timeline layout",
+  },
+  grid: {
+    title: "Grid",
+    subtitle: "Card-based structured layout",
   },
 }
 
@@ -26,7 +34,14 @@ export function TemplateSelector() {
   const templateKey = useResumeStore((s) => s.resume.templateKey)
   const setTemplateKey = useResumeStore((s) => s.setTemplateKey)
 
-  const options: TemplateKey[] = ["classic", "minimal", "modern"]
+  const options: TemplateKey[] = [
+    "classic",
+    "minimal",
+    "modern",
+    "simple",
+    "timeline",
+    "grid",
+  ]
 
   return (
     <div className="space-y-3">
