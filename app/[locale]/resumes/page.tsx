@@ -1,9 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useParams, useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
+import { Input, List, Tag, Button } from "antd"
+import { SearchOutlined, FileTextOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons"
 
 type ResumeListItem = {
   id: string
@@ -28,6 +30,7 @@ const messages = {
     delete: "Удалить",
     deleting: "Удаление...",
     confirmDelete: "Точно удалить это резюме? Отменить будет нельзя.",
+    searchPlaceholder: "Поиск по имени или позиции...",
   },
   en: {
     title: "My resumes",
@@ -45,6 +48,7 @@ const messages = {
     deleting: "Deleting...",
     confirmDelete:
       "Are you sure you want to delete this resume? This cannot be undone.",
+    searchPlaceholder: "Search by name or position...",
   },
 } as const
 
@@ -59,6 +63,7 @@ export default function MyResumesPage() {
   const [resumes, setResumes] = useState<ResumeListItem[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [search, setSearch] = useState("")
 
   useEffect(() => {
     if (status === "loading") return
@@ -124,6 +129,16 @@ export default function MyResumesPage() {
     }
   }
 
+  const filteredResumes = useMemo(() => {
+    if (!search.trim()) return resumes
+    const q = search.toLowerCase()
+    return resumes.filter((r) => {
+      const fullName = (r.data?.fullName || "").toLowerCase()
+      const position = (r.data?.position || "").toLowerCase()
+      return fullName.includes(q) || position.includes(q)
+    })
+  }, [resumes, search])
+
   if (status === "loading" || loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center text-sm text-slate-600">
@@ -153,22 +168,40 @@ export default function MyResumesPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <header className="mb-8">
-          <h1 className="text-2xl font-semibold text-slate-900">
-            {t.title}
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            {t.subtitle}
-          </p>
+        <header className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold text-slate-900">
+              {t.title}
+            </h1>
+            <p className="mt-1 text-sm text-slate-600">
+              {t.subtitle}
+            </p>
+          </div>
+          <div className="w-full sm:w-64">
+            <Input
+              allowClear
+              size="middle"
+              placeholder={t.searchPlaceholder}
+              prefix={<SearchOutlined className="text-slate-400" />}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </header>
 
-        {resumes.length === 0 ? (
+        {filteredResumes.length === 0 ? (
           <p className="text-sm text-slate-500">
             {t.empty}
           </p>
         ) : (
-          <ul className="space-y-3">
-            {resumes.map((resume) => {
+          <List
+            itemLayout="horizontal"
+            dataSource={filteredResumes}
+            pagination={{
+              pageSize: 5,
+              size: "small",
+            }}
+            renderItem={(resume) => {
               const data = resume.data || {}
               const fullName = data.fullName || "—"
               const position = data.position || "—"
@@ -183,56 +216,72 @@ export default function MyResumesPage() {
               const isDeleting = deletingId === resume.id
 
               return (
-                <li
-                  key={resume.id}
-                  className="bg-white border border-slate-200 rounded-xl p-4 flex items-center justify-between gap-4"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
-                      {fullName}
-                    </p>
-                    <p className="text-xs text-slate-600 truncate">
-                      {position}
-                    </p>
-
-                    <div className="mt-2 flex flex-wrap gap-4 text-[11px] text-slate-500">
-                      <span>
-                        {t.createdAt}: {createdAt}
-                      </span>
-                      <span>
-                        {t.updatedAt}: {updatedAt}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-2 text-xs">
+                <List.Item
+                  actions={[
                     <Link
+                      key="editor"
                       href={`/${locale}/editor?resumeId=${resume.id}`}
-                      className="px-2.5 py-1 rounded-full border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-700 transition text-xs"
                     >
-                      {t.openEditor}
-                    </Link>
+                      <Button
+                        type="default"
+                        size="small"
+                        icon={<EditOutlined />}
+                      >
+                        {t.openEditor}
+                      </Button>
+                    </Link>,
                     <Link
+                      key="pdf"
                       href={`/${locale}/print/${resume.id}`}
-                      className="px-2.5 py-1 rounded-full border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-slate-700 transition text-xs"
                       target="_blank"
                     >
-                      {t.openPdf}
-                    </Link>
-
-                    <button
-                      type="button"
+                      <Button
+                        type="default"
+                        size="small"
+                        icon={<FileTextOutlined />}
+                      >
+                        {t.openPdf}
+                      </Button>
+                    </Link>,
+                    <Button
+                      key="delete"
+                      type="default"
+                      danger
+                      size="small"
+                      icon={<DeleteOutlined />}
+                      loading={isDeleting}
                       onClick={() => handleDelete(resume.id)}
-                      disabled={isDeleting}
-                      className="px-2.5 py-1 rounded-full border border-red-100 text-red-500 hover:bg-red-50 hover:border-red-200 transition text-xs disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {isDeleting ? t.deleting : t.delete}
-                    </button>
-                  </div>
-                </li>
+                    </Button>,
+                  ]}
+                >
+                  <List.Item.Meta
+                    title={
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm font-medium text-slate-900">
+                          {fullName}
+                        </span>
+                        <span className="text-xs text-slate-600">
+                          {position}
+                        </span>
+                      </div>
+                    }
+                    description={
+                      <div className="mt-1 flex flex-wrap gap-2 text-[11px]">
+                        <Tag bordered={false} color="default">
+                          {t.createdAt}: {createdAt}
+                        </Tag>
+                        <Tag bordered={false} color="default">
+                          {t.updatedAt}: {updatedAt}
+                        </Tag>
+                      </div>
+                    }
+                  />
+                </List.Item>
               )
-            })}
-          </ul>
+            }}
+          />
         )}
       </div>
     </div>

@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-white">
-                      Resume Builder
+                      ResumeCraft
                     </span>
                     <span className="hidden text-[11px] text-neutral-400 sm:inline">
                       Create, edit and export PDF resumes

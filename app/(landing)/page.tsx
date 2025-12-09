@@ -34,10 +34,6 @@ export default function LandingPage() {
 
   return (
     <>
-          <div className="flex">
-        asdsa
-        <AuthButton/>
-      </div>
       {/* Только фон для лендинга - темный */}
       <div className="fixed inset-0 -z-30 bg-neutral-950" />
 
@@ -112,7 +108,7 @@ export default function LandingPage() {
               </motion.div>
 
               <motion.div
-                className="flex flex-wrap gap-4"
+                className="flex flex-wrap gap-4 items-center"
                 variants={fadeInUp}
                 transition={{ delay: 0.1 }}
               >
