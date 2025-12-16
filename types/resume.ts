@@ -1,7 +1,7 @@
-export type TemplateKey = 
-  | "default" 
-  | "classic" 
-  | "minimal" 
+export type TemplateKey =
+  | "default"
+  | "classic"
+  | "minimal"
   | "modern"
   | "neo"
   | "sidebar"
@@ -63,10 +63,15 @@ export type ResumeData = {
   projects: ProjectItem[];
   education: EducationItem[];
   languages: LanguageItem[];
-  skills: string;
-  softSkills: string;
+  techSkills: SkillsBlock;
+  softSkills: SkillsBlock;
   photo?: string;
   templateKey: TemplateKey;
+};
+
+export type SkillsBlock = {
+  tags: string[];
+  note: string;
 };
 
 export type Resume = ResumeData;

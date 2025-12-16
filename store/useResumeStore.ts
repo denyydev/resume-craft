@@ -9,10 +9,13 @@ import {
   EducationItem,
   LanguageItem,
   TemplateKey,
+  SkillsBlock,
 } from "@/types/resume";
 
 type ResumeState = {
   resume: Resume;
+  techSkills: SkillsBlock;
+  softSkills: SkillsBlock;
   setPhoto: (photo?: string) => void;
   loadResume: (resume: Resume) => void;
   setFullName: (fullName: string) => void;
@@ -54,8 +57,8 @@ const emptyResume: Resume = {
   summary: "",
   experience: [],
   projects: [],
-  skills: "",
-  softSkills: "",
+  techSkills: { tags: [], note: "" },
+  softSkills: { tags: [], note: "" },
   education: [],
   languages: [],
   templateKey: "default",
@@ -69,6 +72,37 @@ export const useResumeStore = create<ResumeState>((set) => ({
       resume: {
         ...state.resume,
         photo,
+      },
+    })),
+  setTechSkillsTags: (tags: string[]) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        techSkills: { ...state.resume.techSkills, tags: [...new Set(tags)] },
+      },
+    })),
+
+  setTechSkillsNote: (note: string) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        techSkills: { ...state.resume.techSkills, note },
+      },
+    })),
+
+  setSoftSkillsTags: (tags: string[]) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        softSkills: { ...state.resume.softSkills, tags: [...new Set(tags)] },
+      },
+    })),
+
+  setSoftSkillsNote: (note: string) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        softSkills: { ...state.resume.softSkills, note },
       },
     })),
   setFullName: (fullName) =>
