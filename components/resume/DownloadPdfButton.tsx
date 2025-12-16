@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Button, Tooltip } from "antd"
-import { DownloadOutlined } from "@ant-design/icons"
+import { Button } from "@/components/ui/button"
+import { Download, FileDown } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { type Locale } from "@/lib/useCurrentLocale"
 import { useResumeStore } from "@/store/useResumeStore"
@@ -25,7 +25,6 @@ export function DownloadPdfButton({ locale }: Props) {
     try {
       setLoading(true)
 
-      // 1) СНАЧАЛА — СОХРАНИТЬ РЕЗЮМЕ В БД
       const saveRes = await fetch("/api/resumes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -33,7 +32,7 @@ export function DownloadPdfButton({ locale }: Props) {
           data: resume,
           locale,
           title: resume.position || resume.fullName || "Untitled resume",
-          userEmail: session.user.email, // 👈 ОБЯЗАТЕЛЬНО
+          userEmail: session.user.email,
         }),
       })
 
@@ -45,7 +44,6 @@ export function DownloadPdfButton({ locale }: Props) {
       const { id } = (await saveRes.json()) as { id: string }
       console.log("Saved resume id:", id)
 
-      // 2) ПОТОМ — СГЕНЕРИТЬ PDF ПО ЭТОМУ id
       const pdfRes = await fetch("/api/pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -75,27 +73,24 @@ export function DownloadPdfButton({ locale }: Props) {
   }
 
   const labelByLocale: Record<Locale, string> = {
-    ru: "Скачать PDF",
-    en: "Download PDF",
-  }
-
-  const tooltipByLocale: Record<Locale, string> = {
-    ru: "Сохранить и скачать резюме в PDF",
-    en: "Save and download resume as PDF",
+    ru: "PDF",
+    en: "PDF",
   }
 
   return (
-    <Tooltip title={tooltipByLocale[locale]}>
-      <Button
-        type="primary"
-        size="small"
-        icon={<DownloadOutlined />}
-        loading={loading}
-        disabled={!session?.user?.email}
-        onClick={handleClick}
-      >
-        {labelByLocale[locale]}
-      </Button>
-    </Tooltip>
+    <Button
+      variant="outline"
+      size="sm"
+      className="rounded-full gap-2 border-slate-200"
+      disabled={!session?.user?.email || loading}
+      onClick={handleClick}
+    >
+      {loading ? (
+        <div className="w-3.5 h-3.5 border-2 border-slate-600 border-t-transparent rounded-full animate-spin" />
+      ) : (
+        <FileDown className="w-4 h-4" />
+      )}
+      {labelByLocale[locale]}
+    </Button>
   )
 }

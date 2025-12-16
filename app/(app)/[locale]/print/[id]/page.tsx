@@ -1,13 +1,12 @@
-// app/[locale]/print/[id]/page.tsx
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { ResumePrint } from "@/components/resume/ResumePrint"
+import type { ResumeData } from "@/types/resume"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 interface PrintPageProps {
-  // ВАЖНО: params — Promise, а не просто объект
   params: Promise<{
     locale: string
     id: string
@@ -15,7 +14,6 @@ interface PrintPageProps {
 }
 
 export default async function PrintPage(props: PrintPageProps) {
-  // Правильно разворачиваем params
   const { locale, id } = await props.params
 
   console.log("PrintPage params resolved:", { locale, id })
@@ -37,7 +35,7 @@ export default async function PrintPage(props: PrintPageProps) {
 
     return (
       <ResumePrint
-        data={resume.data as any}
+        data={resume.data as ResumeData}
         locale={locale}
       />
     )

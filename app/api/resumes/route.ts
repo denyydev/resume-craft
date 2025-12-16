@@ -1,10 +1,8 @@
-// app/api/resumes/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-// POST /api/resumes — сохранить резюме
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -38,15 +36,12 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET /api/resumes?userEmail=... — список резюме пользователя
-// GET /api/resumes?id=...        — одно резюме по id
 export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
     const userEmail = url.searchParams.get("userEmail");
 
-    // одно резюме
     if (id) {
       const resume = await prisma.resume.findUnique({ where: { id } });
       if (!resume) {
@@ -55,7 +50,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ resume });
     }
 
-    // список
     if (!userEmail) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -75,7 +69,6 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// DELETE /api/resumes?id=XXX&userEmail=YYY — удалить резюме
 export async function DELETE(req: NextRequest) {
   try {
     const url = new URL(req.url);

@@ -1,6 +1,6 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import "@/types/auth"
 
 const handler = NextAuth({
   providers: [
@@ -16,7 +16,7 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, token }) {
       if (token?.sub && session.user) {
-        (session.user as any).id = token.sub;
+        session.user.id = token.sub;
       }
       return session;
     },

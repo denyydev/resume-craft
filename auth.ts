@@ -1,6 +1,6 @@
-// auth.ts (корень проекта)
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
+import "@/types/auth"
 
 export const authConfig: NextAuthConfig = {
   providers: [
@@ -16,12 +16,11 @@ export const authConfig: NextAuthConfig = {
   callbacks: {
     async session({ session, token }) {
       if (token?.sub && session.user) {
-        (session.user as any).id = token.sub;
+        session.user.id = token.sub;
       }
       return session;
     },
   },
 };
 
-// ВАЖНО: НИКАКИХ `export default`, только это:
 export const { auth, handlers, signIn, signOut } = NextAuth(authConfig);

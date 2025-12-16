@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "antd"
+import { Button } from "@/components/ui/button"
 import { useSession } from "next-auth/react"
 import { useSearchParams, useRouter, useParams } from "next/navigation"
 import { useResumeStore } from "@/store/useResumeStore"
@@ -35,7 +35,7 @@ export function SaveResumeButton() {
           data: resume,
           locale,
           title: resume.position || resume.fullName || "Untitled resume",
-          userEmail: session.user.email, // 👈 ВАЖНО: отправляем email
+          userEmail: session.user.email,
         }),
       })
 
@@ -47,7 +47,6 @@ export function SaveResumeButton() {
       const json = await res.json()
       const newId: string = json.id
 
-      // обновляем URL с resumeId, чтобы потом загружать это резюме
       if (newId && newId !== existingId) {
         const usp = new URLSearchParams(searchParams.toString())
         usp.set("resumeId", newId)
@@ -71,12 +70,15 @@ export function SaveResumeButton() {
 
   return (
     <Button
-      type="primary"
-      size="small"
-      loading={loading}
-      disabled={!session?.user?.email}
+      variant="default"
+      size="sm"
+      disabled={!session?.user?.email || loading}
       onClick={handleClick}
+      className="rounded-full bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/20"
     >
+      {loading ? (
+        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+      ) : null}
       {label}
     </Button>
   )

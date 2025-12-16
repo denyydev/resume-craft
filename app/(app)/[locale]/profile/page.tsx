@@ -2,6 +2,7 @@
 
 import { useSession } from "next-auth/react"
 import { useParams, useRouter } from "next/navigation"
+import "@/types/auth"
 
 export default function ProfilePage() {
   const { data: session, status } = useSession()
@@ -37,7 +38,7 @@ export default function ProfilePage() {
     )
   }
 
-  const user = session.user as any
+  const user = session.user
 
   return (
     <div className="min-h-screen bg-slate-50">

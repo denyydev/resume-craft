@@ -1,5 +1,6 @@
 import type { NextAuthOptions } from "next-auth";
 import Google from "next-auth/providers/google";
+import "@/types/auth"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -15,7 +16,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, token }) {
       if (token?.sub && session.user) {
-        (session.user as any).id = token.sub;
+        session.user.id = token.sub;
       }
       return session;
     },

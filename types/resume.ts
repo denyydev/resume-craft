@@ -1,4 +1,14 @@
-export type TemplateKey = "default" | "classic" | "minimal" | "modern";
+export type TemplateKey = 
+  | "default" 
+  | "classic" 
+  | "minimal" 
+  | "modern"
+  | "neo"
+  | "sidebar"
+  | "compact"
+  | "simple"
+  | "timeline"
+  | "grid";
 
 export type Contacts = {
   email: string;
@@ -58,3 +68,7 @@ export type ResumeData = {
   photo?: string;
   templateKey: TemplateKey;
 };
+
+export type Resume = ResumeData;
+
+export type ResumeContacts = Contacts;
