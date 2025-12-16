@@ -88,7 +88,6 @@ export default function EditorPage() {
               <Button onClick={handleOpenPreview} icon={<EyeOutlined />}>
                 {dict.openPreview}
               </Button>
-              <DownloadPdfButton locale={locale} />
               <SaveResumeButton />
             </Space>
           </Flex>
