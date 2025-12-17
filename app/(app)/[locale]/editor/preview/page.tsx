@@ -10,6 +10,7 @@ import { DownloadPdfButton } from "@/components/resume/DownloadPdfButton"
 import { ArrowLeft } from "lucide-react"
 import { Button, Card, Divider, Typography } from "antd"
 import AccentColorPicker from "@/components/resume/AccentColorPicker"
+import { PhotoExportToggle } from "@/components/resume/PhotoExportToggle"
 
 const messages = {
   ru: {
@@ -86,7 +87,9 @@ export default function PreviewPage() {
             <Card>
               <TemplateSelector />
               <Divider/>
-    <AccentColorPicker/>
+          <AccentColorPicker/>
+                 <Divider/>
+                 <PhotoExportToggle/>
             </Card>
           </aside>
           <main className="flex-1 min-w-0">

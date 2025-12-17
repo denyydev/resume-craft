@@ -24,8 +24,10 @@ type ResumeState = {
   setSummary: (summary: string) => void;
   setTemplateKey: (templateKey: TemplateKey) => void;
 
-  // ✅ NEW
   setAccentColor: (accentColor: string) => void;
+
+  // ✅ NEW
+  setIncludePhoto: (includePhoto: boolean) => void;
 
   addTechSkillTag: (tag: string) => void;
   removeTechSkillTag: (tag: string) => void;
@@ -56,8 +58,9 @@ type ResumeState = {
 
 const generateId = () => Math.random().toString(36).slice(2, 9);
 
-// ✅ NEW: дефолтный акцент (под твои 6 цветов можно взять любой)
 const DEFAULT_ACCENT_COLOR = "#1677ff";
+// ✅ NEW
+const DEFAULT_INCLUDE_PHOTO = true;
 
 const emptyResume: Resume = {
   fullName: "",
@@ -79,8 +82,11 @@ const emptyResume: Resume = {
   education: [],
   languages: [],
   templateKey: "default",
-  // ✅ NEW
   accentColor: DEFAULT_ACCENT_COLOR,
+
+  // ✅ NEW
+  includePhoto: DEFAULT_INCLUDE_PHOTO,
+
   photo: undefined,
 };
 
@@ -124,10 +130,15 @@ export const useResumeStore = create<ResumeState>((set) => ({
       resume: { ...state.resume, templateKey },
     })),
 
-  // ✅ NEW
   setAccentColor: (accentColor) =>
     set((state) => ({
       resume: { ...state.resume, accentColor },
+    })),
+
+  // ✅ NEW
+  setIncludePhoto: (includePhoto) =>
+    set((state) => ({
+      resume: { ...state.resume, includePhoto },
     })),
 
   loadResume: (resume) =>
@@ -138,8 +149,10 @@ export const useResumeStore = create<ResumeState>((set) => ({
           ...emptyResume,
           ...resume,
 
-          // ✅ NEW: если в сохранённом резюме нет accentColor — берем дефолт
           accentColor: resume.accentColor ?? DEFAULT_ACCENT_COLOR,
+
+          // ✅ NEW: миграция (если поля нет в сохранёнке)
+          includePhoto: (resume as any).includePhoto ?? DEFAULT_INCLUDE_PHOTO,
 
           techSkills:
             resume.techSkills ??
@@ -161,6 +174,7 @@ export const useResumeStore = create<ResumeState>((set) => ({
     resume: emptyResume,
   }),
 
+  // ... остальной код без изменений
   addTechSkillTag: (tag) =>
     set((state) => {
       const value = tag.trim();
