@@ -133,5 +133,71 @@ export const mockResume: Resume = {
     },
   ],
 
+  // ✅ NEW: Employment / Work Preferences
+  employmentPreferences: {
+    employmentType: ["full-time", "contract"],
+    workFormat: ["remote", "hybrid"],
+    relocation: false,
+    timezone: "Europe/Warsaw",
+    workAuthorization: "EU citizen / Poland work permit (if applicable)",
+  },
+
+  // ✅ NEW: Certifications
+  certifications: [
+    {
+      id: "cert-1",
+      name: "AWS Certified Developer – Associate",
+      issuer: "Amazon Web Services",
+      year: "2023",
+      link: "https://www.credly.com/",
+    },
+    {
+      id: "cert-2",
+      name: "Professional Scrum Master I (PSM I)",
+      issuer: "Scrum.org",
+      year: "2022",
+      link: "https://www.scrum.org/",
+    },
+  ],
+
+  // ✅ NEW: Open Source / Volunteering / Community
+  activities: [
+    {
+      id: "act-1",
+      type: "open-source",
+      name: "TanStack Query (React Query) ecosystem",
+      role: "Contributor",
+      link: "https://github.com/TanStack/query",
+      description:
+        "— Исправлял баги и улучшал типизацию\n" +
+        "— Помогал с документацией и примерами\n" +
+        "— Делал небольшие улучшения DX в issues/PR",
+    },
+    {
+      id: "act-2",
+      type: "community",
+      name: "Frontend Meetup (Moscow / Online)",
+      role: "Speaker",
+      link: "",
+      description:
+        "— Доклад: «State management без боли: Zustand в проде»\n" +
+        "— Разбор реальных кейсов и Q&A",
+    },
+    {
+      id: "act-3",
+      type: "volunteering",
+      name: "TechMentor Program",
+      role: "Mentor",
+      link: "",
+      description:
+        "— Менторил 2 джунов (план развития, код-ревью, собеседования)\n" +
+        "— Помогал с пет-проектами и подготовкой к офферам",
+    },
+  ],
+
+  // ✅ если у тебя эти поля обязательные в ResumeData (мы их добавляли под стор)
+  accentColor: "#1677ff",
+  includePhoto: true,
+
   templateKey: "neo",
 };

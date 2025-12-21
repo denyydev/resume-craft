@@ -6,6 +6,7 @@ import { SkillsSection } from "./SkillsSection"
 import { ProjectsSection } from "./ProjectsSection"
 import { EducationSection } from "./EducationSection"
 import { ResumeDashboard } from "./ResumeDashboard"
+import { ActivitiesSection, CertificationsSection, EmploymentPreferencesSection } from "./EmploymentPreferencesSection"
 
 
 export function EditorShell() {
@@ -32,6 +33,9 @@ export function EditorShell() {
         <SkillsSection />
         <ProjectsSection />
         <EducationSection />
+        <EmploymentPreferencesSection/>
+        <CertificationsSection/>
+        <ActivitiesSection/>
     </div>
 </div>
   )
