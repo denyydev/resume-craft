@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react"
 import { formatPeriod, type ResumeTemplateProps } from "./common"
 
 function InitialAvatar({
@@ -13,14 +14,20 @@ function InitialAvatar({
   return (
     <div
       className="w-20 h-20 rounded-2xl bg-slate-950 flex items-center justify-center text-xl font-semibold border"
-      style={{ borderColor: `${accentColor}55` }} // полупрозрачный акцент
+      style={{ borderColor: `${accentColor}55` }}
     >
       {letter}
     </div>
   )
 }
 
-function TagPill({ label, tone = "dark" }: { label: string; tone?: "dark" | "light" }) {
+function TagPill({
+  label,
+  tone = "dark",
+}: {
+  label: string
+  tone?: "dark" | "light"
+}) {
   const base =
     tone === "dark"
       ? "border-white/15 text-slate-100 bg-white/5"
@@ -57,6 +64,28 @@ function SectionTitle({
   )
 }
 
+function KeyValueRow({
+  label,
+  value,
+  tone = "dark",
+}: {
+  label: string
+  value?: string
+  tone?: "dark" | "light"
+}) {
+  if (!value) return null
+  const labelCls =
+    tone === "dark" ? "text-[10px] text-slate-400" : "text-[10px] text-slate-500"
+  const valueCls =
+    tone === "dark" ? "text-[11px] text-slate-100" : "text-[11px] text-slate-800"
+  return (
+    <div className="flex items-baseline justify-between gap-3">
+      <span className={labelCls}>{label}</span>
+      <span className={`${valueCls} text-right leading-snug`}>{value}</span>
+    </div>
+  )
+}
+
 export function SidebarTemplate({ data }: ResumeTemplateProps) {
   const {
     fullName,
@@ -70,7 +99,11 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
     education,
     languages,
     photo,
-    accentColor, // ✅ NEW: берём из data (из zustand оно должно попасть в props экспорта/превью)
+    accentColor,
+    includePhoto,
+    employmentPreferences,
+    certifications,
+    activities,
   } = data
 
   const accent = accentColor || "#1677ff"
@@ -86,17 +119,58 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
   const hasPrimaryContacts = !!(contacts.email || contacts.phone || contacts.location)
   const hasLinks = !!(contacts.telegram || contacts.github || contacts.linkedin || contacts.website)
 
+  const pref = employmentPreferences
+  const prefEmploymentType = pref?.employmentType?.length ? pref.employmentType.join(" · ") : ""
+  const prefWorkFormat = pref?.workFormat?.length ? pref.workFormat.join(" · ") : ""
+
+  const hasPreferences = !!(
+    prefEmploymentType ||
+    prefWorkFormat ||
+    pref?.timezone ||
+    pref?.workAuthorization ||
+    typeof pref?.relocation === "boolean"
+  )
+
+  const hasCerts = (certifications?.length ?? 0) > 0
+  const hasActivities = (activities?.length ?? 0) > 0
+
+  const activityLabel = (type?: string) => {
+    if (type === "open-source") return "Open Source"
+    if (type === "volunteering") return "Volunteering"
+    if (type === "community") return "Community"
+    return "Activity"
+  }
+
+  const contactLines = [contacts.email, contacts.phone, contacts.location].filter(
+    Boolean
+  ) as string[]
+
+  const linkLines = [
+    contacts.telegram,
+    contacts.github,
+    contacts.linkedin,
+    contacts.website,
+  ].filter(Boolean) as string[]
+
   return (
-    <div className="w-[794px] min-h-[1123px] bg-white text-slate-900 flex">
+    <div
+      className="w-[794px] bg-white text-slate-900 flex"
+      style={{
+        minHeight: "1123px",
+        WebkitPrintColorAdjust: "exact",
+        printColorAdjust: "exact",
+      }}
+    >
       <aside
         className="w-[270px] bg-slate-950 text-slate-50 px-6 py-8 flex flex-col gap-6"
         style={{
-          // лёгкий акцентный бордер слева, чтобы цвет был “в тему”, но не кричал
           boxShadow: `inset 4px 0 0 0 ${accent}`,
+          WebkitPrintColorAdjust: "exact",
+          printColorAdjust: "exact",
         }}
       >
         <div className="flex flex-col items-start gap-4">
-          {photo ? (
+          {photo && includePhoto !== false ? (
             <img
               src={photo}
               alt={fullName}
@@ -118,24 +192,53 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
         </div>
 
         {(hasPrimaryContacts || hasLinks) && (
-          <div className="space-y-3">
+          <section className="space-y-3">
             {hasPrimaryContacts && (
               <div className="space-y-1 text-[11px] text-slate-200">
-                {contacts.email && <p className="leading-snug">{contacts.email}</p>}
-                {contacts.phone && <p className="leading-snug">{contacts.phone}</p>}
-                {contacts.location && <p className="leading-snug">{contacts.location}</p>}
+                {contactLines.map((line, i) => (
+                  <p key={`c-${i}`} className="leading-snug">
+                    {line}
+                  </p>
+                ))}
               </div>
             )}
 
             {hasLinks && (
               <div className="space-y-1 text-[11px] text-slate-200">
-                {contacts.telegram && <p className="leading-snug">{contacts.telegram}</p>}
-                {contacts.github && <p className="leading-snug">{contacts.github}</p>}
-                {contacts.linkedin && <p className="leading-snug">{contacts.linkedin}</p>}
-                {contacts.website && <p className="leading-snug">{contacts.website}</p>}
+                {linkLines.map((line, i) => (
+                  <p key={`l-${i}`} className="leading-snug">
+                    {line}
+                  </p>
+                ))}
               </div>
             )}
-          </div>
+          </section>
+        )}
+
+        {hasPreferences && (
+          <section className="space-y-3">
+            <SectionTitle accentColor={accent} tone="dark">
+              Preferences
+            </SectionTitle>
+
+            <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-3">
+              <KeyValueRow label="Employment" value={prefEmploymentType} tone="dark" />
+              <KeyValueRow label="Format" value={prefWorkFormat} tone="dark" />
+              <KeyValueRow
+                label="Relocation"
+                value={
+                  typeof pref?.relocation === "boolean"
+                    ? pref.relocation
+                      ? "Yes"
+                      : "No"
+                    : ""
+                }
+                tone="dark"
+              />
+              <KeyValueRow label="Timezone" value={pref?.timezone} tone="dark" />
+              <KeyValueRow label="Authorization" value={pref?.workAuthorization} tone="dark" />
+            </div>
+          </section>
         )}
 
         {(hasTech || hasSoft) && (
@@ -201,9 +304,45 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             </ul>
           </section>
         )}
+
+        {hasCerts && (
+          <section className="space-y-2">
+            <SectionTitle accentColor={accent} tone="dark">
+              Certifications
+            </SectionTitle>
+
+            <div className="space-y-2">
+              {certifications!.slice(0, 4).map((c) => (
+                <div
+                  key={c.id}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-3"
+                >
+                  <p className="text-[11px] text-slate-100 leading-snug font-medium">
+                    {c.name}
+                  </p>
+                  <p className="text-[10px] text-slate-300 leading-snug">
+                    {[c.issuer, (c as any).year].filter(Boolean).join(" · ")}
+                  </p>
+                  {c.link && (
+                    <p className="text-[10px] truncate mt-1" style={{ color: accent }}>
+                      {c.link}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {certifications!.length > 4 && (
+              <p className="text-[10px] text-slate-400">+{certifications!.length - 4} more</p>
+            )}
+          </section>
+        )}
       </aside>
 
-      <main className="flex-1 px-9 py-8 space-y-5 text-[11px] leading-snug">
+      <main
+        className="flex-1 px-9 py-8 space-y-5 text-[11px] leading-snug bg-white"
+        style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}
+      >
         {summary && (
           <section className="space-y-2 border-b border-slate-200 pb-4">
             <SectionTitle accentColor={accent}>Profile</SectionTitle>
@@ -216,7 +355,11 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             <SectionTitle accentColor={accent}>Experience</SectionTitle>
 
             {experience.map((item) => (
-              <div key={item.id} className="space-y-1">
+              <div
+                key={item.id}
+                className="space-y-1"
+                style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
+              >
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
                     {item.position || "Position"}
@@ -244,7 +387,11 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             <SectionTitle accentColor={accent}>Projects</SectionTitle>
 
             {projects.map((p) => (
-              <div key={p.id} className="space-y-1">
+              <div
+                key={p.id}
+                className="space-y-1"
+                style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
+              >
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
                     {p.name || "Project"}
@@ -253,7 +400,7 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                   {p.link && (
                     <p
                       className="text-[10px] truncate max-w-[220px] text-right"
-                      style={{ color: accent }} // ✅ акцент на ссылке
+                      style={{ color: accent }}
                     >
                       {p.link}
                     </p>
@@ -272,19 +419,66 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
           </section>
         )}
 
+        {hasActivities && (
+          <section className="space-y-3">
+            <SectionTitle accentColor={accent}>Open Source & Volunteering</SectionTitle>
+
+            {activities!.map((a) => (
+              <div
+                key={a.id}
+                className="space-y-1"
+                style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
+              >
+                <div className="flex justify-between gap-4">
+                  <p className="font-medium text-slate-900">
+                    {a.name || "Activity"}
+                    {a.role && <span className="text-slate-600"> · {a.role}</span>}
+                  </p>
+                  {a.type && (
+                    <span
+                      className="text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border"
+                      style={{ borderColor: `${accent}55`, color: accent }}
+                    >
+                      {activityLabel(a.type)}
+                    </span>
+                  )}
+                </div>
+
+                {a.link && (
+                  <p className="text-[10px] truncate" style={{ color: accent }}>
+                    {a.link}
+                  </p>
+                )}
+
+                {a.description && (
+                  <p className="text-slate-800 whitespace-pre-line leading-snug">
+                    {a.description}
+                  </p>
+                )}
+              </div>
+            ))}
+          </section>
+        )}
+
         {education?.length > 0 && (
           <section className="space-y-3">
             <SectionTitle accentColor={accent}>Education</SectionTitle>
 
             {education.map((e) => (
-              <div key={e.id} className="space-y-1">
+              <div
+                key={e.id}
+                className="space-y-1"
+                style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
+              >
                 <p className="font-medium text-slate-900">
                   {e.degree || e.field || "Education"}
                   {e.institution && <span className="text-slate-600"> · {e.institution}</span>}
                 </p>
 
                 {(e.startDate || e.endDate) && (
-                  <p className="text-[10px] text-slate-500">{formatPeriod(e.startDate, e.endDate)}</p>
+                  <p className="text-[10px] text-slate-500">
+                    {formatPeriod(e.startDate, e.endDate)}
+                  </p>
                 )}
               </div>
             ))}

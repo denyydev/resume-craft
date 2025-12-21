@@ -17,13 +17,43 @@ export type DashboardHint = {
     | "experience"
     | "skills"
     | "education"
-    | "languages";
+    | "languages"
+    | "preferences"
+    | "certifications"
+    | "activities";
 };
 
 const clean = (s?: string) => (s ?? "").trim();
 const has = (s?: string) => clean(s).length > 0;
 
 export function computeResumeScore(resume: Resume) {
+  const prefs = resume.employmentPreferences;
+  const certs = resume.certifications ?? [];
+  const acts = resume.activities ?? [];
+
+  const contactsCount = [
+    resume.contacts.email,
+    resume.contacts.phone,
+    resume.contacts.location,
+  ].filter(has).length;
+
+  const prefEmploymentTypeOk = (prefs?.employmentType?.length ?? 0) > 0;
+  const prefWorkFormatOk = (prefs?.workFormat?.length ?? 0) > 0;
+  const prefAnyOk =
+    prefEmploymentTypeOk ||
+    prefWorkFormatOk ||
+    has(prefs?.timezone) ||
+    has(prefs?.workAuthorization) ||
+    typeof prefs?.relocation === "boolean";
+
+  const certAnyOk = certs.length > 0;
+  const certStrongOk =
+    certs.some((c) => has(c.name) && has(c.issuer)) ||
+    certs.some((c) => has(c.name) && has((c as any).year));
+
+  const actsAnyOk = acts.length > 0;
+  const actsStrongOk = acts.some((a) => has(a.name) && has(a.description));
+
   const checks = [
     { key: "fullName", weight: 10, ok: has(resume.fullName) },
     { key: "position", weight: 10, ok: has(resume.position) },
@@ -57,6 +87,16 @@ export function computeResumeScore(resume: Resume) {
 
     { key: "education", weight: 4, ok: resume.education.length > 0 },
     { key: "languages", weight: 4, ok: resume.languages.length > 0 },
+
+    { key: "preferencesAny", weight: 4, ok: prefAnyOk },
+    { key: "preferencesType", weight: 3, ok: prefEmploymentTypeOk },
+    { key: "preferencesFormat", weight: 3, ok: prefWorkFormatOk },
+
+    { key: "certificationsAny", weight: 4, ok: certAnyOk },
+    { key: "certificationsStrong", weight: 2, ok: certStrongOk },
+
+    { key: "activitiesAny", weight: 4, ok: actsAnyOk },
+    { key: "activitiesStrong", weight: 2, ok: actsStrongOk },
   ];
 
   const total = checks.reduce((s, c) => s + c.weight, 0);
@@ -97,6 +137,12 @@ export function computeResumeScore(resume: Resume) {
       description: "Без опыта резюме сильно теряет вес.",
       section: "experience",
     },
+    missing("experienceDesc") && {
+      key: "h_exp_desc",
+      title: "Усиль описание опыта",
+      description: "Добавь 2–4 строки задач/результатов (от 60 символов).",
+      section: "experience",
+    },
     missing("techTags") && {
       key: "h_tech",
       title: "Добавь 5+ технологий в стек",
@@ -108,6 +154,34 @@ export function computeResumeScore(resume: Resume) {
       title: "Добавь 5+ soft skills",
       description: "Покажи, как ты работаешь в команде и решаешь задачи.",
       section: "skills",
+    },
+    missing("preferencesAny") && {
+      key: "h_prefs_any",
+      title: "Заполни предпочтения по работе",
+      description:
+        "Укажи тип занятости и формат (remote/hybrid/onsite) — это помогает рекрутерам.",
+      section: "preferences",
+    },
+    !missing("preferencesAny") &&
+      (missing("preferencesType") || missing("preferencesFormat")) && {
+        key: "h_prefs_details",
+        title: "Добавь тип занятости и формат работы",
+        description:
+          "Хотя бы один вариант: full-time/contract и remote/hybrid/onsite.",
+        section: "preferences",
+      },
+    missing("certificationsAny") && {
+      key: "h_certs",
+      title: "Добавь сертификаты (если есть)",
+      description: "Сертификации повышают доверие и улучшают релевантность.",
+      section: "certifications",
+    },
+    missing("activitiesAny") && {
+      key: "h_activities",
+      title: "Добавь open-source или волонтёрство",
+      description:
+        "Даже 1 запись про вклад/комьюнити заметно усиливает профиль.",
+      section: "activities",
     },
   ].filter(Boolean) as DashboardHint[];
 
@@ -140,20 +214,27 @@ export function computeResumeScore(resume: Resume) {
     {
       key: "contacts",
       label: "Контакты",
-      value:
-        [
-          resume.contacts.email,
-          resume.contacts.phone,
-          resume.contacts.location,
-        ].filter(has).length + "/3",
+      value: `${contactsCount}/3`,
       status:
-        [
-          resume.contacts.email,
-          resume.contacts.phone,
-          resume.contacts.location,
-        ].filter(has).length >= 2
-          ? "good"
-          : "warn",
+        contactsCount >= 2 ? "good" : contactsCount === 1 ? "warn" : "bad",
+    },
+    {
+      key: "preferences",
+      label: "Предпочтения",
+      value: prefAnyOk ? "есть" : "нет",
+      status: prefAnyOk ? "good" : "warn",
+    },
+    {
+      key: "certifications",
+      label: "Сертификаты",
+      value: certs.length ? `${certs.length} шт.` : "нет",
+      status: certs.length ? (certStrongOk ? "good" : "warn") : "warn",
+    },
+    {
+      key: "activities",
+      label: "Активности",
+      value: acts.length ? `${acts.length} шт.` : "нет",
+      status: acts.length ? (actsStrongOk ? "good" : "warn") : "warn",
     },
   ];
 
