@@ -1,88 +1,128 @@
 "use client";
 
 import { useThemeStore } from "@/store/useThemeStore";
-import { ConfigProvider, theme } from "antd";
-import { useEffect, type ReactNode } from "react";
+import { ConfigProvider, theme as antdTheme } from "antd";
+import { type ReactNode } from "react";
 
-function cssVarRgb(name: string) {
-  if (typeof window === "undefined") return "0, 0, 0";
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim()
-    .replace(/\s+/g, ", ");
-}
+const commonTokens = {
+  fontFamily:
+    'Rubik, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  borderRadius: 14,
+  borderRadiusLG: 20,
+  borderRadiusSM: 10,
+  controlHeight: 40,
+  colorPrimary: "#0A84FF",
+  colorInfo: "#0A84FF",
+};
 
-function getAntdTheme(isDark: boolean) {
-  const bg = `rgb(${cssVarRgb("--bg")})`;
-  const surface = `rgb(${cssVarRgb("--surface")})`;
-  const surface2 = `rgb(${cssVarRgb("--surface-2")})`;
-  const border = `rgb(${cssVarRgb("--border")})`;
+const lightTokens = {
+  ...commonTokens,
+  colorBgLayout: "#f1f5f9",
+  colorBgBase: "#ffffff",
+  colorBgContainer: "#f9fafb",
+  colorBorder: "#e5e7eb",
+  colorBorderSecondary: "#e5e7eb",
+  colorTextBase: "#0f172a",
+  colorTextSecondary: "#64748b",
+};
 
-  const text = `rgb(${cssVarRgb("--text")})`;
-  const text2 = `rgb(${cssVarRgb("--text-2")})`;
-  const text3 = `rgb(${cssVarRgb("--text-3")})`;
-
-  const primary = `rgb(${cssVarRgb("--primary")})`;
-
-  return {
-    algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-    token: {
-      colorPrimary: primary,
-      colorInfo: primary,
-
-      colorBgBase: bg,
-      colorBgLayout: bg,
-      colorBgContainer: surface,
-      colorBgElevated: surface2,
-
-      colorText: text,
-      colorTextSecondary: text2,
-      colorTextTertiary: text3,
-
-      colorBorder: border,
-      colorBorderSecondary: border,
-
-      borderRadius: 12,
-      borderRadiusLG: 16,
-      lineWidth: 1,
-    },
-    components: {
-      Button: {
-        borderRadius: 12,
-        controlHeight: 42,
-        fontWeight: 500,
-      },
-      Input: {
-        borderRadius: 12,
-        controlHeight: 42,
-      },
-      Select: {
-        borderRadius: 12,
-        controlHeight: 42,
-      },
-      Dropdown: {
-        borderRadius: 16,
-        paddingBlock: 8,
-      },
-      Card: {
-        borderRadius: 20,
-      },
-    },
-  };
-}
+const darkTokens = {
+  ...commonTokens,
+  colorBgLayout: "#020617",
+  colorBgBase: "#020617",
+  colorBgContainer: "#020617",
+  colorBorder: "#1e293b",
+  colorBorderSecondary: "#1f2937",
+  colorTextBase: "#e5e7eb",
+  colorTextSecondary: "#94a3b8",
+};
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const currentTheme = useThemeStore((s) => s.theme);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    if (currentTheme === "dark") root.classList.add("dark");
-    else root.classList.remove("dark");
-  }, [currentTheme]);
-
   const isDark = currentTheme === "dark";
 
   return (
-    <ConfigProvider theme={getAntdTheme(isDark)}>{children}</ConfigProvider>
+    <ConfigProvider
+      theme={{
+        algorithm: isDark
+          ? antdTheme.darkAlgorithm
+          : antdTheme.defaultAlgorithm,
+        token: isDark ? darkTokens : lightTokens,
+        components: {
+          Layout: {
+            headerBg: isDark ? "rgba(15,23,42,0.92)" : "rgba(255,255,255,0.94)",
+            footerBg: "transparent",
+            siderBg: isDark ? "#020617" : "#ffffff",
+            bodyBg: isDark ? "#020617" : "#f1f5f9",
+          },
+          Menu: {
+            itemColor: isDark ? "#e5e7eb" : "#0f172a",
+            itemHoverColor: "#0A84FF",
+            itemSelectedColor: "#0A84FF",
+            itemSelectedBg: isDark
+              ? "rgba(10,132,255,0.08)"
+              : "rgba(10,132,255,0.08)",
+            horizontalItemHoverBg: "transparent",
+            horizontalItemSelectedBg: "transparent",
+            borderRadius: 999,
+            itemMarginInline: 8,
+          },
+          Card: {
+            colorBgContainer: isDark ? "rgba(15,23,42,0.96)" : "#ffffff",
+            colorBorderSecondary: "rgba(148,163,184,0.25)",
+            borderRadius: 18,
+            boxShadow: isDark
+              ? "0 18px 45px rgba(15,23,42,0.85)"
+              : "0 18px 45px rgba(15,23,42,0.08)",
+            headerFontSize: 16,
+            paddingLG: 20,
+          },
+          Button: {
+            borderRadius: 999,
+            controlHeight: 40,
+            colorPrimary: "#0A84FF",
+            colorPrimaryHover: "#0060df",
+            colorPrimaryActive: "#0047b3",
+            colorText: isDark ? "#e5e7eb" : "#0f172a",
+            colorTextLightSolid: "#0b1120",
+          },
+          Input: {
+            borderRadius: 999,
+            controlHeight: 40,
+            colorBgContainer: isDark ? "#020617" : "#ffffff",
+            colorBorder: isDark ? "#1e293b" : "#d1d5db",
+            colorText: isDark ? "#e5e7eb" : "#0f172a",
+            activeBorderColor: "#0A84FF",
+            hoverBorderColor: "#0A84FF",
+          },
+          Modal: {
+            borderRadiusLG: 22,
+            colorBgElevated: isDark ? "rgba(15,23,42,0.98)" : "#ffffff",
+            paddingContentHorizontalLG: 24,
+            paddingContentVerticalLG: 20,
+          },
+          Table: {
+            headerBg: isDark ? "#020617" : "#f9fafb",
+            headerColor: isDark ? "#e5e7eb" : "#0f172a",
+            rowHoverBg: isDark ? "rgba(15,23,42,0.9)" : "#f1f5f9",
+          },
+          Dropdown: {
+            borderRadiusLG: 16,
+            colorBgElevated: isDark ? "#020617" : "#ffffff",
+            boxShadowSecondary: isDark
+              ? "0 18px 45px rgba(15,23,42,0.9)"
+              : "0 18px 45px rgba(15,23,42,0.12)",
+          },
+          Tag: {
+            borderRadiusSM: 999,
+          },
+          Pagination: {
+            borderRadius: 999,
+          },
+        },
+      }}
+    >
+      {children}
+    </ConfigProvider>
   );
 }
