@@ -7,6 +7,7 @@ import {
   Card,
   Col,
   Empty,
+  Grid,
   Input,
   Modal,
   Pagination,
@@ -14,6 +15,7 @@ import {
   Row,
   Space,
   Spin,
+  theme,
   Tooltip,
   Typography,
 } from "antd";
@@ -22,7 +24,7 @@ import { Clock, File, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 type ResumeListItem = {
   id: string;
@@ -49,6 +51,7 @@ const messages = {
     noPosition: "Должность не указана",
     openPdf: "PDF",
     delete: "Удалить",
+    updated: "Обновлено",
   },
   en: {
     title: "My Resumes",
@@ -67,12 +70,16 @@ const messages = {
     noPosition: "No position specified",
     openPdf: "PDF",
     delete: "Delete",
+    updated: "Updated",
   },
 } as const;
 
 export default function MyResumesPage() {
-  const params = useParams() as { locale: "ru" | "en" };
-  const locale = params.locale ?? "en";
+  const { token } = theme.useToken();
+  const screens = Grid.useBreakpoint();
+
+  const params = useParams() as { locale?: "ru" | "en" };
+  const locale = params?.locale ?? "en";
   const t = messages[locale] ?? messages.en;
   const router = useRouter();
 
@@ -83,7 +90,7 @@ export default function MyResumesPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
 
-  const pageSize = 4;
+  const pageSize = 8;
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -162,9 +169,7 @@ export default function MyResumesPage() {
     });
   }, [resumes, search]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [search]);
+  useEffect(() => setPage(1), [search]);
 
   useEffect(() => {
     const maxPage = Math.max(1, Math.ceil(filteredResumes.length / pageSize));
@@ -176,9 +181,17 @@ export default function MyResumesPage() {
     return filteredResumes.slice(start, start + pageSize);
   }, [filteredResumes, page]);
 
+  const pageWrapStyle: React.CSSProperties = {
+    minHeight: "100vh",
+    background: token.colorBgLayout,
+    padding: screens.md ? 24 : 16,
+    paddingBottom: 56,
+    width: "100%",
+  };
+
   if (status === "loading" || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50/50">
+      <div style={{ ...pageWrapStyle, display: "grid", placeItems: "center" }}>
         <Spin size="large" />
       </div>
     );
@@ -186,9 +199,11 @@ export default function MyResumesPage() {
 
   if (status === "unauthenticated" || !session?.user?.email) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50/50 px-4">
+      <div style={{ ...pageWrapStyle, display: "grid", placeItems: "center" }}>
         <Result
-          icon={<FileText className="w-10 h-10 text-slate-400" />}
+          icon={
+            <FileText size={42} style={{ color: token.colorTextSecondary }} />
+          }
           title={t.unauthorized}
           extra={
             <Button type="primary" onClick={() => router.push(`/${locale}`)}>
@@ -201,45 +216,62 @@ export default function MyResumesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50/50 pb-20">
-      <div className="flex flex-col gap-5 py-5">
+    <div style={pageWrapStyle}>
+      <Space
+        direction="vertical"
+        size="large"
+        style={{ width: "100%", maxWidth: 1120, margin: "0 auto" }}
+      >
         <Card>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-2xl">
-              <Typography.Title level={2} style={{ marginBottom: 6 }}>
+          <div
+            style={{
+              display: "flex",
+              gap: 16,
+              alignItems: screens.md ? "flex-end" : "flex-start",
+              justifyContent: "space-between",
+              flexDirection: screens.md ? "row" : "column",
+            }}
+          >
+            <div style={{ maxWidth: 720 }}>
+              <Typography.Title level={2} style={{ margin: 0 }}>
                 {t.title}
               </Typography.Title>
               <Typography.Paragraph
                 type="secondary"
-                style={{ marginBottom: 0, fontSize: 16 }}
+                style={{ margin: 0, fontSize: 16 }}
               >
                 {t.subtitle}
               </Typography.Paragraph>
             </div>
 
             <Link href={`/${locale}/editor`}>
-              <Button
-                type="primary"
-                icon={<Plus className="w-4 h-4" />}
-                className="rounded-full px-6"
-              >
+              <Button type="primary" icon={<Plus size={16} />}>
                 {t.createResume}
               </Button>
             </Link>
           </div>
         </Card>
-        <div>
-          <div className="mb-7 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="w-full md:max-w-md">
-              <Input
-                allowClear
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t.searchPlaceholder}
-                prefix={<Search className="w-4 h-4 text-slate-400" />}
-                className="rounded-2xl"
-              />
-            </div>
+
+        <Card>
+          <div
+            style={{
+              display: "flex",
+              gap: 12,
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexDirection: screens.md ? "row" : "column",
+            }}
+          >
+            <Input
+              allowClear
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t.searchPlaceholder}
+              prefix={
+                <Search size={16} style={{ color: token.colorTextTertiary }} />
+              }
+              style={{ maxWidth: screens.md ? 420 : "100%" }}
+            />
 
             {filteredResumes.length > pageSize && (
               <Pagination
@@ -251,160 +283,194 @@ export default function MyResumesPage() {
               />
             )}
           </div>
+        </Card>
 
-          <AnimatePresence mode="popLayout">
-            {filteredResumes.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-              >
-                <Card
-                  className="rounded-3xl"
-                  styles={{ body: { padding: 28 } }}
+        <AnimatePresence mode="popLayout">
+          {filteredResumes.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+            >
+              <Card>
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={
+                    <Space direction="vertical" size={4}>
+                      <Typography.Text strong>{t.empty}</Typography.Text>
+                      <Typography.Text type="secondary">
+                        {t.emptySubtext}
+                      </Typography.Text>
+                    </Space>
+                  }
                 >
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description={
-                      <div className="space-y-1">
-                        <div className="text-base font-semibold text-slate-900">
-                          {t.empty}
-                        </div>
-                        <div className="text-sm text-slate-500">
-                          {t.emptySubtext}
-                        </div>
-                      </div>
-                    }
-                  >
-                    <Link href={`/${locale}/editor`}>
-                      <Button type="default" className="rounded-full px-6">
-                        {t.createResume}
-                      </Button>
-                    </Link>
-                  </Empty>
-                </Card>
-              </motion.div>
-            ) : (
-              <motion.div layout>
-                <Row gutter={[16, 16]}>
-                  {paginatedResumes.map((resume, index) => {
-                    const data = (resume.data || {}) as any;
-                    const title = data.fullName || t.newResume;
-                    const subtitle = data.position || t.noPosition;
+                  <Link href={`/${locale}/editor`}>
+                    <Button type="primary" icon={<Plus size={16} />}>
+                      {t.createResume}
+                    </Button>
+                  </Link>
+                </Empty>
+              </Card>
+            </motion.div>
+          ) : (
+            <motion.div layout>
+              <Row gutter={[16, 16]}>
+                {paginatedResumes.map((resume, index) => {
+                  const data = (resume.data || {}) as any;
+                  const title = data.fullName || t.newResume;
+                  const subtitle = data.position || t.noPosition;
 
-                    const date = new Date(resume.updatedAt).toLocaleDateString(
-                      locale === "ru" ? "ru-RU" : "en-US",
-                      {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      }
-                    );
+                  const date = new Date(resume.updatedAt).toLocaleDateString(
+                    locale === "ru" ? "ru-RU" : "en-US",
+                    { month: "short", day: "numeric", year: "numeric" }
+                  );
 
-                    const isDeleting = deletingId === resume.id;
+                  const isDeleting = deletingId === resume.id;
 
-                    return (
-                      <Col key={resume.id} xs={24} sm={12} lg={8} xl={6}>
-                        <motion.div
-                          layout
-                          initial={{ opacity: 0, y: 18 }}
-                          animate={{
-                            opacity: 1,
-                            y: 0,
-                            transition: { delay: index * 0.04 },
-                          }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="h-full"
+                  const showActionsAlways = !screens.lg; // mobile/tablet: actions always visible
+
+                  return (
+                    <Col key={resume.id} xs={24} sm={12} lg={8} xl={6}>
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0, y: 14 }}
+                        animate={{
+                          opacity: 1,
+                          y: 0,
+                          transition: { delay: index * 0.03 },
+                        }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        style={{ height: "100%" }}
+                      >
+                        <Card
+                          hoverable
+                          style={{ height: "100%" }}
+                          styles={{ body: { padding: 14 } }}
                         >
-                          <Card
-                            hoverable
-                            className="group relative h-full rounded-2xl border border-slate-200/70"
-                            styles={{ body: { padding: 14 } }}
+                          <Link
+                            href={`/${locale}/editor?resumeId=${resume.id}`}
+                            style={{ display: "block" }}
                           >
-                            <Link
-                              href={`/${locale}/editor?resumeId=${resume.id}`}
-                              className="block"
+                            <ResumePreviewThumb
+                              data={data}
+                              locale={locale}
+                              className="mb-3"
+                            />
+
+                            <div style={{ paddingInline: 4 }}>
+                              <Typography.Text
+                                strong
+                                style={{ fontSize: 16, display: "block" }}
+                              >
+                                <span
+                                  style={{
+                                    display: "block",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  {title}
+                                </span>
+                              </Typography.Text>
+                              <Typography.Text
+                                type="secondary"
+                                style={{ fontSize: 13, display: "block" }}
+                              >
+                                <span
+                                  style={{
+                                    display: "-webkit-box",
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: "vertical",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {subtitle}
+                                </span>
+                              </Typography.Text>
+                            </div>
+                          </Link>
+
+                          <div
+                            style={{
+                              marginTop: 12,
+                              paddingTop: 12,
+                              borderTop: `1px solid ${token.colorBorderSecondary}`,
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              paddingInline: 4,
+                            }}
+                          >
+                            <Space size={6}>
+                              <Clock
+                                size={14}
+                                style={{ color: token.colorTextTertiary }}
+                              />
+                              <Typography.Text
+                                type="secondary"
+                                style={{ fontSize: 12 }}
+                              >
+                                {t.updated} • {date}
+                              </Typography.Text>
+                            </Space>
+
+                            <div
+                              style={{
+                                display: "flex",
+                                gap: 6,
+                                opacity: showActionsAlways ? 1 : 0,
+                                transition: "opacity 160ms ease",
+                              }}
+                              className="resume-actions"
                             >
-                              <div className="relative">
-                                <ResumePreviewThumb
-                                  data={data}
-                                  locale={locale}
-                                  className="mb-3"
-                                />
-                              </div>
-
-                              <div className="px-1">
-                                <Typography.Text
-                                  strong
-                                  className="block"
-                                  style={{ fontSize: 16 }}
+                              <Tooltip title={t.openPdf}>
+                                <Link
+                                  href={`/${locale}/print/${resume.id}`}
+                                  target="_blank"
                                 >
-                                  <span className="line-clamp-1">{title}</span>
-                                </Typography.Text>
-                                <Typography.Text
-                                  type="secondary"
-                                  className="block"
-                                  style={{ fontSize: 13 }}
-                                >
-                                  <span className="line-clamp-2">
-                                    {subtitle}
-                                  </span>
-                                </Typography.Text>
-                              </div>
-                            </Link>
-
-                            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between px-1">
-                              <Space size={6} className="text-slate-400">
-                                <Clock className="w-3.5 h-3.5" />
-                                <Typography.Text
-                                  type="secondary"
-                                  style={{ fontSize: 12 }}
-                                >
-                                  {date}
-                                </Typography.Text>
-                              </Space>
-
-                              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                <Tooltip title={t.openPdf}>
-                                  <Link
-                                    href={`/${locale}/print/${resume.id}`}
-                                    target="_blank"
-                                  >
-                                    <Button
-                                      type="text"
-                                      shape="circle"
-                                      icon={<File className="w-4 h-4" />}
-                                    />
-                                  </Link>
-                                </Tooltip>
-
-                                <Tooltip title={t.delete}>
                                   <Button
                                     type="text"
-                                    danger
                                     shape="circle"
-                                    loading={isDeleting}
-                                    onClick={(e) => handleDelete(resume.id, e)}
-                                    icon={
-                                      !isDeleting ? (
-                                        <Trash2 className="w-4 h-4" />
-                                      ) : undefined
-                                    }
+                                    icon={<File size={16} />}
                                   />
-                                </Tooltip>
-                              </div>
+                                </Link>
+                              </Tooltip>
+
+                              <Tooltip title={t.delete}>
+                                <Button
+                                  type="text"
+                                  danger
+                                  shape="circle"
+                                  loading={isDeleting}
+                                  onClick={(e) => handleDelete(resume.id, e)}
+                                  icon={
+                                    !isDeleting ? (
+                                      <Trash2 size={16} />
+                                    ) : undefined
+                                  }
+                                />
+                              </Tooltip>
                             </div>
-                          </Card>
-                        </motion.div>
-                      </Col>
-                    );
-                  })}
-                </Row>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
+                          </div>
+
+                          {!showActionsAlways && (
+                            <style jsx>{`
+                              :global(.ant-card:hover .resume-actions) {
+                                opacity: 1 !important;
+                              }
+                            `}</style>
+                          )}
+                        </Card>
+                      </motion.div>
+                    </Col>
+                  );
+                })}
+              </Row>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Space>
     </div>
   );
 }
