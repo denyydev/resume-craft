@@ -1,19 +1,21 @@
 "use client";
 
-import { create } from "zustand";
-import { nanoid } from "nanoid";
 import {
+  ActivityItem,
+  CertificationItem,
+  EducationItem,
+  EmploymentPreferences,
+  ExperienceItem,
+  LanguageItem,
+  ProjectItem,
   Resume,
   ResumeContacts,
-  ExperienceItem,
-  ProjectItem,
-  EducationItem,
-  LanguageItem,
+  ResumeSectionKey,
+  SectionsVisibility,
   TemplateKey,
-  EmploymentPreferences,
-  CertificationItem,
-  ActivityItem,
 } from "@/types/resume";
+import { nanoid } from "nanoid";
+import { create } from "zustand";
 
 type ResumeState = {
   resume: Resume;
@@ -33,12 +35,14 @@ type ResumeState = {
 
   setEmploymentPreferences: (patch: Partial<EmploymentPreferences>) => void;
 
-  // NEW: Certifications
+  setSectionVisible: (key: ResumeSectionKey, value: boolean) => void;
+  toggleSection: (key: ResumeSectionKey) => void;
+  showAllSections: () => void;
+
   addCertification: () => void;
   updateCertification: (id: string, patch: Partial<CertificationItem>) => void;
   removeCertification: (id: string) => void;
 
-  // NEW: Open Source / Volunteering (Activities)
   addActivity: (type?: ActivityItem["type"]) => void;
   updateActivity: (id: string, patch: Partial<ActivityItem>) => void;
   removeActivity: (id: string) => void;
@@ -73,6 +77,20 @@ type ResumeState = {
 const DEFAULT_ACCENT_COLOR = "#1677ff";
 const DEFAULT_INCLUDE_PHOTO = true;
 
+const DEFAULT_SECTIONS_VISIBILITY: SectionsVisibility = {
+  photo: true,
+  summary: true,
+  experience: true,
+  projects: true,
+  techSkills: true,
+  softSkills: true,
+  education: true,
+  languages: true,
+  employmentPreferences: true,
+  certifications: true,
+  activities: true,
+};
+
 const createEmptyResume = (): Resume => ({
   fullName: "",
   position: "",
@@ -92,8 +110,6 @@ const createEmptyResume = (): Resume => ({
   softSkills: { tags: [], note: "" },
   education: [],
   languages: [],
-
-  // NEW: Employment / Work Preferences
   employmentPreferences: {
     employmentType: [],
     workFormat: [],
@@ -101,17 +117,13 @@ const createEmptyResume = (): Resume => ({
     timezone: "",
     workAuthorization: "",
   },
-
-  // NEW: Certifications
   certifications: [],
-
-  // NEW: Open Source / Volunteering
   activities: [],
-
   templateKey: "default",
   accentColor: DEFAULT_ACCENT_COLOR,
   includePhoto: DEFAULT_INCLUDE_PHOTO,
   photo: undefined,
+  sectionsVisibility: DEFAULT_SECTIONS_VISIBILITY,
 });
 
 function uniq(list: string[]) {
@@ -164,7 +176,6 @@ export const useResumeStore = create<ResumeState>((set) => ({
       resume: { ...state.resume, includePhoto },
     })),
 
-  // NEW: Employment / Work Preferences
   setEmploymentPreferences: (patch) =>
     set((state) => ({
       resume: {
@@ -176,17 +187,52 @@ export const useResumeStore = create<ResumeState>((set) => ({
       },
     })),
 
+  setSectionVisible: (key, value) =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        sectionsVisibility: {
+          ...DEFAULT_SECTIONS_VISIBILITY,
+          ...state.resume.sectionsVisibility,
+          [key]: value,
+        },
+      },
+    })),
+
+  toggleSection: (key) =>
+    set((state) => {
+      const current =
+        state.resume.sectionsVisibility?.[key] ??
+        DEFAULT_SECTIONS_VISIBILITY[key];
+      return {
+        resume: {
+          ...state.resume,
+          sectionsVisibility: {
+            ...DEFAULT_SECTIONS_VISIBILITY,
+            ...state.resume.sectionsVisibility,
+            [key]: !current,
+          },
+        },
+      };
+    }),
+
+  showAllSections: () =>
+    set((state) => ({
+      resume: {
+        ...state.resume,
+        sectionsVisibility: { ...DEFAULT_SECTIONS_VISIBILITY },
+      },
+    })),
+
   loadResume: (resume) =>
     set(() => {
       const r = resume as any;
-
       return {
         resume: {
           ...createEmptyResume(),
           ...resume,
           accentColor: resume.accentColor ?? DEFAULT_ACCENT_COLOR,
-          includePhoto: (resume as any).includePhoto ?? DEFAULT_INCLUDE_PHOTO,
-
+          includePhoto: r.includePhoto ?? DEFAULT_INCLUDE_PHOTO,
           techSkills:
             resume.techSkills ??
             ({
@@ -199,18 +245,16 @@ export const useResumeStore = create<ResumeState>((set) => ({
               tags: [],
               note: typeof r.softSkills === "string" ? r.softSkills : "",
             } as Resume["softSkills"]),
-
-          // NEW: safe defaults / backward compatibility
           employmentPreferences:
-            (resume as any).employmentPreferences ??
+            r.employmentPreferences ??
             createEmptyResume().employmentPreferences,
-
           certifications:
-            (resume as any).certifications ??
-            createEmptyResume().certifications,
-
-          activities:
-            (resume as any).activities ?? createEmptyResume().activities,
+            r.certifications ?? createEmptyResume().certifications,
+          activities: r.activities ?? createEmptyResume().activities,
+          sectionsVisibility: {
+            ...DEFAULT_SECTIONS_VISIBILITY,
+            ...(r.sectionsVisibility ?? {}),
+          },
         },
       };
     }),
@@ -451,7 +495,6 @@ export const useResumeStore = create<ResumeState>((set) => ({
       },
     })),
 
-  // NEW: Certifications
   addCertification: () =>
     set((state) => ({
       resume: {
@@ -489,7 +532,6 @@ export const useResumeStore = create<ResumeState>((set) => ({
       },
     })),
 
-  // NEW: Open Source / Volunteering (Activities)
   addActivity: (type = "open-source") =>
     set((state) => ({
       resume: {

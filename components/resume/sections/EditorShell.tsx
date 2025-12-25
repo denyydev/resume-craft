@@ -12,7 +12,7 @@ import { SkillsSection } from "./SkillsSection";
 export function EditorShell() {
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-5">
         <BasicSection />
         <ExperienceSection />
         <SkillsSection />

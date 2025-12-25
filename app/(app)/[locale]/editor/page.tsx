@@ -14,6 +14,7 @@ import { ResetResumeButton } from "@/components/resume/ResetButton";
 import { SaveResumeButton } from "@/components/resume/SaveResumeButton";
 import { EditorShell } from "@/components/resume/sections/EditorShell";
 import { ResumeDashboard } from "@/components/resume/sections/ResumeDashboard";
+import { SectionsVisibilityPanel } from "@/components/resume/sections/SectionsVisibilityPanel";
 import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 
@@ -70,9 +71,12 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-bg pb-24">
-      <div className="flex flex-col gap-5 p-5">
-        <ResumeDashboard />
+      <div className="grid grid-cols-2 gap-5 p-5">
         <EditorShell />
+        <div className="grid grid-cols-1 gap-5">
+          <SectionsVisibilityPanel />
+          <ResumeDashboard />
+        </div>
       </div>
 
       <EditorBottomBar

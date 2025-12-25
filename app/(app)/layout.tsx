@@ -33,19 +33,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   ];
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <Header
-        style={{
-          position: "sticky",
-          top: 0,
-          zIndex: 50,
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-          paddingInline: 16,
-          borderBottom: "1px solid rgba(148,163,184,0.18)",
-        }}
-      >
+    <Layout className="min-h-screen">
+      <Header className="sticky top-0 z-50 flex items-center gap-4 border-b border-slate-400/20 px-4">
         <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4">
           <Link href={editorHref} className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0A84FF] shadow-sm">
@@ -61,11 +50,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               mode="horizontal"
               selectedKeys={[selectedKey]}
               items={items}
-              style={{
-                background: "transparent",
-                borderBottom: "none",
-                minWidth: 320,
-              }}
+              className="min-w-[320px] border-b-0 bg-transparent"
             />
           </div>
 

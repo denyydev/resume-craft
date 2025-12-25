@@ -50,14 +50,14 @@ export default function HeroSection() {
 
           <motion.div className="flex flex-wrap items-center gap-4" variants={fadeInUp} transition={{ delay: 0.1 }}>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-<button
-  type="button"
-  onClick={() => signIn("google", { callbackUrl: "/ru/editor" })}
-  className="group relative flex items-center gap-3 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-cyan-500/25 lg:text-lg cursor-pointer"
->
-  <span className="relative">Начать бесплатно</span>
-  <ArrowRight className="relative h-5 w-5 transition-transform group-hover:translate-x-1" />
-</button>
+              <button
+                type="button"
+                onClick={() => signIn("google", { callbackUrl: "/ru/editor" })}
+                className="group relative flex items-center gap-3 rounded-full bg-gradient-to-r from-cyan-500 to-emerald-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-cyan-500/25 lg:text-lg cursor-pointer"
+              >
+                <span className="relative">Начать бесплатно</span>
+                <ArrowRight className="relative h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
 
             </motion.div>
           </motion.div>

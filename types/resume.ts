@@ -1,5 +1,3 @@
-// ✅ FULL UPDATED "@/types/resume" (с Employment / Preferences + Certifications + Open Source / Volunteering)
-
 export type TemplateKey =
   | "default"
   | "classic"
@@ -19,7 +17,7 @@ export type Contacts = {
   telegram?: string;
   github?: string;
   linkedin?: string;
-  website?: string; // ✅ у тебя используется в createEmptyResume
+  website?: string;
 };
 
 export type ExperienceItem = {
@@ -57,10 +55,6 @@ export type LanguageItem = {
   level: string;
 };
 
-// =========================
-// ✅ NEW: Employment / Work Preferences
-// =========================
-
 export type EmploymentType =
   | "full-time"
   | "part-time"
@@ -69,36 +63,27 @@ export type EmploymentType =
 export type WorkFormat = "remote" | "hybrid" | "onsite";
 
 export type EmploymentPreferences = {
-  employmentType: EmploymentType[]; // можно []
-  workFormat: WorkFormat[]; // можно []
-  relocation?: boolean; // готов к релокации
-  timezone?: string; // "Europe/Warsaw"
-  workAuthorization?: string; // "EU citizen" / "Poland work permit"
+  employmentType: EmploymentType[];
+  workFormat: WorkFormat[];
+  relocation?: boolean;
+  timezone?: string;
+  workAuthorization?: string;
 };
-
-// =========================
-// ✅ NEW: Certifications
-// =========================
 
 export type CertificationItem = {
   id: string;
-  name: string; // "AWS Certified Developer – Associate"
-  issuer: string; // "Amazon Web Services"
-  year?: string; // "2025" (строкой удобнее для формы)
+  name: string;
+  issuer: string;
+  year?: string;
   link?: string;
 };
-
-// =========================
-// ✅ NEW: Open Source / Volunteering
-// (общее "activities", чтобы можно было расширять)
-// =========================
 
 export type ActivityType = "open-source" | "volunteering" | "community";
 
 export type ActivityItem = {
   id: string;
   type: ActivityType;
-  name: string; // проект / организация
+  name: string;
   role?: string;
   description?: string;
   link?: string;
@@ -108,6 +93,21 @@ export type SkillsBlock = {
   tags: string[];
   note: string;
 };
+
+export type ResumeSectionKey =
+  | "photo"
+  | "summary"
+  | "experience"
+  | "projects"
+  | "techSkills"
+  | "softSkills"
+  | "education"
+  | "languages"
+  | "employmentPreferences"
+  | "certifications"
+  | "activities";
+
+export type SectionsVisibility = Record<ResumeSectionKey, boolean>;
 
 export type ResumeData = {
   fullName: string;
@@ -123,21 +123,18 @@ export type ResumeData = {
   techSkills: SkillsBlock;
   softSkills: SkillsBlock;
 
-  // ✅ existing
   photo?: string;
   templateKey: TemplateKey;
 
-  // ✅ NEW
   employmentPreferences: EmploymentPreferences;
   certifications: CertificationItem[];
   activities: ActivityItem[];
 
-  // ✅ у тебя это хранится в resume (по стору), поэтому фиксируем тут,
-  // иначе TS будет ругаться / придется кастовать Resume в сторе.
   accentColor: string;
   includePhoto: boolean;
+
+  sectionsVisibility?: SectionsVisibility;
 };
 
 export type Resume = ResumeData;
-
 export type ResumeContacts = Contacts;
