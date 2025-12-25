@@ -1,30 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "antd"
-import { Download, FileDown } from "lucide-react"
-import { useSession } from "next-auth/react"
-import { type Locale } from "@/lib/useCurrentLocale"
-import { useResumeStore } from "@/store/useResumeStore"
-
+import { type Locale } from "@/lib/useCurrentLocale";
+import { useResumeStore } from "@/store/useResumeStore";
+import { Button } from "antd";
+import { FileDown } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 type Props = {
-  locale: Locale
-}
+  locale: Locale;
+};
 
 export function DownloadPdfButton({ locale }: Props) {
-  const [loading, setLoading] = useState(false)
-  const resume = useResumeStore((s) => s.resume)
-  const { data: session } = useSession()
+  const [loading, setLoading] = useState(false);
+  const resume = useResumeStore((s) => s.resume);
+  const { data: session } = useSession();
 
   const handleClick = async () => {
     if (!session?.user?.email) {
-      console.warn("No user email in session, user is not authenticated")
-      return
+      console.warn("No user email in session, user is not authenticated");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
 
       const saveRes = await fetch("/api/resumes", {
         method: "POST",
@@ -35,53 +34,53 @@ export function DownloadPdfButton({ locale }: Props) {
           title: resume.position || resume.fullName || "Untitled resume",
           userEmail: session.user.email,
         }),
-      })
+      });
 
       if (!saveRes.ok) {
-        console.error("Failed to save resume", await saveRes.text())
-        return
+        console.error("Failed to save resume", await saveRes.text());
+        return;
       }
 
-      const { id } = (await saveRes.json()) as { id: string }
-      console.log("Saved resume id:", id)
+      const { id } = (await saveRes.json()) as { id: string };
+      console.log("Saved resume id:", id);
 
       const pdfRes = await fetch("/api/pdf", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, locale }),
-      })
+      });
 
       if (!pdfRes.ok) {
-        console.error("Failed to generate PDF", await pdfRes.text())
-        return
+        console.error("Failed to generate PDF", await pdfRes.text());
+        return;
       }
 
-      const blob = await pdfRes.blob()
-      const url = URL.createObjectURL(blob)
+      const blob = await pdfRes.blob();
+      const url = URL.createObjectURL(blob);
 
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `resume-${id}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      URL.revokeObjectURL(url)
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `resume-${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     } catch (e) {
-      console.error(e)
+      console.error(e);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const labelByLocale: Record<Locale, string> = {
     ru: "Скачать PDF",
     en: "Download PDF",
-  }
+  };
 
   return (
     <Button
       type="primary"
-      className="rounded-full gap-2 border-slate-200"
+      className="rounded-full w-full"
       disabled={!session?.user?.email || loading}
       onClick={handleClick}
       icon={<FileDown className="w-4 h-4" />}
@@ -89,5 +88,5 @@ export function DownloadPdfButton({ locale }: Props) {
     >
       {labelByLocale[locale]}
     </Button>
-  )
+  );
 }

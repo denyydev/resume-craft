@@ -21,8 +21,8 @@ import { useResumeStore } from "@/store/useResumeStore";
 const { useBreakpoint } = Grid;
 
 const messages = {
-  ru: { openPreview: "Предпросмотр" },
-  en: { openPreview: "Preview" },
+  ru: { openPreview: "Предпросмотр / Скачать PDF" },
+  en: { openPreview: "Preview / Download PDF" },
 } as const;
 
 export default function EditorPage() {

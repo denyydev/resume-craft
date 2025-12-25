@@ -1,54 +1,46 @@
-"use client"
+"use client";
 
-import React, { useMemo } from "react"
-import { usePathname, useRouter } from "next/navigation"
-import { Button, Dropdown, type MenuProps } from "antd"
-import { GlobalOutlined } from "@ant-design/icons"
+import { usePathname, useRouter } from "next/navigation";
+import { useMemo } from "react";
 
-type Locale = "ru" | "en"
+type Locale = "ru" | "en";
 
-export function LanguageSwitcher({ currentLocale }: { currentLocale?: Locale }) {
-  const router = useRouter()
-  const pathname = usePathname()
+export function LanguageSwitcher({
+  currentLocale,
+}: {
+  currentLocale?: Locale;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
 
   const locale: Locale = useMemo(() => {
-    if (currentLocale) return currentLocale
-    const seg = pathname?.split("/")[1]
-    return seg === "en" ? "en" : "ru"
-  }, [currentLocale, pathname])
+    if (currentLocale) return currentLocale;
+    const seg = pathname?.split("/")[1];
+    return seg === "en" ? "en" : "ru";
+  }, [currentLocale, pathname]);
 
-  const handleChange = (nextLocale: Locale) => {
-    if (!pathname) return
-    const segments = pathname.split("/")
-    segments[1] = nextLocale
-    const nextPath = segments.join("/") || "/"
-    router.push(nextPath)
-  }
+  const toggle = () => {
+    if (!pathname) return;
 
-  const items: MenuProps["items"] = [
-    {
-      key: "ru",
-      label: "Русский",
-      icon: <span style={{ fontSize: 16, lineHeight: 1 }}>🇷🇺</span>,
-      onClick: () => handleChange("ru"),
-    },
-    {
-      key: "en",
-      label: "English",
-      icon: <span style={{ fontSize: 16, lineHeight: 1 }}>🇺🇸</span>,
-      onClick: () => handleChange("en"),
-    },
-  ]
+    const nextLocale: Locale = locale === "ru" ? "en" : "ru";
+    const segments = pathname.split("/");
+    segments[1] = nextLocale;
+
+    router.push(segments.join("/") || "/");
+  };
 
   return (
-    <Dropdown menu={{ items, selectable: true, selectedKeys: [locale] }} trigger={["click"]}>
-      <Button
-        size="small"
-        icon={<GlobalOutlined />}
-        style={{ borderRadius: 10, fontWeight: 600 }}
-      >
-        {locale.toUpperCase()}
-      </Button>
-    </Dropdown>
-  )
+    <button
+      type="button"
+      onClick={toggle}
+      className={[
+        "text-xs font-semibold uppercase tracking-wide",
+        "transition-colors duration-150",
+        "text-text2 hover:text-text cursor-pointer",
+      ].join(" ")}
+      aria-label="Toggle language"
+    >
+      {locale === "ru" ? "RU" : "EN"}
+    </button>
+  );
 }

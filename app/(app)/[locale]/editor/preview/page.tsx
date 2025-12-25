@@ -7,10 +7,12 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { TemplateSelector } from "@/components/resume/sections/TemplateSelector";
 import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
-import { Button, Card, Divider } from "antd";
+import { Button, Card, Divider, Grid } from "antd";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+
+const { useBreakpoint } = Grid;
 
 const messages = {
   ru: {
@@ -27,6 +29,9 @@ export default function PreviewPage() {
   const params = useParams<{ locale: Locale }>();
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
   const t = messages[locale];
+
+  const screens = useBreakpoint();
+  const isMobile = useMemo(() => !screens.lg, [screens.lg]);
 
   const searchParams = useSearchParams();
   const resumeId = searchParams.get("resumeId");
@@ -60,42 +65,67 @@ export default function PreviewPage() {
   };
 
   return (
-    <div className="min-h-screen ">
-      <header className="">
-        <div className="px-5">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
+    <div className="min-h-screen">
+      <div className="flex gap-5 py-5">
+        {!isMobile && (
+          <aside className="w-[320px] shrink-0">
+            <div className="sticky top-[88px]">
+              <Card>
+                <Button
+                  type="primary"
+                  className="w-full"
+                  onClick={handleBack}
+                  icon={<ArrowLeft className="h-4 w-4" />}
+                >
+                  {t.backToEditor}
+                </Button>
+                <Divider />
+                <TemplateSelector />
+              </Card>
+            </div>
+          </aside>
+        )}
+
+        <main className="min-w-0 flex-1">
+          {isMobile && (
+            <Card className="mb-5">
               <Button
-                type="primary"
+                type="text"
+                size="small"
                 onClick={handleBack}
-                className="gap-2"
-                icon={<ArrowLeft className="w-4 h-4" />}
+                icon={<ArrowLeft className="h-4 w-4" />}
               >
                 {t.backToEditor}
               </Button>
-            </div>
-            <div className="flex items-center gap-2">
-              <DownloadPdfButton locale={locale} />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="py-5">
-        <div className="flex flex-col lg:flex-row gap-5">
-          <aside className="lg:w-80 flex-shrink-0">
-            <Card>
               <TemplateSelector />
-              <Divider />
-              <AccentColorPicker />
-              <Divider />
-              <PhotoExportToggle />
             </Card>
+          )}
+
+          <ResumePreview />
+        </main>
+
+        {!isMobile && (
+          <aside className="w-[320px] shrink-0">
+            <div className="sticky top-[88px]">
+              <Card>
+                <AccentColorPicker />
+                <Divider />
+                <PhotoExportToggle />
+                <Divider />
+                <DownloadPdfButton locale={locale} />
+              </Card>
+            </div>
           </aside>
-          <main className="flex-1 min-w-0">
-            <ResumePreview />
-          </main>
-        </div>
+        )}
+
+        {isMobile && (
+          <Card className="mt-5">
+            <AccentColorPicker />
+            <Divider />
+            <PhotoExportToggle />
+            <DownloadPdfButton locale={locale} />
+          </Card>
+        )}
       </div>
     </div>
   );
