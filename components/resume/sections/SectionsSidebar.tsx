@@ -9,6 +9,8 @@ import { useResumeStore } from "@/store/useResumeStore";
 import type { ResumeSectionKey } from "@/types/resume";
 
 import {
+  Activity,
+  Award,
   BadgeCheck,
   Briefcase,
   Eye,
@@ -18,6 +20,7 @@ import {
   Languages,
   Layers3,
   ShieldCheck,
+  SlidersHorizontal,
   User,
 } from "lucide-react";
 
@@ -35,6 +38,9 @@ const ITEMS: Item[] = [
   { key: "softSkills", icon: <BadgeCheck size={16} /> },
   { key: "education", icon: <GraduationCap size={16} /> },
   { key: "languages", icon: <Languages size={16} /> },
+  { key: "employmentPreferences", icon: <SlidersHorizontal size={16} /> },
+  { key: "certifications", icon: <Award size={16} /> },
+  { key: "activities", icon: <Activity size={16} /> },
 ];
 
 const messages = {
@@ -47,6 +53,9 @@ const messages = {
     softSkills: "Софт-скиллы",
     education: "Образование",
     languages: "Языки",
+    employmentPreferences: "Предпочтения",
+    certifications: "Сертификаты",
+    activities: "Активности",
   },
   en: {
     photo: "Photo",
@@ -57,6 +66,9 @@ const messages = {
     softSkills: "Soft skills",
     education: "Education",
     languages: "Languages",
+    employmentPreferences: "Preferences",
+    certifications: "Certifications",
+    activities: "Activities",
   },
 } as const;
 
@@ -67,8 +79,7 @@ export function SectionsSidebar() {
 
   const { resume, toggleSection } = useResumeStore();
 
-  const isVisible = (key: ResumeSectionKey) =>
-    resume.sectionsVisibility?.[key] ?? true;
+  const isVisible = (key: ResumeSectionKey) => resume.sectionsVisibility[key];
 
   const itemsWithLabels = useMemo(
     () =>
@@ -92,16 +103,14 @@ export function SectionsSidebar() {
               onClick={() => toggleSection(item.key)}
               className={[
                 "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition",
-                "hover:bg-black/5 active:scale-[0.99]",
+                "hover:bg-black/5 active:scale-[0.99] cursor-pointer",
                 visible ? "opacity-100" : "opacity-45 bg-black/5",
               ].join(" ")}
             >
               <span className="flex shrink-0 items-center">{item.icon}</span>
-
               <span className="min-w-0 flex-1 truncate text-sm">
                 {item.label}
               </span>
-
               <span className="flex shrink-0 items-center">
                 {visible ? <Eye size={14} /> : <EyeOff size={14} />}
               </span>

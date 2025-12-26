@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import React from "react"
-import { formatPeriod, type ResumeTemplateProps } from "./common"
+import React from "react";
+import { formatPeriod, type ResumeTemplateProps } from "./common";
 
 function InitialAvatar({
   fullName,
   accentColor,
 }: {
-  fullName?: string
-  accentColor: string
+  fullName?: string;
+  accentColor: string;
 }) {
-  const letter = (fullName || "N").trim().charAt(0).toUpperCase()
+  const letter = (fullName || "N").trim().charAt(0).toUpperCase();
   return (
     <div
       className="w-20 h-20 rounded-2xl bg-slate-950 flex items-center justify-center text-xl font-semibold border"
@@ -18,20 +18,20 @@ function InitialAvatar({
     >
       {letter}
     </div>
-  )
+  );
 }
 
 function TagPill({
   label,
   tone = "dark",
 }: {
-  label: string
-  tone?: "dark" | "light"
+  label: string;
+  tone?: "dark" | "light";
 }) {
   const base =
     tone === "dark"
       ? "border-white/15 text-slate-100 bg-white/5"
-      : "border-slate-200 text-slate-700 bg-white"
+      : "border-slate-200 text-slate-700 bg-white";
 
   return (
     <span
@@ -39,7 +39,7 @@ function TagPill({
     >
       {label}
     </span>
-  )
+  );
 }
 
 function SectionTitle({
@@ -47,21 +47,24 @@ function SectionTitle({
   accentColor,
   tone = "light",
 }: {
-  children: React.ReactNode
-  accentColor: string
-  tone?: "light" | "dark"
+  children: React.ReactNode;
+  accentColor: string;
+  tone?: "light" | "dark";
 }) {
   const base =
     tone === "dark"
       ? "text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-200"
-      : "text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-700"
+      : "text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-700";
 
   return (
     <div className="flex items-center gap-2">
-      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accentColor }} />
+      <span
+        className="h-2 w-2 rounded-full"
+        style={{ backgroundColor: accentColor }}
+      />
       <h2 className={base}>{children}</h2>
     </div>
-  )
+  );
 }
 
 function KeyValueRow({
@@ -69,21 +72,25 @@ function KeyValueRow({
   value,
   tone = "dark",
 }: {
-  label: string
-  value?: string
-  tone?: "dark" | "light"
+  label: string;
+  value?: string;
+  tone?: "dark" | "light";
 }) {
-  if (!value) return null
+  if (!value) return null;
   const labelCls =
-    tone === "dark" ? "text-[10px] text-slate-400" : "text-[10px] text-slate-500"
+    tone === "dark"
+      ? "text-[10px] text-slate-400"
+      : "text-[10px] text-slate-500";
   const valueCls =
-    tone === "dark" ? "text-[11px] text-slate-100" : "text-[11px] text-slate-800"
+    tone === "dark"
+      ? "text-[11px] text-slate-100"
+      : "text-[11px] text-slate-800";
   return (
     <div className="flex items-baseline justify-between gap-3">
       <span className={labelCls}>{label}</span>
       <span className={`${valueCls} text-right leading-snug`}>{value}</span>
     </div>
-  )
+  );
 }
 
 export function SidebarTemplate({ data }: ResumeTemplateProps) {
@@ -104,24 +111,37 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
     employmentPreferences,
     certifications,
     activities,
-  } = data
+  } = data;
 
-  const accent = accentColor || "#1677ff"
+  const accent = accentColor || "#1677ff";
 
-  const techTags = techSkills?.tags ?? []
-  const techNote = techSkills?.note?.trim() ?? ""
-  const softTags = softSkills?.tags ?? []
-  const softNote = softSkills?.note?.trim() ?? ""
+  const techTags = techSkills?.tags ?? [];
+  const techNote = techSkills?.note?.trim() ?? "";
+  const softTags = softSkills?.tags ?? [];
+  const softNote = softSkills?.note?.trim() ?? "";
 
-  const hasTech = techTags.length > 0 || techNote.length > 0
-  const hasSoft = softTags.length > 0 || softNote.length > 0
+  const hasTech = techTags.length > 0 || techNote.length > 0;
+  const hasSoft = softTags.length > 0 || softNote.length > 0;
 
-  const hasPrimaryContacts = !!(contacts.email || contacts.phone || contacts.location)
-  const hasLinks = !!(contacts.telegram || contacts.github || contacts.linkedin || contacts.website)
+  const hasPrimaryContacts = !!(
+    contacts.email ||
+    contacts.phone ||
+    contacts.location
+  );
+  const hasLinks = !!(
+    contacts.telegram ||
+    contacts.github ||
+    contacts.linkedin ||
+    contacts.website
+  );
 
-  const pref = employmentPreferences
-  const prefEmploymentType = pref?.employmentType?.length ? pref.employmentType.join(" · ") : ""
-  const prefWorkFormat = pref?.workFormat?.length ? pref.workFormat.join(" · ") : ""
+  const pref = employmentPreferences;
+  const prefEmploymentType = pref?.employmentType?.length
+    ? pref.employmentType.join(" · ")
+    : "";
+  const prefWorkFormat = pref?.workFormat?.length
+    ? pref.workFormat.join(" · ")
+    : "";
 
   const hasPreferences = !!(
     prefEmploymentType ||
@@ -129,28 +149,30 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
     pref?.timezone ||
     pref?.workAuthorization ||
     typeof pref?.relocation === "boolean"
-  )
+  );
 
-  const hasCerts = (certifications?.length ?? 0) > 0
-  const hasActivities = (activities?.length ?? 0) > 0
+  const hasCerts = (certifications?.length ?? 0) > 0;
+  const hasActivities = (activities?.length ?? 0) > 0;
 
   const activityLabel = (type?: string) => {
-    if (type === "open-source") return "Open Source"
-    if (type === "volunteering") return "Volunteering"
-    if (type === "community") return "Community"
-    return "Activity"
-  }
+    if (type === "open-source") return "Open Source";
+    if (type === "volunteering") return "Volunteering";
+    if (type === "community") return "Community";
+    return "Activity";
+  };
 
-  const contactLines = [contacts.email, contacts.phone, contacts.location].filter(
-    Boolean
-  ) as string[]
+  const contactLines = [
+    contacts.email,
+    contacts.phone,
+    contacts.location,
+  ].filter(Boolean) as string[];
 
   const linkLines = [
     contacts.telegram,
     contacts.github,
     contacts.linkedin,
     contacts.website,
-  ].filter(Boolean) as string[]
+  ].filter(Boolean) as string[];
 
   return (
     <div
@@ -222,7 +244,11 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             </SectionTitle>
 
             <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-3">
-              <KeyValueRow label="Employment" value={prefEmploymentType} tone="dark" />
+              <KeyValueRow
+                label="Employment"
+                value={prefEmploymentType}
+                tone="dark"
+              />
               <KeyValueRow label="Format" value={prefWorkFormat} tone="dark" />
               <KeyValueRow
                 label="Relocation"
@@ -235,8 +261,16 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                 }
                 tone="dark"
               />
-              <KeyValueRow label="Timezone" value={pref?.timezone} tone="dark" />
-              <KeyValueRow label="Authorization" value={pref?.workAuthorization} tone="dark" />
+              <KeyValueRow
+                label="Timezone"
+                value={pref?.timezone}
+                tone="dark"
+              />
+              <KeyValueRow
+                label="Authorization"
+                value={pref?.workAuthorization}
+                tone="dark"
+              />
             </div>
           </section>
         )}
@@ -298,7 +332,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
               {languages.map((l) => (
                 <li key={l.id} className="leading-snug">
                   {l.name}
-                  {l.level && <span className="text-slate-400"> · {l.level}</span>}
+                  {l.level && (
+                    <span className="text-slate-400"> · {l.level}</span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -324,7 +360,10 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                     {[c.issuer, (c as any).year].filter(Boolean).join(" · ")}
                   </p>
                   {c.link && (
-                    <p className="text-[10px] truncate mt-1" style={{ color: accent }}>
+                    <p
+                      className="text-[10px] truncate mt-1"
+                      style={{ color: accent }}
+                    >
                       {c.link}
                     </p>
                   )}
@@ -333,7 +372,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             </div>
 
             {certifications!.length > 4 && (
-              <p className="text-[10px] text-slate-400">+{certifications!.length - 4} more</p>
+              <p className="text-[10px] text-slate-400">
+                +{certifications!.length - 4} more
+              </p>
             )}
           </section>
         )}
@@ -346,7 +387,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
         {summary && (
           <section className="space-y-2 border-b border-slate-200 pb-4">
             <SectionTitle accentColor={accent}>Profile</SectionTitle>
-            <p className="text-slate-800 whitespace-pre-line leading-snug">{summary}</p>
+            <p className="text-slate-800 whitespace-pre-line leading-snug">
+              {summary}
+            </p>
           </section>
         )}
 
@@ -363,14 +406,18 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
                     {item.position || "Position"}
-                    {item.company && <span className="text-slate-600"> · {item.company}</span>}
+                    {item.company && (
+                      <span className="text-slate-600"> · {item.company}</span>
+                    )}
                   </p>
                   <p className="text-[10px] text-slate-500 whitespace-nowrap">
                     {formatPeriod(item.startDate, item.endDate, item.isCurrent)}
                   </p>
                 </div>
 
-                {item.location && <p className="text-[10px] text-slate-500">{item.location}</p>}
+                {item.location && (
+                  <p className="text-[10px] text-slate-500">{item.location}</p>
+                )}
 
                 {item.description && (
                   <p className="text-slate-800 whitespace-pre-line leading-snug">
@@ -395,7 +442,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
                     {p.name || "Project"}
-                    {p.role && <span className="text-slate-600"> · {p.role}</span>}
+                    {p.role && (
+                      <span className="text-slate-600"> · {p.role}</span>
+                    )}
                   </p>
                   {p.link && (
                     <p
@@ -407,7 +456,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                   )}
                 </div>
 
-                {p.stack && <p className="text-[10px] text-slate-500">{p.stack}</p>}
+                {p.stack && (
+                  <p className="text-[10px] text-slate-500">{p.stack}</p>
+                )}
 
                 {p.description && (
                   <p className="text-slate-800 whitespace-pre-line leading-snug">
@@ -421,7 +472,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
 
         {hasActivities && (
           <section className="space-y-3">
-            <SectionTitle accentColor={accent}>Open Source & Volunteering</SectionTitle>
+            <SectionTitle accentColor={accent}>
+              Open Source & Volunteering
+            </SectionTitle>
 
             {activities!.map((a) => (
               <div
@@ -432,7 +485,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
                     {a.name || "Activity"}
-                    {a.role && <span className="text-slate-600"> · {a.role}</span>}
+                    {a.role && (
+                      <span className="text-slate-600"> · {a.role}</span>
+                    )}
                   </p>
                   {a.type && (
                     <span
@@ -472,7 +527,9 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
               >
                 <p className="font-medium text-slate-900">
                   {e.degree || e.field || "Education"}
-                  {e.institution && <span className="text-slate-600"> · {e.institution}</span>}
+                  {e.institution && (
+                    <span className="text-slate-600"> · {e.institution}</span>
+                  )}
                 </p>
 
                 {(e.startDate || e.endDate) && (
@@ -486,5 +543,5 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
         )}
       </main>
     </div>
-  )
+  );
 }

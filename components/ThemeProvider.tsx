@@ -23,24 +23,44 @@ const lightTokens = {
   colorBorderSecondary: "#e5e7eb",
   colorTextBase: "#0f172a",
   colorTextSecondary: "#64748b",
+
+  // primary (почти чёрный) — обязательно задаём семантические оттенки
   colorPrimary: "#020617",
   colorPrimaryHover: "#020617",
   colorPrimaryActive: "#000000",
+  colorPrimaryBg: "rgba(2,6,23,0.06)",
+  colorPrimaryBgHover: "rgba(2,6,23,0.10)",
+  colorPrimaryBorder: "rgba(2,6,23,0.20)",
+  colorPrimaryText: "#020617",
+  colorPrimaryTextHover: "#000000",
+
   colorTextLightSolid: "#ffffff",
 };
 
 const darkTokens = {
   ...commonTokens,
+
+  // layout может быть очень тёмным, но container лучше сделать чуть светлее
   colorBgLayout: "#020617",
   colorBgBase: "#020617",
-  colorBgContainer: "#020617",
+  colorBgContainer: "rgba(15,23,42,0.96)",
+
   colorBorder: "#1e293b",
   colorBorderSecondary: "#1f2937",
   colorTextBase: "#e5e7eb",
   colorTextSecondary: "#94a3b8",
+
   colorPrimary: "#0A84FF",
   colorPrimaryHover: "#0060df",
   colorPrimaryActive: "#0047b3",
+
+  // и тут фиксируем семантику
+  colorPrimaryBg: "rgba(10,132,255,0.12)",
+  colorPrimaryBgHover: "rgba(10,132,255,0.18)",
+  colorPrimaryBorder: "rgba(10,132,255,0.35)",
+  colorPrimaryText: "#9ecbff", // можно оставить близким к светлому оттенку
+  colorPrimaryTextHover: "#c7e2ff",
+
   colorTextLightSolid: "#ffffff",
 };
 
@@ -96,9 +116,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             colorText: isDark ? "#e5e7eb" : "#0f172a",
           },
           Input: {
-            borderRadius: 999,
-            borderRadiusLG: 999,
-            borderRadiusSM: 12,
             controlHeight: 40,
             colorBgContainer: isDark ? "#020617" : "#ffffff",
             colorBorder: isDark ? "#1e293b" : "#d1d5db",

@@ -3,7 +3,7 @@
 import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { DeleteOutlined, LinkOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Empty, Form, Input, Select, Space } from "antd";
+import { Button, Card, Divider, Empty, Form, Input, Select } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
 import { Briefcase, Building2, Github, HandHeart, Users } from "lucide-react";
 import React from "react";
@@ -86,26 +86,15 @@ export function ActivitiesSection() {
 
   return (
     <Card
+      className="w-full"
       title={
-        <Space>
+        <div className="flex items-center gap-2">
           <Github size={18} />
           <span>{t.title}</span>
-        </Space>
-      }
-      extra={
-        <Button
-          size="small"
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => addActivity("open-source")}
-        >
-          {t.add}
-        </Button>
+        </div>
       }
     >
-      <div style={{ marginTop: -8, marginBottom: 12, opacity: 0.75 }}>
-        {t.subtitle}
-      </div>
+      <div className="-mt-2 mb-3 opacity-75">{t.subtitle}</div>
 
       <AnimatePresence initial={false}>
         {list.length === 0 ? (
@@ -118,7 +107,7 @@ export function ActivitiesSection() {
             <Empty description={t.empty} />
           </motion.div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="flex flex-col gap-3">
             {list.map((item, index) => (
               <motion.div
                 key={item.id}
@@ -129,17 +118,18 @@ export function ActivitiesSection() {
               >
                 <Card
                   size="small"
+                  className="w-full"
                   title={
-                    <Space>
-                      <span>{index + 1}</span>
-                      <span style={{ opacity: 0.65 }}>
+                    <div className="flex items-center gap-2">
+                      <span className="tabular-nums">{index + 1}</span>
+                      <span className="opacity-65">
                         {
                           iconByType[
                             (item.type as ActivityType) ?? "open-source"
                           ]
                         }
                       </span>
-                    </Space>
+                    </div>
                   }
                   extra={
                     <Button
@@ -150,13 +140,13 @@ export function ActivitiesSection() {
                     />
                   }
                 >
-                  <Form layout="vertical" colon={false}>
+                  <Form layout="vertical" colon={false} className="space-y-1">
                     <Form.Item label={t.type}>
                       <Select
                         value={item.type}
                         onChange={(v) => updateActivity(item.id, { type: v })}
                         options={typeOptions}
-                        style={{ width: "100%" }}
+                        className="w-full"
                       />
                     </Form.Item>
 
@@ -196,7 +186,7 @@ export function ActivitiesSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.description}>
+                    <Form.Item label={t.description} className="mb-0">
                       <Input.TextArea
                         value={item.description ?? ""}
                         onChange={(e) =>
@@ -213,38 +203,38 @@ export function ActivitiesSection() {
                 </Card>
               </motion.div>
             ))}
-
-            <Divider />
-
-            <Space direction="vertical" style={{ width: "100%" }}>
-              <Button
-                block
-                type="dashed"
-                icon={<PlusOutlined />}
-                onClick={() => addActivity("open-source")}
-              >
-                {t.addOpenSource}
-              </Button>
-              <Button
-                block
-                type="dashed"
-                icon={<PlusOutlined />}
-                onClick={() => addActivity("volunteering")}
-              >
-                {t.addVolunteering}
-              </Button>
-              <Button
-                block
-                type="dashed"
-                icon={<PlusOutlined />}
-                onClick={() => addActivity("community")}
-              >
-                {t.addCommunity}
-              </Button>
-            </Space>
           </div>
         )}
       </AnimatePresence>
+
+      <Divider className="my-4" />
+
+      <div className="flex flex-col gap-2">
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => addActivity("open-source")}
+        >
+          {t.addOpenSource}
+        </Button>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => addActivity("volunteering")}
+        >
+          {t.addVolunteering}
+        </Button>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => addActivity("community")}
+        >
+          {t.addCommunity}
+        </Button>
+      </div>
     </Card>
   );
 }

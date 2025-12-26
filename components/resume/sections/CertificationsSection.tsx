@@ -8,7 +8,7 @@ import {
   LinkOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Empty, Form, Input, Space } from "antd";
+import { Button, Card, Empty, Form, Input } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
 import { BadgeCheck, Building2 } from "lucide-react";
 
@@ -65,26 +65,15 @@ export function CertificationsSection() {
 
   return (
     <Card
+      className="w-full"
       title={
-        <Space>
+        <div className="flex items-center gap-2">
           <BadgeCheck size={18} />
           <span>{t.title}</span>
-        </Space>
-      }
-      extra={
-        <Button
-          size="small"
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={addCertification}
-        >
-          {t.add}
-        </Button>
+        </div>
       }
     >
-      <div style={{ marginTop: -8, marginBottom: 12, opacity: 0.75 }}>
-        {t.subtitle}
-      </div>
+      <div className="-mt-2 mb-3 opacity-75">{t.subtitle}</div>
 
       <AnimatePresence initial={false}>
         {list.length === 0 ? (
@@ -97,7 +86,7 @@ export function CertificationsSection() {
             <Empty description={t.empty} />
           </motion.div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="flex flex-col gap-3">
             {list.map((item, index) => (
               <motion.div
                 key={item.id}
@@ -108,7 +97,8 @@ export function CertificationsSection() {
               >
                 <Card
                   size="small"
-                  title={`${index + 1}`}
+                  className="w-full"
+                  title={<span className="tabular-nums">{index + 1}</span>}
                   extra={
                     <Button
                       danger
@@ -118,7 +108,7 @@ export function CertificationsSection() {
                     />
                   }
                 >
-                  <Form layout="vertical" colon={false}>
+                  <Form layout="vertical" colon={false} className="space-y-1">
                     <Form.Item label={t.name}>
                       <Input
                         value={item.name ?? ""}
@@ -160,7 +150,7 @@ export function CertificationsSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.link}>
+                    <Form.Item label={t.link} className="mb-0">
                       <Input
                         value={item.link ?? ""}
                         onChange={(e) =>
@@ -175,18 +165,20 @@ export function CertificationsSection() {
                 </Card>
               </motion.div>
             ))}
-
-            <Button
-              block
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={addCertification}
-            >
-              {t.add}
-            </Button>
           </div>
         )}
       </AnimatePresence>
+
+      <div className="mt-4">
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={addCertification}
+        >
+          {t.add}
+        </Button>
+      </div>
     </Card>
   );
 }

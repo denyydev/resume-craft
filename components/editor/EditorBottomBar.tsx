@@ -27,7 +27,7 @@ export function EditorBottomBar({
           boxShadow: token.boxShadowSecondary,
         }}
       >
-        <div className="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-2">
+        <div className="mx-auto flex max-w-[1440px] items-center justify-between py-2">
           <Button type="text" icon={<EyeOutlined />} onClick={onOpenPreview}>
             {previewLabel}
           </Button>

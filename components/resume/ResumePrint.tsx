@@ -8,12 +8,12 @@ import type { Resume } from "@/types/resume";
 export function ResumePrint({
   data,
   locale,
+  templateKey,
 }: {
   data: Resume;
   locale: Locale;
 }) {
-  const key = "sidebar";
-  const Template = templateMap[key] ?? NeoTemplate;
+  const Template = templateMap[templateKey] ?? NeoTemplate;
 
   return <Template data={data} locale={locale} />;
 }

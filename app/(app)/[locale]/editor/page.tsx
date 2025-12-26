@@ -71,7 +71,7 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-bg pb-12">
-      <div className="flex gap-5 p-5">
+      <div className="flex gap-5 py-5">
         {!isMobile && (
           <aside className="w-[240px] shrink-0">
             <div className="sticky top-[88px]">

@@ -8,7 +8,7 @@ import {
   LinkOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Empty, Form, Input, Space } from "antd";
+import { Button, Card, Empty, Form, Input } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
 import { FolderGit2 } from "lucide-react";
 
@@ -73,21 +73,15 @@ export function ProjectsSection() {
 
   return (
     <Card
+      className="w-full"
       title={
-        <Space>
+        <div className="flex items-center gap-2">
           <FolderGit2 size={18} />
           <span>{t.sectionTitle}</span>
-        </Space>
-      }
-      extra={
-        <Button type="primary" icon={<PlusOutlined />} onClick={addProject}>
-          {t.addButton}
-        </Button>
+        </div>
       }
     >
-      <div style={{ marginTop: -8, marginBottom: 12, opacity: 0.75 }}>
-        {t.sectionSubtitle}
-      </div>
+      <div className="-mt-2 mb-3 opacity-75">{t.sectionSubtitle}</div>
 
       <AnimatePresence initial={false}>
         {projects.length === 0 ? (
@@ -100,7 +94,7 @@ export function ProjectsSection() {
             <Empty description={t.emptyState} />
           </motion.div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="flex flex-col gap-3">
             {projects.map((project, index) => (
               <motion.div
                 key={project.id}
@@ -111,7 +105,8 @@ export function ProjectsSection() {
               >
                 <Card
                   size="small"
-                  title={`${index + 1}`}
+                  className="w-full"
+                  title={<span className="tabular-nums">{index + 1}</span>}
                   extra={
                     <Button
                       danger
@@ -121,7 +116,7 @@ export function ProjectsSection() {
                     />
                   }
                 >
-                  <Form layout="vertical" colon={false}>
+                  <Form layout="vertical" colon={false} className="space-y-1">
                     <Form.Item label={t.name}>
                       <Input
                         value={project.name ?? ""}
@@ -168,7 +163,7 @@ export function ProjectsSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.description}>
+                    <Form.Item label={t.description} className="mb-0">
                       <Input.TextArea
                         value={project.description ?? ""}
                         onChange={(e) =>
@@ -185,18 +180,20 @@ export function ProjectsSection() {
                 </Card>
               </motion.div>
             ))}
-
-            <Button
-              block
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={addProject}
-            >
-              {t.addButton}
-            </Button>
           </div>
         )}
       </AnimatePresence>
+
+      <div className="mt-4">
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={addProject}
+        >
+          {t.addButton}
+        </Button>
+      </div>
     </Card>
   );
 }

@@ -2,21 +2,9 @@
 
 import { useResumeStore } from "@/store/useResumeStore";
 import type { UploadProps } from "antd";
-import {
-  Button,
-  Card,
-  Form,
-  Input,
-  message,
-  Space,
-  theme,
-  Typography,
-  Upload,
-} from "antd";
+import { Button, Card, Form, Input, message, Upload } from "antd";
 import { Camera, Trash2, User } from "lucide-react";
 import { useMemo, useState } from "react";
-
-const { Text } = Typography;
 
 type LocaleMessages = {
   lastName: string;
@@ -51,7 +39,6 @@ function joinFullName(lastName: string, firstName: string, patronymic: string) {
 }
 
 export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
-  const { token } = theme.useToken();
   const [msgApi, contextHolder] = message.useMessage();
   const [hover, setHover] = useState(false);
 
@@ -90,122 +77,88 @@ export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
     setFullName(joinFullName(next.lastName, next.firstName, next.patronymic));
   };
 
-  const avatarSize = 96;
-
   return (
-    <Card>
+    <Card className="w-full">
       {contextHolder}
 
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        <Space direction="vertical" size={6} style={{ width: "100%" }}>
-          <Text strong>{t.photo}</Text>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[140px_1fr]">
+        <div className="flex flex-col gap-2">
+          <div className="text-sm font-semibold">{t.photo}</div>
 
           <Upload.Dragger
             accept="image/*"
             multiple={false}
             showUploadList={false}
             beforeUpload={beforeUpload}
-            style={{
-              borderRadius: 16,
-              background: token.colorFillQuaternary,
-              borderColor: token.colorBorderSecondary,
-            }}
+            className="!rounded-2xl"
           >
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                padding: 16,
-              }}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              className="relative aspect-square w-full overflow-hidden rounded-2xl border border-[var(--ant-colorBorderSecondary)] bg-[var(--ant-colorFillSecondary)]"
             >
+              {resume.photo ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={resume.photo}
+                  alt="Avatar"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <User size={32} className="opacity-60" />
+                </div>
+              )}
+
               <div
-                onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}
-                style={{
-                  width: avatarSize,
-                  height: avatarSize,
-                  borderRadius: 16,
-                  overflow: "hidden",
-                  border: `1px solid ${token.colorBorderSecondary}`,
-                  background: token.colorFillSecondary,
-                  position: "relative",
-                  flex: "0 0 auto",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                className={[
+                  "pointer-events-none absolute inset-0 flex items-center justify-center transition-colors duration-150",
+                  resume.photo && hover ? "bg-black/35" : "bg-transparent",
+                ].join(" ")}
               >
                 {resume.photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={resume.photo}
-                    alt="Avatar"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
+                  <Camera
+                    size={18}
+                    className={hover ? "opacity-100" : "opacity-0"}
+                    color="#fff"
                   />
-                ) : (
-                  <User size={32} style={{ opacity: 0.6 }} />
-                )}
-
-                {resume.photo && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      background: hover ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0)",
-                      transition: "background 180ms ease",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    <Camera
-                      size={18}
-                      color="#fff"
-                      style={{ opacity: hover ? 1 : 0 }}
-                    />
-                  </div>
-                )}
-              </div>
-
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <Space direction="vertical" size={2} style={{ width: "100%" }}>
-                  <Text>{t.dragDrop}</Text>
-                  <Text type="secondary">{t.photoSubtitle}</Text>
-
-                  {resume.photo ? (
-                    <Space wrap style={{ marginTop: 8 }}>
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        {t.replacePhoto ??
-                          (typeof t.replacePhoto === "string"
-                            ? t.replacePhoto
-                            : "")}
-                      </Text>
-                      <Button
-                        danger
-                        type="default"
-                        icon={<Trash2 size={16} />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPhoto(undefined);
-                        }}
-                      >
-                        {t.removePhoto}
-                      </Button>
-                    </Space>
-                  ) : null}
-                </Space>
+                ) : null}
               </div>
             </div>
           </Upload.Dragger>
-        </Space>
 
-        <Form layout="vertical" colon={false}>
+          <div className="text-xs text-[var(--ant-colorTextSecondary)]">
+            {t.photoSubtitle}
+          </div>
+
+          {resume.photo ? (
+            <div className="flex flex-col gap-2">
+              {t.replacePhoto ? (
+                <div className="text-xs text-[var(--ant-colorTextSecondary)]">
+                  {t.replacePhoto}
+                </div>
+              ) : null}
+
+              <Button
+                danger
+                type="default"
+                icon={<Trash2 size={16} />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setPhoto(undefined);
+                }}
+              >
+                {t.removePhoto}
+              </Button>
+            </div>
+          ) : (
+            <div className="text-xs text-[var(--ant-colorTextSecondary)]">
+              {t.dragDrop}
+            </div>
+          )}
+        </div>
+
+        <Form layout="vertical" colon={false} className="space-y-1">
           <Form.Item label={t.lastName}>
             <Input
               prefix={<User size={16} />}
@@ -226,7 +179,7 @@ export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
             />
           </Form.Item>
 
-          <Form.Item label={t.patronymic}>
+          <Form.Item label={t.patronymic} className="mb-0">
             <Input
               prefix={<User size={16} />}
               placeholder={t.patronymicPlaceholder}
@@ -236,7 +189,7 @@ export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
             />
           </Form.Item>
         </Form>
-      </Space>
+      </div>
     </Card>
   );
 }

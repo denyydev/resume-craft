@@ -7,7 +7,7 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Divider, Empty, Form, Input, Space } from "antd";
+import { Button, Card, Divider, Empty, Form, Input } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, GraduationCap, Languages } from "lucide-react";
 
@@ -91,34 +91,25 @@ export function EducationSection() {
 
   return (
     <Card
+      className="w-full"
       title={
-        <Space>
+        <div className="flex items-center gap-2">
           <GraduationCap size={18} />
           <span>{t.sectionTitle}</span>
-        </Space>
+        </div>
       }
     >
-      <div style={{ marginTop: -8, marginBottom: 12, opacity: 0.75 }}>
-        {t.sectionSubtitle}
-      </div>
+      <div className="-mt-2 mb-3 opacity-75">{t.sectionSubtitle}</div>
 
-      <Space direction="vertical" style={{ width: "100%" }} size="large">
+      <div className="flex w-full flex-col gap-6">
         <Card
           size="small"
+          className="w-full"
           title={
-            <Space>
+            <div className="flex items-center gap-2">
               <BookOpen size={16} />
               <span>{t.educationTitle}</span>
-            </Space>
-          }
-          extra={
-            <Button
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={addEducation}
-            >
-              {t.addEducation}
-            </Button>
+            </div>
           }
         >
           <AnimatePresence initial={false}>
@@ -132,7 +123,7 @@ export function EducationSection() {
                 <Empty description={t.educationEmpty} />
               </motion.div>
             ) : (
-              <Space direction="vertical" style={{ width: "100%" }}>
+              <div className="flex w-full flex-col gap-3">
                 {education.map((item) => (
                   <motion.div
                     key={item.id}
@@ -143,6 +134,7 @@ export function EducationSection() {
                   >
                     <Card
                       size="small"
+                      className="w-full"
                       extra={
                         <Button
                           danger
@@ -152,7 +144,11 @@ export function EducationSection() {
                         />
                       }
                     >
-                      <Form layout="vertical" colon={false}>
+                      <Form
+                        layout="vertical"
+                        colon={false}
+                        className="space-y-1"
+                      >
                         <Form.Item label={t.institution}>
                           <Input
                             value={item.institution}
@@ -192,8 +188,8 @@ export function EducationSection() {
                           />
                         </Form.Item>
 
-                        <Space style={{ width: "100%" }}>
-                          <Form.Item label={t.startLabel} style={{ flex: 1 }}>
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                          <Form.Item label={t.startLabel} className="mb-0">
                             <Input
                               value={item.startDate}
                               onChange={(e) =>
@@ -206,7 +202,7 @@ export function EducationSection() {
                             />
                           </Form.Item>
 
-                          <Form.Item label={t.endLabel} style={{ flex: 1 }}>
+                          <Form.Item label={t.endLabel} className="mb-0">
                             <Input
                               value={item.endDate}
                               onChange={(e) =>
@@ -218,37 +214,51 @@ export function EducationSection() {
                               prefix={<CalendarOutlined />}
                             />
                           </Form.Item>
-                        </Space>
+                        </div>
                       </Form>
                     </Card>
                   </motion.div>
                 ))}
-              </Space>
+              </div>
             )}
           </AnimatePresence>
+
+          <div className="mt-4">
+            <Button
+              type="dashed"
+              icon={<PlusOutlined />}
+              block
+              onClick={addEducation}
+            >
+              {t.addEducation}
+            </Button>
+          </div>
         </Card>
 
-        <Divider />
+        <Divider className="my-0" />
 
         <Card
           size="small"
+          className="w-full"
           title={
-            <Space>
+            <div className="flex items-center gap-2">
               <Languages size={16} />
               <span>{t.languagesTitle}</span>
-            </Space>
-          }
-          extra={
-            <Button type="dashed" icon={<PlusOutlined />} onClick={addLanguage}>
-              {t.addLanguage}
-            </Button>
+            </div>
           }
         >
           <AnimatePresence initial={false}>
             {languages.length === 0 ? (
-              <Empty description={t.languagesEmpty} />
+              <motion.div
+                key="empty-lang"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <Empty description={t.languagesEmpty} />
+              </motion.div>
             ) : (
-              <Space direction="vertical" style={{ width: "100%" }}>
+              <div className="flex w-full flex-col gap-3">
                 {languages.map((lang) => (
                   <motion.div
                     key={lang.id}
@@ -259,6 +269,7 @@ export function EducationSection() {
                   >
                     <Card
                       size="small"
+                      className="w-full"
                       extra={
                         <Button
                           danger
@@ -268,27 +279,27 @@ export function EducationSection() {
                         />
                       }
                     >
-                      <Form layout="vertical" colon={false}>
+                      <Form
+                        layout="vertical"
+                        colon={false}
+                        className="space-y-1"
+                      >
                         <Form.Item label={t.languageLabel}>
                           <Input
                             value={lang.name}
                             onChange={(e) =>
-                              updateLanguage(lang.id, {
-                                name: e.target.value,
-                              })
+                              updateLanguage(lang.id, { name: e.target.value })
                             }
                             placeholder={t.languagePlaceholder}
                             allowClear
                           />
                         </Form.Item>
 
-                        <Form.Item label={t.levelLabel}>
+                        <Form.Item label={t.levelLabel} className="mb-0">
                           <Input
                             value={lang.level}
                             onChange={(e) =>
-                              updateLanguage(lang.id, {
-                                level: e.target.value,
-                              })
+                              updateLanguage(lang.id, { level: e.target.value })
                             }
                             placeholder={t.levelPlaceholder}
                             allowClear
@@ -298,11 +309,22 @@ export function EducationSection() {
                     </Card>
                   </motion.div>
                 ))}
-              </Space>
+              </div>
             )}
           </AnimatePresence>
+
+          <div className="mt-4">
+            <Button
+              type="dashed"
+              icon={<PlusOutlined />}
+              block
+              onClick={addLanguage}
+            >
+              {t.addLanguage}
+            </Button>
+          </div>
         </Card>
-      </Space>
+      </div>
     </Card>
   );
 }

@@ -13,14 +13,18 @@ import {
   Button,
   Card,
   Checkbox,
+  DatePicker,
   Divider,
   Empty,
   Form,
   Input,
-  Space,
 } from "antd";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import { AnimatePresence, motion } from "framer-motion";
 import { Briefcase } from "lucide-react";
+
+dayjs.extend(customParseFormat);
 
 const messages = {
   ru: {
@@ -69,6 +73,8 @@ function normalizeLocale(value: unknown): Locale {
   return base === "en" ? "en" : "ru";
 }
 
+const MONTH_FORMAT = "YYYY-MM";
+
 export function ExperienceSection() {
   const rawLocale = useCurrentLocale();
   const locale = normalizeLocale(rawLocale) satisfies Locale;
@@ -81,21 +87,15 @@ export function ExperienceSection() {
 
   return (
     <Card
+      className="w-full"
       title={
-        <Space>
+        <div className="flex items-center gap-2">
           <Briefcase size={18} />
           <span>{t.sectionTitle}</span>
-        </Space>
-      }
-      extra={
-        <Button type="primary" icon={<PlusOutlined />} onClick={addExperience}>
-          {t.addButton}
-        </Button>
+        </div>
       }
     >
-      <div style={{ marginTop: -8, marginBottom: 12, opacity: 0.75 }}>
-        {t.sectionSubtitle}
-      </div>
+      <div className="-mt-2 mb-3 opacity-75">{t.sectionSubtitle}</div>
 
       <AnimatePresence initial={false}>
         {experience.length === 0 ? (
@@ -108,7 +108,7 @@ export function ExperienceSection() {
             <Empty description={t.emptyState} />
           </motion.div>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div className="flex flex-col gap-3">
             {experience.map((item, index) => (
               <motion.div
                 key={item.id}
@@ -119,7 +119,8 @@ export function ExperienceSection() {
               >
                 <Card
                   size="small"
-                  title={`${index + 1}`}
+                  className="w-full"
+                  title={<span className="tabular-nums">{index + 1}</span>}
                   extra={
                     <Button
                       danger
@@ -129,7 +130,7 @@ export function ExperienceSection() {
                     />
                   }
                 >
-                  <Form layout="vertical" colon={false}>
+                  <Form layout="vertical" colon={false} className="space-y-1">
                     <Form.Item label={t.company}>
                       <Input
                         value={item.company ?? ""}
@@ -169,40 +170,50 @@ export function ExperienceSection() {
                       />
                     </Form.Item>
 
-                    <Space
-                      style={{ width: "100%" }}
-                      align="start"
-                      size="middle"
-                    >
-                      <Form.Item label={t.startDate} style={{ flex: 1 }}>
-                        <Input
-                          type="month"
-                          value={item.startDate ?? ""}
-                          onChange={(e) =>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <Form.Item label={t.startDate} className="mb-0">
+                        <DatePicker
+                          picker="month"
+                          format={MONTH_FORMAT}
+                          value={
+                            item.startDate
+                              ? dayjs(item.startDate, MONTH_FORMAT)
+                              : null
+                          }
+                          onChange={(v) =>
                             updateExperience(item.id, {
-                              startDate: e.target.value,
+                              startDate: v ? v.format(MONTH_FORMAT) : "",
                             })
                           }
-                          prefix={<CalendarOutlined />}
+                          allowClear
+                          className="w-full"
+                          suffixIcon={<CalendarOutlined />}
                         />
                       </Form.Item>
 
-                      <Form.Item label={t.endDate} style={{ flex: 1 }}>
-                        <Input
-                          type="month"
+                      <Form.Item label={t.endDate} className="mb-0">
+                        <DatePicker
+                          picker="month"
+                          format={MONTH_FORMAT}
                           disabled={Boolean(item.isCurrent)}
-                          value={item.endDate ?? ""}
-                          onChange={(e) =>
+                          value={
+                            item.endDate
+                              ? dayjs(item.endDate, MONTH_FORMAT)
+                              : null
+                          }
+                          onChange={(v) =>
                             updateExperience(item.id, {
-                              endDate: e.target.value,
+                              endDate: v ? v.format(MONTH_FORMAT) : "",
                             })
                           }
-                          prefix={<CalendarOutlined />}
+                          allowClear
+                          className="w-full"
+                          suffixIcon={<CalendarOutlined />}
                         />
                       </Form.Item>
-                    </Space>
+                    </div>
 
-                    <Form.Item>
+                    <Form.Item className="mb-0">
                       <Checkbox
                         checked={Boolean(item.isCurrent)}
                         onChange={(e) =>
@@ -216,7 +227,7 @@ export function ExperienceSection() {
                       </Checkbox>
                     </Form.Item>
 
-                    <Form.Item label={t.description}>
+                    <Form.Item label={t.description} className="mb-0">
                       <Input.TextArea
                         value={item.description ?? ""}
                         onChange={(e) =>
@@ -233,20 +244,20 @@ export function ExperienceSection() {
                 </Card>
               </motion.div>
             ))}
-
-            <Divider />
-
-            <Button
-              block
-              type="dashed"
-              icon={<PlusOutlined />}
-              onClick={addExperience}
-            >
-              {t.addButton}
-            </Button>
           </div>
         )}
       </AnimatePresence>
+
+      <Divider className="my-4" />
+
+      <Button
+        block
+        type="dashed"
+        icon={<PlusOutlined />}
+        onClick={addExperience}
+      >
+        {t.addButton}
+      </Button>
     </Card>
   );
 }

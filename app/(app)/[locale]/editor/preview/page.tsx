@@ -72,7 +72,7 @@ export default function PreviewPage() {
             <div className="sticky top-[88px]">
               <Card>
                 <Button
-                  type="primary"
+                  type="text"
                   className="w-full"
                   onClick={handleBack}
                   icon={<ArrowLeft className="h-4 w-4" />}
