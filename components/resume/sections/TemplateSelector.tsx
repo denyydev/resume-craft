@@ -4,20 +4,28 @@ import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import type { TemplateKey } from "@/types/resume";
 import { theme } from "antd";
-import { Check } from "lucide-react";
+import {
+  AlignLeft,
+  Check,
+  FileText,
+  GitCommitHorizontal,
+  Layout,
+  LayoutGrid,
+  ScanText,
+} from "lucide-react";
 
 type LocaleKey = "ru" | "en";
 
 const templateLabels: Record<
   TemplateKey,
   {
-    icon: string;
+    icon: React.ReactNode;
     title: Record<LocaleKey, string>;
     subtitle: Record<LocaleKey, string>;
   }
 > = {
   classic: {
-    icon: "📄",
+    icon: <FileText size={20} />,
     title: { ru: "Классический", en: "Classic" },
     subtitle: {
       ru: "Макет с сайдбаром и тёмным акцентом",
@@ -25,7 +33,7 @@ const templateLabels: Record<
     },
   },
   minimal: {
-    icon: "✨",
+    icon: <AlignLeft size={20} />,
     title: { ru: "Минимал", en: "Minimal" },
     subtitle: {
       ru: "Чистый одноколоночный макет",
@@ -33,7 +41,7 @@ const templateLabels: Record<
     },
   },
   modern: {
-    icon: "🚀",
+    icon: <Layout size={20} />,
     title: { ru: "Современный", en: "Modern" },
     subtitle: {
       ru: "Компактный двухколоночный макет",
@@ -41,15 +49,15 @@ const templateLabels: Record<
     },
   },
   simple: {
-    icon: "📝",
-    title: { ru: "Простой", en: "Simple" },
+    icon: <ScanText size={20} />,
+    title: { ru: "ATS Friendly", en: "ATS Friendly" },
     subtitle: {
-      ru: "Прямолинейный одноколоночный макет",
-      en: "Straightforward single-column resume",
+      ru: "Максимально простой ATS-friendly шаблон с одноколоночной структурой и чистой иерархией текста",
+      en: "Highly ATS-friendly single-column resume with a clean, text-first structure",
     },
   },
   timeline: {
-    icon: "⏱️",
+    icon: <GitCommitHorizontal size={20} />,
     title: { ru: "Таймлайн", en: "Timeline" },
     subtitle: {
       ru: "Акцент на опыте в виде таймлайна",
@@ -57,7 +65,7 @@ const templateLabels: Record<
     },
   },
   grid: {
-    icon: "🔲",
+    icon: <LayoutGrid size={20} />,
     title: { ru: "Сетка", en: "Grid" },
     subtitle: {
       ru: "Структурированный макет карточками",
@@ -169,7 +177,13 @@ export function TemplateSelector() {
                 </div>
               )}
 
-              <span style={{ fontSize: 20 }}>{template.icon}</span>
+              <span
+                style={{
+                  color: active ? token.colorPrimary : token.colorTextSecondary,
+                }}
+              >
+                {template.icon}
+              </span>
 
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div

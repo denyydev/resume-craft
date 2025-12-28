@@ -1,11 +1,11 @@
 "use client";
 
+import { AtsFriendlyTemplate } from "./AtsFriendlyTemplate";
+import { CompactTemplate } from "./CompactTemplate";
+import { GridTemplate } from "./GridTemplate";
 import { NeoTemplate } from "./NeoTemplate";
 import { SidebarTemplate } from "./SidebarTemplate";
-import { CompactTemplate } from "./CompactTemplate";
-import { SimpleTemplate } from "./SimpleTemplate";
 import { TimelineTemplate } from "./TimelineTemplate";
-import { GridTemplate } from "./GridTemplate";
 
 export const templateMap = {
   default: NeoTemplate,
@@ -15,7 +15,7 @@ export const templateMap = {
   neo: NeoTemplate,
   sidebar: SidebarTemplate,
   compact: CompactTemplate,
-  simple: SimpleTemplate,
+  simple: AtsFriendlyTemplate,
   timeline: TimelineTemplate,
   grid: GridTemplate,
 } as const;

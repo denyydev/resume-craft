@@ -1,14 +1,14 @@
-import LandingPage from "@/components/landing/LandingPage"
-import { redirect } from "next/navigation"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/authOptions"
+import Hero from "@/components/landing/Hero";
+import { authOptions } from "@/lib/authOptions";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 export default async function Page() {
-  const session = await getServerSession(authOptions)
+  const session = await getServerSession(authOptions);
 
   if (session) {
-    redirect("/ru/editor")
+    redirect("/ru/editor");
   }
 
-  return <LandingPage />
+  return <Hero />;
 }
