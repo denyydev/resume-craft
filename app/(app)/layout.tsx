@@ -3,14 +3,10 @@
 import { AuthButton } from "@/components/AuthButton";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { BrandLink } from "@/components/ui/BrandLink";
 import type { MenuProps } from "antd";
 import { Dropdown, Layout, Menu, Space } from "antd";
-import {
-  FileText,
-  FolderOpen,
-  LayoutDashboard,
-  ShieldCheck,
-} from "lucide-react";
+import { FolderOpen, LayoutDashboard, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -37,7 +33,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       icon: <LayoutDashboard size={16} />,
       label: (
         <Link href={editorHref}>
-          {currentLocale === "en" ? "Editor" : "Редактор"}
+          {currentLocale === "en" ? "Builder" : "Конструктор"}
         </Link>
       ),
     },
@@ -46,7 +42,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       icon: <FolderOpen size={16} />,
       label: (
         <Link href={resumesHref}>
-          {currentLocale === "en" ? "My resumes" : "Мои резюме"}
+          {currentLocale === "en" ? "Documents" : "Документы"}
         </Link>
       ),
     },
@@ -55,25 +51,19 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       icon: <ShieldCheck size={16} />,
       label: (
         <Link href={guideHref}>
-          {currentLocale === "en" ? "ATS & Tips" : "Советы по резюме"}
+          {currentLocale === "en" ? "Insights" : "Инсайты"}
         </Link>
       ),
     },
   ];
 
   return (
-    <Layout className="min-h-screen">
-      <Header className="sticky top-0 z-50 flex items-center gap-4 border-b border-slate-400/20 px-4">
+    <Layout className="h-screen overflow-hidden">
+      <Header className="sticky top-0 z-50 h-16 flex items-center gap-4 border-b border-slate-400/20 px-4">
         <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4">
           <div className="flex items-center gap-5">
-            <Link href={editorHref} className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0A84FF] shadow-sm">
-                <FileText className="h-4 w-4 text-white" />
-              </div>
-              <span className="text-[16px] font-semibold tracking-tight">
-                ResumeCraft
-              </span>
-            </Link>
+            <BrandLink href={editorHref} />
+
             <Menu
               mode="horizontal"
               selectedKeys={[selectedKey]}
@@ -113,7 +103,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </Header>
 
-      <Content>
+      {/* ВАЖНО: скролл только тут */}
+      <Content className="flex-1 min-h-0 overflow-y-auto">
         <div className="mx-auto w-full max-w-[1440px]">{children}</div>
       </Content>
     </Layout>

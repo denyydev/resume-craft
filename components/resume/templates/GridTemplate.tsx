@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import type { Resume } from "@/types/resume"
-import type { Locale } from "@/lib/useCurrentLocale"
+import type { Locale } from "@/lib/useCurrentLocale";
+import type { Resume } from "@/types/resume";
 
 type ResumeTemplateProps = {
-  data: Resume
-  locale: Locale
-}
+  data: Resume;
+  locale: Locale;
+};
 
 function formatPeriod(start?: string, end?: string, isCurrent?: boolean) {
-  if (!start && !end) return ""
-  if (isCurrent) return `${start || ""} — Present`
-  if (start && end) return `${start} — ${end}`
-  return start || end || ""
+  if (!start && !end) return "";
+  if (isCurrent) return `${start || ""} — Present`;
+  if (start && end) return `${start} — ${end}`;
+  return start || end || "";
 }
 
 function TagPill({ label }: { label: string }) {
@@ -20,15 +20,15 @@ function TagPill({ label }: { label: string }) {
     <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[10px] leading-none text-slate-700">
       {label}
     </span>
-  )
+  );
 }
 
 function SectionCard({
   title,
   children,
 }: {
-  title: string
-  children: React.ReactNode
+  title: string;
+  children: React.ReactNode;
 }) {
   return (
     <section className="bg-white rounded-xl border border-slate-200 px-4 py-3 space-y-2">
@@ -37,7 +37,7 @@ function SectionCard({
       </h2>
       {children}
     </section>
-  )
+  );
 }
 
 export function GridTemplate({ data }: ResumeTemplateProps) {
@@ -53,54 +53,69 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
     education,
     languages,
     photo,
-  } = data
+  } = data;
 
-  const techTags = techSkills?.tags ?? []
-  const techNote = techSkills?.note?.trim() ?? ""
-  const softTags = softSkills?.tags ?? []
-  const softNote = softSkills?.note?.trim() ?? ""
+  const techTags = techSkills?.tags ?? [];
+  const techNote = techSkills?.note?.trim() ?? "";
+  const softTags = softSkills?.tags ?? [];
+  const softNote = softSkills?.note?.trim() ?? "";
 
-  const hasTech = techTags.length > 0 || techNote.length > 0
-  const hasSoft = softTags.length > 0 || softNote.length > 0
-  const hasLinks = !!(contacts.github || contacts.linkedin || contacts.website || contacts.telegram)
+  const hasTech = techTags.length > 0 || techNote.length > 0;
+  const hasSoft = softTags.length > 0 || softNote.length > 0;
+  const hasLinks = !!(
+    contacts.github ||
+    contacts.linkedin ||
+    contacts.website ||
+    contacts.telegram
+  );
 
   return (
     <div className="w-[794px] min-h-[1123px] bg-slate-50 text-slate-900 px-8 py-8 flex flex-col gap-5">
-      <header className="bg-white rounded-xl border border-slate-200 px-6 py-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4 min-w-0">
+      <header className="bg-white rounded-xl border border-slate-200 px-6 py-4 flex items-start justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0 flex-1">
           {photo ? (
             <img
               src={photo}
               alt={fullName}
-              className="w-16 h-16 rounded-2xl object-cover border border-slate-200"
+              className="w-16 h-16 rounded-2xl object-cover border border-slate-200 shrink-0"
             />
           ) : (
-            <div className="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-lg font-semibold">
+            <div className="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center text-lg font-semibold shrink-0">
               {(fullName || "N").trim().charAt(0).toUpperCase()}
             </div>
           )}
 
           <div className="min-w-0">
-            <h1 className="text-[22px] font-semibold leading-tight tracking-tight">
+            <h1 className="text-[22px] font-semibold leading-tight tracking-tight truncate">
               {fullName || "Your Name"}
             </h1>
-            <p className="mt-1 text-xs text-slate-600">
+            <p className="mt-1 text-xs text-slate-600 truncate">
               {position || "Job Title / Position"}
             </p>
           </div>
         </div>
 
-        <div className="text-[10px] text-slate-500 text-right space-y-0.5 shrink-0">
-          {contacts.location && <p>{contacts.location}</p>}
-          {contacts.email && <p>{contacts.email}</p>}
-          {contacts.phone && <p>{contacts.phone}</p>}
+        <div className="shrink-0 text-[10px] text-slate-500 text-right leading-snug max-w-[260px]">
+          <div className="space-y-0.5">
+            {contacts.location && (
+              <p className="truncate">{contacts.location}</p>
+            )}
+            {contacts.email && <p className="truncate">{contacts.email}</p>}
+            {contacts.phone && <p className="truncate">{contacts.phone}</p>}
+          </div>
 
           {hasLinks && (
-            <div className="mt-1 flex flex-wrap justify-end gap-x-2 gap-y-1">
-              {contacts.github && <span>{contacts.github}</span>}
-              {contacts.linkedin && <span>{contacts.linkedin}</span>}
-              {contacts.website && <span>{contacts.website}</span>}
-              {contacts.telegram && <span>{contacts.telegram}</span>}
+            <div className="mt-1 flex flex-col gap-0.5">
+              {contacts.github && <p className="truncate">{contacts.github}</p>}
+              {contacts.linkedin && (
+                <p className="truncate">{contacts.linkedin}</p>
+              )}
+              {contacts.website && (
+                <p className="truncate">{contacts.website}</p>
+              )}
+              {contacts.telegram && (
+                <p className="truncate">{contacts.telegram}</p>
+              )}
             </div>
           )}
         </div>
@@ -121,16 +136,27 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
                   <div key={item.id} className="space-y-0.5">
                     <p className="font-medium text-slate-900">
                       {item.position || "Position"}
-                      {item.company && <span className="text-slate-600"> · {item.company}</span>}
+                      {item.company && (
+                        <span className="text-slate-600">
+                          {" "}
+                          · {item.company}
+                        </span>
+                      )}
                     </p>
 
                     <p className="text-[10px] text-slate-500">
-                      {formatPeriod(item.startDate, item.endDate, item.isCurrent)}
+                      {formatPeriod(
+                        item.startDate,
+                        item.endDate,
+                        item.isCurrent
+                      )}
                       {item.location && ` · ${item.location}`}
                     </p>
 
                     {item.description && (
-                      <p className="text-slate-800 whitespace-pre-line">{item.description}</p>
+                      <p className="text-slate-800 whitespace-pre-line">
+                        {item.description}
+                      </p>
                     )}
                   </div>
                 ))}
@@ -147,7 +173,9 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
                       {e.degree || e.field || "Education"}
                     </p>
                     {e.institution && (
-                      <p className="text-[10px] text-slate-500">{e.institution}</p>
+                      <p className="text-[10px] text-slate-500">
+                        {e.institution}
+                      </p>
                     )}
                     {(e.startDate || e.endDate) && (
                       <p className="text-[10px] text-slate-500">
@@ -180,7 +208,9 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
                     )}
 
                     {techNote && (
-                      <p className="text-slate-800 whitespace-pre-line">{techNote}</p>
+                      <p className="text-slate-800 whitespace-pre-line">
+                        {techNote}
+                      </p>
                     )}
                   </div>
                 )}
@@ -200,7 +230,9 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
                     )}
 
                     {softNote && (
-                      <p className="text-slate-800 whitespace-pre-line">{softNote}</p>
+                      <p className="text-slate-800 whitespace-pre-line">
+                        {softNote}
+                      </p>
                     )}
                   </div>
                 )}
@@ -215,14 +247,22 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
                   <div key={p.id} className="space-y-0.5">
                     <p className="font-medium text-slate-900">
                       {p.name || "Project"}
-                      {p.role && <span className="text-slate-600"> · {p.role}</span>}
+                      {p.role && (
+                        <span className="text-slate-600"> · {p.role}</span>
+                      )}
                     </p>
 
-                    {p.stack && <p className="text-[10px] text-slate-500">{p.stack}</p>}
-                    {p.link && <p className="text-[10px] text-sky-600">{p.link}</p>}
+                    {p.stack && (
+                      <p className="text-[10px] text-slate-500">{p.stack}</p>
+                    )}
+                    {p.link && (
+                      <p className="text-[10px] text-sky-600">{p.link}</p>
+                    )}
 
                     {p.description && (
-                      <p className="text-slate-800 whitespace-pre-line">{p.description}</p>
+                      <p className="text-slate-800 whitespace-pre-line">
+                        {p.description}
+                      </p>
                     )}
                   </div>
                 ))}
@@ -239,7 +279,9 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
                     className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] text-slate-700"
                   >
                     {l.name}
-                    {l.level && <span className="text-slate-500"> · {l.level}</span>}
+                    {l.level && (
+                      <span className="text-slate-500"> · {l.level}</span>
+                    )}
                   </span>
                 ))}
               </div>
@@ -248,5 +290,5 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
         </div>
       </main>
     </div>
-  )
+  );
 }

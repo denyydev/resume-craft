@@ -1,203 +1,203 @@
 import type { Resume } from "@/types/resume";
 
-export const mockResume: Resume = {
-  fullName: "Иван Петров",
-  position: "Senior Frontend Developer",
-
-  photo: undefined,
-
+export const MOCK_RESUME: Resume = {
+  fullName: "Алексей Воронов",
+  position: "Senior Frontend Engineer (React / TypeScript)",
   contacts: {
-    email: "ivan.petrov.dev@gmail.com",
-    phone: "+7 999 123-45-67",
-    location: "Москва / Remote",
-    telegram: "@ivanpetrov",
-    github: "github.com/ivanpetrov",
-    linkedin: "linkedin.com/in/ivanpetrov",
-    website: "ivanpetrov.dev",
+    email: "alexey.voronov.dev@gmail.com",
+    phone: "+48 512 345 678",
+    location: "Warsaw, Poland",
+    telegram: "https://t.me/alexey_voronov",
+    github: "https://github.com/alexey-voronov",
+    linkedin: "https://www.linkedin.com/in/alexey-voronov/",
+    website: "https://alexeyvoronov.dev",
   },
-
   summary:
-    "Frontend-разработчик с 6+ годами опыта в создании сложных SPA и внутренних продуктов.\n" +
-    "Специализируюсь на React, архитектуре интерфейсов и DX.\n" +
-    "Работал с высоконагруженными системами и дизайн-системами.",
-
+    "Senior Frontend Engineer (React/TypeScript) с 7+ годами опыта в продуктовых командах (B2B SaaS, финтех). Делаю быстрые и доступные интерфейсы, дизайн-системы и сложные формы/флоу. Улучшал Web Vitals (LCP/INP), снижал регрессии через тесты и CI. Ищу продукт с высокой планкой качества и понятными метриками.",
+  experience: [
+    {
+      id: "exp_1",
+      company: "FinEdge (B2B Payments)",
+      position: "Senior Frontend Engineer",
+      location: "Warsaw (Hybrid)",
+      startDate: "2023-02",
+      endDate: "",
+      isCurrent: true,
+      description:
+        "— Вёл редизайн кабинета мерчанта (React, TS, Next.js, Ant Design): конверсия активации +12%.\n— Ускорил LCP с 3.2s до 1.9s: code-splitting, оптимизация критического CSS, кеширование запросов.\n— Внедрил feature flags и staged rollout: инциденты после релиза −30%.\n— Построил библиотеку UI-паттернов поверх AntD (токены, типовые формы, валидаторы): время разработки экранов −20%.\n— Настроил e2e smoke (Playwright) и quality gates в CI: регрессии в проде −25%.",
+    },
+    {
+      id: "exp_2",
+      company: "CloudDesk (SaaS for Operations)",
+      position: "Frontend Engineer → Lead",
+      location: "Remote",
+      startDate: "2020-06",
+      endDate: "2023-01",
+      isCurrent: false,
+      description:
+        "— Спроектировал и внедрил дизайн-систему (tokens, components, docs): консистентность UI, скорость фичей +18%.\n— Перевёл ключевые модули на TypeScript strict: баги на интеграции −15%.\n— Оптимизировал таблицы и виртуализацию списков (react-window): TTI −22% на больших наборах данных.\n— Улучшил DX: генерация типов из OpenAPI, единые хуки для запросов, шаблоны PR/ревью: cycle time 9 → 6 дней.\n— Менторил 4 инженеров, проводил архитектурные ревью, отвечал за качество фронтенда в двух командах.",
+    },
+    {
+      id: "exp_3",
+      company: "RetailNow",
+      position: "Frontend Developer",
+      location: "Minsk",
+      startDate: "2018-04",
+      endDate: "2020-05",
+      isCurrent: false,
+      description:
+        "— Разработал витрину и личный кабинет (React, Redux, Node BFF): выручка онлайн-канала +8%.\n— Внедрил мониторинг ошибок (Sentry) и трейсинг производительности: MTTR −35%.\n— Настроил SSR для SEO-страниц и улучшил индексируемость: органический трафик +20%.\n— Автоматизировал сборку и деплой (GitHub Actions): время релиза 45 → 15 минут.",
+    },
+  ],
+  projects: [
+    {
+      id: "prj_1",
+      name: "ResumeCraft — Resume Builder",
+      role: "Author / Frontend",
+      stack:
+        "Next.js, React, TypeScript, Ant Design, Zustand, Tailwind, Playwright",
+      link: "https://github.com/alexey-voronov/resumecraft",
+      description:
+        "Конструктор резюме с шаблонами, экспортом в PDF и ATS-friendly режимом. Реализовал токены темы, редактор секций, историю изменений и превью шаблонов.",
+    },
+    {
+      id: "prj_2",
+      name: "Design Tokens Playground",
+      role: "Frontend",
+      stack: "React, TypeScript, Vite, CSS Variables",
+      link: "https://alexeyvoronov.dev/tokens",
+      description:
+        "Песочница для генерации и тестирования дизайн-токенов (цвета, радиусы, тени) с экспортом в JSON/CSS и визуальной проверкой компонентов.",
+    },
+    {
+      id: "prj_3",
+      name: "Perf Audit Toolkit",
+      role: "Frontend",
+      stack: "Node.js, Lighthouse CI, GitHub Actions",
+      link: "https://github.com/alexey-voronov/perf-audit-toolkit",
+      description:
+        "Инструменты для CI-аудита производительности (LCP/INP/CLS), автоматические отчёты и алерты по деградациям.",
+    },
+  ],
   techSkills: {
     tags: [
       "React",
       "TypeScript",
       "Next.js",
-      "JavaScript",
-      "Redux",
+      "Ant Design",
       "Zustand",
+      "Redux Toolkit",
+      "TanStack Query",
       "Node.js",
-      "PostgreSQL",
-      "Docker",
-      "Git",
-      "Jest",
+      "REST",
+      "GraphQL",
+      "Web Performance",
+      "Accessibility (a11y)",
       "Playwright",
+      "Jest",
+      "RTL",
+      "CI/CD",
+      "GitHub Actions",
+      "Docker (basic)",
     ],
-    note:
-      "Опыт проектирования архитектуры frontend-приложений, работы с SSR/SSG, " +
-      "оптимизации производительности и написания тестов.",
+    note: "Фокус: дизайн-системы, сложные формы, таблицы/виртуализация, Web Vitals (LCP/INP/CLS), типобезопасные интеграции (OpenAPI).",
   },
-
   softSkills: {
     tags: [
-      "Коммуникация",
-      "Работа в команде",
-      "Лидерство",
-      "Менторство",
-      "Ответственность",
-      "Критическое мышление",
+      "Ownership",
+      "Mentoring",
+      "Communication",
+      "Product thinking",
+      "Stakeholder management",
+      "Code review",
+      "System design",
+      "Prioritization",
     ],
-    note:
-      "Регулярно выступал ментором для junior-разработчиков, участвовал в код-ревью, " +
-      "планировании спринтов и обсуждении продуктовых решений.",
+    note: "Люблю прозрачные метрики, короткие итерации, качественные релизы и аккуратную архитектуру без оверинжиниринга.",
   },
-
-  experience: [
-    {
-      id: "exp-1",
-      company: "FinTech Corp",
-      position: "Senior Frontend Developer",
-      location: "Москва",
-      startDate: "2021-03",
-      endDate: "",
-      isCurrent: true,
-      description:
-        "— Разработка и поддержка SPA для финансовых сервисов\n" +
-        "— Архитектура модульного frontend\n" +
-        "— Внедрение Zustand и React Query\n" +
-        "— Оптимизация времени загрузки на 30%",
-    },
-    {
-      id: "exp-2",
-      company: "Digital Agency",
-      position: "Frontend Developer",
-      location: "Санкт-Петербург",
-      startDate: "2018-06",
-      endDate: "2021-02",
-      isCurrent: false,
-      description:
-        "— Разработка клиентских интерфейсов\n" +
-        "— Интеграция REST API\n" +
-        "— Поддержка дизайн-системы\n" +
-        "— Участие в пресейлах",
-    },
-  ],
-
-  projects: [
-    {
-      id: "proj-1",
-      name: "Resume Builder",
-      role: "Author / Frontend",
-      stack: "Next.js, React, Zustand, Ant Design, PDF",
-      link: "https://resume-builder.dev",
-      description:
-        "Онлайн-конструктор резюме с live-preview и экспортом в PDF.\n" +
-        "Фокус на UX, архитектуру состояния и шаблонный рендеринг.",
-    },
-    {
-      id: "proj-2",
-      name: "Internal Admin Panel",
-      role: "Frontend Lead",
-      stack: "React, TypeScript, Redux Toolkit",
-      link: "",
-      description:
-        "Админ-панель для управления пользователями и контентом.\n" +
-        "Проектирование архитектуры и код-ревью.",
-    },
-  ],
-
   education: [
     {
-      id: "edu-1",
-      institution: "МГТУ им. Баумана",
-      degree: "Бакалавр",
-      field: "Информатика и вычислительная техника",
-      startDate: "2014",
-      endDate: "2018",
+      id: "edu_1",
+      institution:
+        "Belarusian State University of Informatics and Radioelectronics",
+      degree: "Bachelor",
+      field: "Computer Science",
+      startDate: "2014-09",
+      endDate: "2018-06",
     },
   ],
-
   languages: [
-    {
-      id: "lang-1",
-      name: "Русский",
-      level: "Родной",
-    },
-    {
-      id: "lang-2",
-      name: "Английский",
-      level: "B2",
-    },
+    { id: "lang_1", name: "Russian", level: "Native" },
+    { id: "lang_2", name: "English", level: "B2 (Upper-Intermediate)" },
+    { id: "lang_3", name: "Polish", level: "A2" },
   ],
-
-  // ✅ NEW: Employment / Work Preferences
   employmentPreferences: {
     employmentType: ["full-time", "contract"],
     workFormat: ["remote", "hybrid"],
     relocation: false,
-    timezone: "Europe/Warsaw",
-    workAuthorization: "EU citizen / Poland work permit (if applicable)",
+    timezone: "CET (Europe/Warsaw) ±2h",
+    workAuthorization: "EU work authorization / B2B available",
   },
-
-  // ✅ NEW: Certifications
   certifications: [
     {
-      id: "cert-1",
-      name: "AWS Certified Developer – Associate",
+      id: "cert_1",
+      name: "AWS Certified Cloud Practitioner",
       issuer: "Amazon Web Services",
-      year: "2023",
+      year: "2022",
       link: "https://www.credly.com/",
     },
     {
-      id: "cert-2",
-      name: "Professional Scrum Master I (PSM I)",
-      issuer: "Scrum.org",
-      year: "2022",
-      link: "https://www.scrum.org/",
+      id: "cert_2",
+      name: "Web Accessibility (WCAG) Fundamentals",
+      issuer: "Deque University",
+      year: "2021",
+      link: "https://dequeuniversity.com/",
     },
   ],
-
-  // ✅ NEW: Open Source / Volunteering / Community
   activities: [
     {
-      id: "act-1",
+      id: "act_1",
       type: "open-source",
-      name: "TanStack Query (React Query) ecosystem",
+      name: "Open-source contributions",
       role: "Contributor",
-      link: "https://github.com/TanStack/query",
       description:
-        "— Исправлял баги и улучшал типизацию\n" +
-        "— Помогал с документацией и примерами\n" +
-        "— Делал небольшие улучшения DX в issues/PR",
+        "Контрибьютил в UI-либах и утилитах (фиксы типизации, улучшения документации, мелкие фичи).",
+      link: "https://github.com/alexey-voronov",
     },
     {
-      id: "act-2",
-      type: "community",
-      name: "Frontend Meetup (Moscow / Online)",
+      id: "act_2",
+      type: "speaking",
+      name: "Internal Frontend Guild",
       role: "Speaker",
-      link: "",
       description:
-        "— Доклад: «State management без боли: Zustand в проде»\n" +
-        "— Разбор реальных кейсов и Q&A",
+        "Доклады про Web Vitals, практики тестирования и дизайн-токены; воркшопы по миграции на TS strict.",
+      link: "",
     },
     {
-      id: "act-3",
+      id: "act_3",
       type: "volunteering",
-      name: "TechMentor Program",
+      name: "Mentoring (career / interviews)",
       role: "Mentor",
-      link: "",
       description:
-        "— Менторил 2 джунов (план развития, код-ревью, собеседования)\n" +
-        "— Помогал с пет-проектами и подготовкой к офферам",
+        "Помогаю джунам подготовиться к собеседованиям: разбор проектов, CV, мок-интервью.",
+      link: "",
     },
   ],
-
-  // ✅ если у тебя эти поля обязательные в ResumeData (мы их добавляли под стор)
-  accentColor: "#1677ff",
-  includePhoto: true,
-
-  templateKey: "neo",
+  templateKey: "grid",
+  accentColor: "#0A84FF",
+  includePhoto: false,
+  photo: undefined,
+  sectionsVisibility: {
+    photo: true,
+    summary: true,
+    experience: true,
+    projects: true,
+    techSkills: true,
+    softSkills: true,
+    education: true,
+    languages: true,
+    employmentPreferences: true,
+    certifications: true,
+    activities: true,
+  },
 };

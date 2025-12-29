@@ -74,7 +74,7 @@ export default function EditorPage() {
       <div className="flex gap-5 py-5">
         {!isMobile && (
           <aside className="w-[240px] shrink-0">
-            <div className="sticky top-[88px]">
+            <div className="sticky top-5">
               <SectionsSidebar />
             </div>
           </aside>
@@ -86,7 +86,7 @@ export default function EditorPage() {
 
         {!isMobile && (
           <aside className="w-[360px] shrink-0">
-            <div className="sticky top-[88px]">
+            <div className="sticky top-5">
               <ResumeDashboard />
             </div>
           </aside>

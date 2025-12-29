@@ -7,6 +7,7 @@ import {
   Collapse,
   Divider,
   List,
+  Menu,
   Space,
   Tag,
   Typography,
@@ -160,10 +161,6 @@ const messages = {
   },
 } as const;
 
-function clsx(...xs: Array<string | false | null | undefined>) {
-  return xs.filter(Boolean).join(" ");
-}
-
 function Pill({
   icon,
   title,
@@ -174,19 +171,21 @@ function Pill({
   desc: string;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start gap-3">
-        <div className="mt-0.5 grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50">
+    <Card styles={{ body: { padding: 16 } }}>
+      <Space align="start" size={12}>
+        <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
           {icon}
-        </div>
+        </span>
         <div className="min-w-0">
-          <div className="text-sm font-semibold text-slate-900">{title}</div>
-          <div className="mt-1 text-xs leading-relaxed text-slate-600">
+          <div className="text-sm font-semibold text-[var(--ant-colorText)]">
+            {title}
+          </div>
+          <div className="mt-1 text-xs leading-relaxed text-[var(--ant-colorTextSecondary)]">
             {desc}
           </div>
         </div>
-      </div>
-    </div>
+      </Space>
+    </Card>
   );
 }
 
@@ -200,15 +199,21 @@ function MiniCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center gap-2">
-        <div className="grid h-8 w-8 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-          {icon}
-        </div>
-        <div className="text-sm font-semibold text-slate-900">{title}</div>
-      </div>
-      <div className="mt-3 text-sm text-slate-700">{children}</div>
-    </div>
+    <Card
+      title={
+        <Space size={10}>
+          <span className="grid h-8 w-8 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
+            {icon}
+          </span>
+          <span className="text-sm font-semibold text-[var(--ant-colorText)]">
+            {title}
+          </span>
+        </Space>
+      }
+      styles={{ header: { padding: "12px 16px" }, body: { padding: 16 } }}
+    >
+      <div className="text-sm text-[var(--ant-colorText)]">{children}</div>
+    </Card>
   );
 }
 
@@ -229,39 +234,45 @@ function RuleRow({
 }) {
   const t = messages[locale];
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="text-sm font-semibold text-slate-900">{title}</div>
-          <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-3">
-              <div className="text-xs font-semibold text-emerald-800">
-                {t.micro.good}
-              </div>
-              <div className="mt-1 text-xs text-slate-700">{good}</div>
-            </div>
-            <div className="rounded-xl border border-amber-200 bg-amber-50/40 p-3">
-              <div className="text-xs font-semibold text-amber-900">
-                {t.micro.risky}
-              </div>
-              <div className="mt-1 text-xs text-slate-700">{risky}</div>
-            </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
-              <div className="text-xs font-semibold text-slate-900">
-                {t.micro.fix}
-              </div>
-              <div className="mt-1 text-xs text-slate-700">{fix}</div>
-            </div>
+    <Card>
+      <div className="text-sm font-semibold text-[var(--ant-colorText)]">
+        {title}
+      </div>
+
+      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="rounded-xl border border-[rgba(16,185,129,0.35)] bg-[rgba(16,185,129,0.10)] p-3">
+          <div className="text-xs font-semibold text-[rgba(16,185,129,0.95)]">
+            {t.micro.good}
           </div>
-          <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
-            <div className="text-xs font-semibold text-slate-900">
-              {t.micro.example}
-            </div>
-            <div className="mt-1 text-xs text-slate-700">{example}</div>
+          <div className="mt-1 text-xs text-[var(--ant-colorText)]">{good}</div>
+        </div>
+
+        <div className="rounded-xl border border-[rgba(245,158,11,0.35)] bg-[rgba(245,158,11,0.10)] p-3">
+          <div className="text-xs font-semibold text-[rgba(245,158,11,0.95)]">
+            {t.micro.risky}
+          </div>
+          <div className="mt-1 text-xs text-[var(--ant-colorText)]">
+            {risky}
           </div>
         </div>
+
+        <div className="rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillQuaternary)] p-3">
+          <div className="text-xs font-semibold text-[var(--ant-colorText)]">
+            {t.micro.fix}
+          </div>
+          <div className="mt-1 text-xs text-[var(--ant-colorText)]">{fix}</div>
+        </div>
       </div>
-    </div>
+
+      <div className="mt-3 rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorBgContainer)] p-3">
+        <div className="text-xs font-semibold text-[var(--ant-colorText)]">
+          {t.micro.example}
+        </div>
+        <div className="mt-1 text-xs text-[var(--ant-colorText)]">
+          {example}
+        </div>
+      </div>
+    </Card>
   );
 }
 
@@ -315,7 +326,6 @@ export default function RecommendationsFaqPage() {
                 : "1 page is the gold standard. 2 pages are acceptable only when your experience genuinely requires it and every line earns its place."}
             </Paragraph>
             <List
-              size="small"
               bordered
               dataSource={[
                 isRu
@@ -371,7 +381,6 @@ export default function RecommendationsFaqPage() {
                 : "LinkedIn / GitHub / portfolio should be valid and clickable. Rule: always include https://"}
             </Paragraph>
             <List
-              size="small"
               bordered
               dataSource={[
                 isRu
@@ -398,7 +407,7 @@ export default function RecommendationsFaqPage() {
                 ? "Читаемость важнее креатива. Стандартные заголовки секций помогают и ATS, и рекрутеру."
                 : "Readability beats creativity. Standard section headings help both ATS and recruiters."}
             </Paragraph>
-            <Card size="small">
+            <Card>
               <Text strong>
                 {isRu ? "Рекомендуемый порядок:" : "Suggested order:"}
               </Text>
@@ -431,7 +440,6 @@ export default function RecommendationsFaqPage() {
                 : "Summary is one of the most important blocks. 3–5 lines: who you are, strengths, stack/domains, and what you’re looking for."}
             </Paragraph>
             <List
-              size="small"
               bordered
               dataSource={[
                 isRu
@@ -458,20 +466,19 @@ export default function RecommendationsFaqPage() {
                 ? "Вместо «что делал» — «что изменил». XYZ: достижение → действие → результат (цифры/эффект)."
                 : "Replace “what I did” with “what changed”. XYZ: achievement → action → result (numbers/impact)."}
             </Paragraph>
-            <Card size="small">
+            <Card>
               <Text strong>{locale === "ru" ? "Примеры:" : "Examples:"}</Text>
               <Divider style={{ margin: "10px 0" }} />
               <List
-                size="small"
                 dataSource={[
                   locale === "ru"
-                    ? "Снизил время загрузки на 35% оптимизацией bundle splitting и кеширования."
+                    ? "Снизил(а) время загрузки на 35% оптимизацией bundle splitting и кеширования."
                     : "Reduced page load time by 35% via bundle splitting and caching.",
                   locale === "ru"
-                    ? "Уменьшил количество багов в проде на 20% внедрив e2e smoke и CI-правила."
+                    ? "Уменьшил(а) количество багов в проде на 20% внедрив e2e smoke и CI-правила."
                     : "Decreased production bugs by 20% by introducing e2e smoke tests and CI rules.",
                   locale === "ru"
-                    ? "Сократил cycle time с 10 до 6 дней улучшив review process."
+                    ? "Сократил(а) cycle time с 10 до 6 дней улучшив review process."
                     : "Reduced cycle time from 10 to 6 days by improving the review process.",
                 ]}
                 renderItem={(x) => <List.Item>• {x}</List.Item>}
@@ -511,7 +518,6 @@ export default function RecommendationsFaqPage() {
         tags: [locale === "ru" ? "ошибки" : "mistakes"],
         content: (
           <List
-            size="small"
             bordered
             dataSource={[
               locale === "ru"
@@ -547,7 +553,6 @@ export default function RecommendationsFaqPage() {
                 : "Use a dedicated ATS-friendly template: one column, minimal decoration, standard section headings."}
             </Paragraph>
             <List
-              size="small"
               bordered
               dataSource={[
                 locale === "ru"
@@ -609,9 +614,8 @@ export default function RecommendationsFaqPage() {
             "Improved {process} from {A} to {B} by {change}.",
             "Introduced {practice} → decreased {bugs/risks} by {X%}.",
           ],
-      skills: isRu
-        ? "Skills: React, TypeScript, Next.js, CSS, Testing (Playwright/Jest), Performance, Accessibility, CI/CD"
-        : "Skills: React, TypeScript, Next.js, CSS, Testing (Playwright/Jest), Performance, Accessibility, CI/CD",
+      skills:
+        "Skills: React, TypeScript, Next.js, CSS, Testing (Playwright/Jest), Performance, Accessibility, CI/CD",
     };
   }, [locale]);
 
@@ -653,7 +657,7 @@ export default function RecommendationsFaqPage() {
           : "3–6 bullets per role, impact-focused.",
         risky: isRu
           ? "Полотна текста, “responsible for”."
-          : "Paragraph walls, “responsible for”.",
+          : "Paragraph walls, “Responsible for”.",
         fix: isRu
           ? "Перепиши в XYZ, добавь метрики."
           : "Rewrite using XYZ and add metrics.",
@@ -715,64 +719,61 @@ export default function RecommendationsFaqPage() {
     [t]
   );
 
+  const menuItems = useMemo(
+    () =>
+      navItems.map((x) => ({
+        key: x.key,
+        icon: x.icon,
+        label: x.label,
+      })),
+    [navItems]
+  );
+
   return (
     <div className="mx-auto w-full max-w-[1120px] px-4 py-6">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
         <aside className="lg:sticky lg:top-6 lg:self-start">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-start gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
+          <Card>
+            <Space align="start" size={12}>
+              <span className="grid h-10 w-10 place-items-center rounded-2xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
                 <FileText size={18} />
-              </div>
+              </span>
               <div className="min-w-0">
-                <div className="text-sm font-semibold text-slate-900">
+                <div className="text-sm font-semibold text-[var(--ant-colorText)]">
                   {t.pageTitle}
                 </div>
-                <div className="mt-1 text-xs leading-relaxed text-slate-600">
+                <div className="mt-1 text-xs leading-relaxed text-[var(--ant-colorTextSecondary)]">
                   {t.intro}
                 </div>
               </div>
-            </div>
+            </Space>
 
-            <div className="mt-4 grid gap-2">
-              {navItems.map((it) => (
-                <button
-                  key={it.key}
-                  type="button"
-                  onClick={() => setActiveSection(it.key)}
-                  className={clsx(
-                    "w-full rounded-xl border px-3 py-2 text-left transition",
-                    activeSection === it.key
-                      ? "border-slate-300 bg-slate-50"
-                      : "border-slate-200 bg-white hover:bg-slate-50"
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-slate-700">{it.icon}</span>
-                    <span className="text-sm font-medium text-slate-900">
-                      {it.label}
-                    </span>
-                  </div>
-                </button>
-              ))}
+            <div className="mt-4">
+              <Menu
+                mode="inline"
+                selectedKeys={[activeSection]}
+                items={menuItems}
+                onClick={(e) => setActiveSection(e.key as any)}
+              />
             </div>
 
             <div className="mt-4">
               <Alert type="info" showIcon message={t.disclaimer} />
             </div>
-          </div>
+          </Card>
         </aside>
 
         <main>
           {activeSection === "overview" ? (
             <Space direction="vertical" size={14} className="w-full">
-              <div className="rounded-2xl border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 shadow-sm">
+              <Card className="bg-[var(--ant-colorBgContainer)]">
                 <Title level={2} style={{ margin: 0 }}>
                   {t.pageTitle}
                 </Title>
                 <Paragraph style={{ margin: "10px 0 0 0" }}>
                   {t.intro}
                 </Paragraph>
+
                 <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
                   <Pill
                     icon={<Search size={16} />}
@@ -811,12 +812,11 @@ export default function RecommendationsFaqPage() {
                     }
                   />
                 </div>
-              </div>
+              </Card>
 
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <MiniCard title={t.sectionsTitle} icon={<Sparkles size={16} />}>
                   <List
-                    size="small"
                     dataSource={tldrItems}
                     renderItem={(x) => <List.Item>• {x}</List.Item>}
                   />
@@ -825,37 +825,39 @@ export default function RecommendationsFaqPage() {
                 <MiniCard title={t.quickToolsTitle} icon={<Wand2 size={16} />}>
                   <div className="grid grid-cols-1 gap-3">
                     {quickTools.map((x) => (
-                      <div
-                        key={x.title}
-                        className="rounded-xl border border-slate-200 bg-white p-3"
-                      >
-                        <div className="flex items-start gap-2">
-                          <div className="mt-0.5 text-slate-700">{x.icon}</div>
+                      <Card key={x.title}>
+                        <Space align="start" size={10}>
+                          <span className="mt-0.5 text-[var(--ant-colorTextSecondary)]">
+                            {x.icon}
+                          </span>
                           <div className="min-w-0">
-                            <div className="text-xs font-semibold text-slate-900">
+                            <div className="text-xs font-semibold text-[var(--ant-colorText)]">
                               {x.title}
                             </div>
-                            <div className="mt-1 text-xs text-slate-600">
+                            <div className="mt-1 text-xs text-[var(--ant-colorTextSecondary)]">
                               {x.desc}
                             </div>
                           </div>
-                        </div>
-                      </div>
+                        </Space>
+                      </Card>
                     ))}
                   </div>
                 </MiniCard>
               </div>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-                    <ScanText size={16} />
-                  </span>
-                  <div className="text-sm font-semibold text-slate-900">
-                    {t.atsScoreTitle}
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-cols-1 gap-4">
+              <Card
+                title={
+                  <Space size={10}>
+                    <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
+                      <ScanText size={16} />
+                    </span>
+                    <span className="text-sm font-semibold text-[var(--ant-colorText)]">
+                      {t.atsScoreTitle}
+                    </span>
+                  </Space>
+                }
+              >
+                <div className="grid grid-cols-1 gap-4">
                   {atsRules.map((r) => (
                     <RuleRow
                       key={r.title}
@@ -868,163 +870,173 @@ export default function RecommendationsFaqPage() {
                     />
                   ))}
                 </div>
-              </div>
+              </Card>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-                    <Sparkles size={16} />
-                  </span>
-                  <div className="text-sm font-semibold text-slate-900">
-                    {t.patternsTitle}
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
-                    <div className="text-xs font-semibold text-slate-900">
+              <Card
+                title={
+                  <Space size={10}>
+                    <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
+                      <Sparkles size={16} />
+                    </span>
+                    <span className="text-sm font-semibold text-[var(--ant-colorText)]">
+                      {t.patternsTitle}
+                    </span>
+                  </Space>
+                }
+              >
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                  <Card>
+                    <div className="text-xs font-semibold text-[var(--ant-colorText)]">
                       {t.micro.patterns.summary}
                     </div>
-                    <div className="mt-2 space-y-2 text-xs text-slate-700">
+                    <div className="mt-2 space-y-2">
                       {patterns.summary.map((x, i) => (
-                        <div
-                          key={i}
-                          className="rounded-xl border border-slate-200 bg-white p-3"
-                        >
-                          {x}
-                        </div>
+                        <Card key={i} styles={{ body: { padding: 12 } }}>
+                          <div className="text-xs text-[var(--ant-colorText)]">
+                            {x}
+                          </div>
+                        </Card>
                       ))}
                     </div>
-                  </div>
+                  </Card>
 
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
-                    <div className="text-xs font-semibold text-slate-900">
+                  <Card>
+                    <div className="text-xs font-semibold text-[var(--ant-colorText)]">
                       {t.micro.patterns.bullets}
                     </div>
-                    <div className="mt-2 space-y-2 text-xs text-slate-700">
+                    <div className="mt-2 space-y-2">
                       {patterns.bullets.map((x, i) => (
-                        <div
-                          key={i}
-                          className="rounded-xl border border-slate-200 bg-white p-3"
-                        >
-                          {x}
-                        </div>
+                        <Card key={i} styles={{ body: { padding: 12 } }}>
+                          <div className="text-xs text-[var(--ant-colorText)]">
+                            {x}
+                          </div>
+                        </Card>
                       ))}
                     </div>
-                  </div>
+                  </Card>
 
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
-                    <div className="text-xs font-semibold text-slate-900">
+                  <Card>
+                    <div className="text-xs font-semibold text-[var(--ant-colorText)]">
                       {t.micro.patterns.skills}
                     </div>
-                    <div className="mt-2 rounded-xl border border-slate-200 bg-white p-3 text-xs text-slate-700">
-                      {patterns.skills}
-                    </div>
-                    <div className="mt-3 rounded-xl border border-amber-200 bg-amber-50/40 p-3">
-                      <div className="flex items-start gap-2">
-                        <TriangleAlert size={14} className="mt-0.5" />
-                        <div className="text-xs text-slate-700">
-                          {locale === "ru"
-                            ? "Навыки должны быть текстом, без иконок вместо названий."
-                            : "Skills must be plain text (avoid icons replacing names)."}
-                        </div>
+                    <Card className="mt-2" styles={{ body: { padding: 12 } }}>
+                      <div className="text-xs text-[var(--ant-colorText)]">
+                        {patterns.skills}
                       </div>
-                    </div>
-                  </div>
+                    </Card>
+                    <Alert
+                      className="mt-3"
+                      type="warning"
+                      showIcon
+                      icon={<TriangleAlert size={14} />}
+                      message={
+                        locale === "ru"
+                          ? "Навыки должны быть текстом, без иконок вместо названий."
+                          : "Skills must be plain text (avoid icons replacing names)."
+                      }
+                    />
+                  </Card>
                 </div>
-              </div>
+              </Card>
 
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-                    <FileDown size={16} />
-                  </span>
-                  <div className="text-sm font-semibold text-slate-900">
-                    {t.exportTitle}
-                  </div>
-                </div>
-                <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <div className="flex items-center gap-2">
+              <Card
+                styles={{ body: { padding: 20 } }}
+                title={
+                  <Space size={10}>
+                    <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
+                      <FileDown size={16} />
+                    </span>
+                    <span className="text-sm font-semibold text-[var(--ant-colorText)]">
+                      {t.exportTitle}
+                    </span>
+                  </Space>
+                }
+              >
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  <Card styles={{ body: { padding: 14 } }}>
+                    <Space size={10}>
                       <ShieldCheck size={16} />
-                      <div className="text-xs font-semibold text-slate-900">
+                      <span className="text-xs font-semibold text-[var(--ant-colorText)]">
                         {locale === "ru" ? "Безопасный режим" : "Safe mode"}
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-slate-700">
+                      </span>
+                    </Space>
+                    <div className="mt-2 text-xs text-[var(--ant-colorTextSecondary)]">
                       {locale === "ru"
                         ? "ATS-шаблон: 1 колонка, минимум декоративных элементов, стандартные заголовки секций."
                         : "ATS template: 1 column, minimal decoration, standard section headings."}
                     </div>
-                  </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <div className="flex items-center gap-2">
+                  </Card>
+
+                  <Card styles={{ body: { padding: 14 } }}>
+                    <Space size={10}>
                       <TriangleAlert size={16} />
-                      <div className="text-xs font-semibold text-slate-900">
+                      <span className="text-xs font-semibold text-[var(--ant-colorText)]">
                         {locale === "ru" ? "Проверка" : "Checks"}
-                      </div>
-                    </div>
-                    <div className="mt-2 text-xs text-slate-700">
+                      </span>
+                    </Space>
+                    <div className="mt-2 text-xs text-[var(--ant-colorTextSecondary)]">
                       {locale === "ru"
                         ? "Текст выделяется/копируется, ссылки кликаются, на телефоне всё читаемо."
                         : "Text selectable/copyable, links clickable, readable on mobile."}
                     </div>
-                  </div>
+                  </Card>
                 </div>
-              </div>
+              </Card>
             </Space>
           ) : activeSection === "faq" ? (
             <Space direction="vertical" size={14} className="w-full">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-                    <BookOpen size={16} />
-                  </span>
-                  <div className="text-sm font-semibold text-slate-900">
-                    {t.nav.faq}
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <Collapse
-                    items={faqItems.map((it) => ({
-                      key: it.key,
-                      label: (
-                        <Space size={10} wrap>
-                          <span className="flex items-center text-slate-700">
-                            {it.icon}
-                          </span>
-                          <span className="text-slate-900">{it.title}</span>
-                          {!!it.tags?.length && (
-                            <Space size={6} wrap>
-                              {it.tags.map((tag) => (
-                                <Tag key={tag}>{tag}</Tag>
-                              ))}
-                            </Space>
-                          )}
-                        </Space>
-                      ),
-                      children: <div className="pt-1">{it.content}</div>,
-                    }))}
-                  />
-                </div>
-              </div>
+              <Card
+                styles={{ body: { padding: 20 } }}
+                title={
+                  <Space size={10}>
+                    <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
+                      <BookOpen size={16} />
+                    </span>
+                    <span className="text-sm font-semibold text-[var(--ant-colorText)]">
+                      {t.nav.faq}
+                    </span>
+                  </Space>
+                }
+              >
+                <Collapse
+                  items={faqItems.map((it) => ({
+                    key: it.key,
+                    label: (
+                      <Space size={10} wrap>
+                        <span className="flex items-center">{it.icon}</span>
+                        <span>{it.title}</span>
+                        {!!it.tags?.length && (
+                          <Space size={6} wrap>
+                            {it.tags.map((tag) => (
+                              <Tag key={tag}>{tag}</Tag>
+                            ))}
+                          </Space>
+                        )}
+                      </Space>
+                    ),
+                    children: <div className="pt-1">{it.content}</div>,
+                  }))}
+                />
+              </Card>
             </Space>
           ) : (
             <Space direction="vertical" size={14} className="w-full">
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <span className="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-slate-50">
-                    <BadgeCheck size={16} />
-                  </span>
-                  <div className="text-sm font-semibold text-slate-900">
-                    {t.checklistTitle}
-                  </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_360px]">
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+              <Card
+                styles={{ body: { padding: 20 } }}
+                title={
+                  <Space size={10}>
+                    <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--ant-colorBorder)] bg-[var(--ant-colorFillTertiary)]">
+                      <BadgeCheck size={16} />
+                    </span>
+                    <span className="text-sm font-semibold text-[var(--ant-colorText)]">
+                      {t.checklistTitle}
+                    </span>
+                  </Space>
+                }
+              >
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_360px]">
+                  <Card styles={{ body: { padding: 14 } }}>
                     <List
-                      size="small"
                       dataSource={t.checklist}
                       renderItem={(x) => (
                         <List.Item>
@@ -1035,59 +1047,51 @@ export default function RecommendationsFaqPage() {
                         </List.Item>
                       )}
                     />
-                  </div>
+                  </Card>
 
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
-                    <div className="flex items-start gap-2">
-                      <div className="mt-0.5 text-slate-700">
-                        <TriangleAlert size={16} />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-semibold text-slate-900">
-                          {locale === "ru"
-                            ? "Перед отправкой"
-                            : "Before sending"}
-                        </div>
-                        <div className="mt-1 text-xs text-slate-700">
-                          {locale === "ru"
-                            ? "Открой PDF и попробуй: выделить текст, скопировать, кликнуть ссылки, открыть на телефоне."
-                            : "Open the PDF and try: select text, copy, click links, open on mobile."}
-                        </div>
-                      </div>
-                    </div>
+                  <Space direction="vertical" size={12} className="w-full">
+                    <Alert
+                      type="warning"
+                      showIcon
+                      icon={<TriangleAlert size={16} />}
+                      message={
+                        locale === "ru" ? "Перед отправкой" : "Before sending"
+                      }
+                      description={
+                        locale === "ru"
+                          ? "Открой PDF и попробуй: выделить текст, скопировать, кликнуть ссылки, открыть на телефоне."
+                          : "Open the PDF and try: select text, copy, click links, open on mobile."
+                      }
+                    />
 
-                    <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck size={14} />
-                        <div className="text-xs font-semibold text-slate-900">
-                          {locale === "ru" ? "ATS-сейф" : "ATS-safe"}
-                        </div>
-                      </div>
-                      <div className="mt-1 text-xs text-slate-700">
-                        {locale === "ru"
+                    <Alert
+                      type="info"
+                      showIcon
+                      icon={<ShieldCheck size={16} />}
+                      message={locale === "ru" ? "ATS-сейф" : "ATS-safe"}
+                      description={
+                        locale === "ru"
                           ? "Если сомневаешься — отправляй ATS-friendly версию."
-                          : "When in doubt — submit the ATS-friendly version."}
-                      </div>
-                    </div>
+                          : "When in doubt — submit the ATS-friendly version."
+                      }
+                    />
 
-                    <div className="mt-3 rounded-xl border border-slate-200 bg-white p-3">
-                      <div className="flex items-center gap-2">
-                        <Wand2 size={14} />
-                        <div className="text-xs font-semibold text-slate-900">
-                          {locale === "ru"
-                            ? "Быстрый апгрейд"
-                            : "Quick upgrade"}
-                        </div>
-                      </div>
-                      <div className="mt-1 text-xs text-slate-700">
-                        {locale === "ru"
+                    <Alert
+                      type="success"
+                      showIcon
+                      icon={<Wand2 size={16} />}
+                      message={
+                        locale === "ru" ? "Быстрый апгрейд" : "Quick upgrade"
+                      }
+                      description={
+                        locale === "ru"
                           ? "Добавь 2–3 метрики в опыт и перепиши 3 буллета по XYZ — это часто даёт самый большой прирост."
-                          : "Add 2–3 metrics and rewrite 3 bullets using XYZ — biggest ROI in minutes."}
-                      </div>
-                    </div>
-                  </div>
+                          : "Add 2–3 metrics and rewrite 3 bullets using XYZ — biggest ROI in minutes."
+                      }
+                    />
+                  </Space>
                 </div>
-              </div>
+              </Card>
             </Space>
           )}
         </main>

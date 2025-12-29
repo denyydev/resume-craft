@@ -91,7 +91,7 @@ export function SectionsSidebar() {
   );
 
   return (
-    <Card size="small" className="w-[220px]">
+    <Card className="w-full">
       <div className="flex w-full flex-col gap-1.5">
         {itemsWithLabels.map((item) => {
           const visible = isVisible(item.key);
