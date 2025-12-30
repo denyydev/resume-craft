@@ -64,6 +64,7 @@ const SOFT_SKILLS_TAGS = [
 ];
 
 type SkillsBlockProps = {
+  linkId: string;
   kind: "tech" | "soft";
   title: string;
   subtitle: string;
@@ -87,6 +88,7 @@ function SkillsBlock({
   onRemoveTag,
   onChangeNote,
   subtitle,
+  linkId,
 }: SkillsBlockProps) {
   const [input, setInput] = useState("");
 
@@ -108,7 +110,7 @@ function SkillsBlock({
   }, [input, onAddTag]);
 
   return (
-    <Card size="small" styles={{ body: { padding: 16 } }}>
+    <Card size="small" styles={{ body: { padding: 16 } }} id={linkId}>
       <Flex align="center" gap={8}>
         {icon}
         <Text strong>{title}</Text>
@@ -217,9 +219,9 @@ export function SkillsSection() {
 
   return (
     <>
-      {" "}
       <Space orientation="vertical" size={14} style={{ width: "100%" }}>
         <SkillsBlock
+          linkId="techSkills"
           kind="tech"
           title="HARD SKILLS"
           subtitle="Технологии, инструменты и фреймворки, с которыми ты работаешь на практике"
@@ -233,6 +235,7 @@ export function SkillsSection() {
         />
 
         <SkillsBlock
+          linkId="softSkills"
           kind="soft"
           title="SOFT SKILLS"
           subtitle="Навыки взаимодействия и личные качества, влияющие на эффективность работы"

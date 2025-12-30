@@ -95,8 +95,8 @@ export type SkillsBlock = {
 };
 
 export type ResumeSectionKey =
-  | "photo"
   | "summary"
+  | "contacts"
   | "experience"
   | "projects"
   | "techSkills"

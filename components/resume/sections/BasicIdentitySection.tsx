@@ -214,7 +214,7 @@ export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
   );
 
   return (
-    <Card>
+    <Card id="summary">
       <div className="grid grid-cols-1 gap-5 md:grid-cols-[140px_1fr]">
         {photoVisible ? <PhotoBlock t={t} /> : <div />}
         <NameInputsBlock t={t} />

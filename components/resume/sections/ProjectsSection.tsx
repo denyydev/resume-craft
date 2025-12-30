@@ -73,6 +73,7 @@ export function ProjectsSection() {
 
   return (
     <Card
+      id="projects"
       className="w-full"
       title={
         <div className="flex items-center gap-2">

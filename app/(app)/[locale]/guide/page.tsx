@@ -730,7 +730,7 @@ export default function RecommendationsFaqPage() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-4 py-6">
+    <div className="w-full py-5">
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[280px_1fr]">
         <aside className="lg:sticky lg:top-6 lg:self-start">
           <Card>

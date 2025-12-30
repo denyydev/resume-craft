@@ -6,6 +6,7 @@ import { CertificationsSection } from "./CertificationsSection";
 import { EducationSection } from "./EducationSection";
 import { EmploymentPreferencesSection } from "./EmploymentPreferencesSection";
 import { ExperienceSection } from "./ExperienceSection";
+import { LanguagesSection } from "./LanguagesSection";
 import { ProjectsSection } from "./ProjectsSection";
 import { SkillsSection } from "./SkillsSection";
 
@@ -17,6 +18,7 @@ export function EditorShell() {
       <SkillsSection />
       <ProjectsSection />
       <EducationSection />
+      <LanguagesSection />
       <EmploymentPreferencesSection />
       <CertificationsSection />
       <ActivitiesSection />

@@ -7,16 +7,14 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Divider, Empty, Form, Input } from "antd";
+import { Button, Card, Empty, Form, Input } from "antd";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, GraduationCap, Languages } from "lucide-react";
+import { BookOpen } from "lucide-react";
 
 const messages = {
   ru: {
-    sectionTitle: "Образование и языки",
-    sectionSubtitle:
-      "Формальное образование, профильные курсы и уровни владения иностранными языками.",
-    educationTitle: "Образование",
+    sectionTitle: "Образование",
+    sectionSubtitle: "Вуз, колледж, курсы и программы обучения.",
     addEducation: "Добавить запись",
     educationEmpty: "Добавь профильный вуз, колледж или сильные курсы.",
     institution: "Учебное заведение",
@@ -29,19 +27,10 @@ const messages = {
     startPlaceholder: "2017",
     endLabel: "Окончание",
     endPlaceholder: "2021",
-    languagesTitle: "Языки",
-    addLanguage: "Добавить язык",
-    languagesEmpty: "Укажи хотя бы английский и уровень владения.",
-    languageLabel: "Язык",
-    languagePlaceholder: "Английский",
-    levelLabel: "Уровень",
-    levelPlaceholder: "B2 / C1 / носитель",
   },
   en: {
-    sectionTitle: "Education & languages",
-    sectionSubtitle:
-      "Formal education, relevant courses and your proficiency in foreign languages.",
-    educationTitle: "Education",
+    sectionTitle: "Education",
+    sectionSubtitle: "University, college, courses and programs.",
     addEducation: "Add entry",
     educationEmpty: "Add a university, college or strong course.",
     institution: "Institution",
@@ -54,13 +43,6 @@ const messages = {
     startPlaceholder: "2017",
     endLabel: "End",
     endPlaceholder: "2021",
-    languagesTitle: "Languages",
-    addLanguage: "Add language",
-    languagesEmpty: "Add at least English and your level.",
-    languageLabel: "Language",
-    languagePlaceholder: "English",
-    levelLabel: "Level",
-    levelPlaceholder: "B2 / C1 / native",
   },
 } as const;
 
@@ -72,84 +54,65 @@ function normalizeLocale(value: unknown): Locale {
   return base === "en" ? "en" : "ru";
 }
 
+const Row = motion(Card);
+
 export function EducationSection() {
   const rawLocale = useCurrentLocale();
   const locale = normalizeLocale(rawLocale) satisfies Locale;
   const t = messages[locale];
 
   const education = useResumeStore((s) => s.resume.education ?? []);
-  const languages = useResumeStore((s) => s.resume.languages ?? []);
-
-  const {
-    addEducation,
-    updateEducation,
-    removeEducation,
-    addLanguage,
-    updateLanguage,
-    removeLanguage,
-  } = useResumeStore();
+  const { addEducation, updateEducation, removeEducation } = useResumeStore();
 
   return (
     <Card
       className="w-full"
       title={
         <div className="flex items-center gap-2">
-          <GraduationCap size={18} />
-          <span>{t.sectionTitle}</span>
+          <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+            <BookOpen size={16} />
+          </span>
+          <div className="flex flex-col">
+            <div className="leading-tight">{t.sectionTitle}</div>
+            <div className="text-xs opacity-70">{t.sectionSubtitle}</div>
+          </div>
         </div>
       }
+      styles={{ header: { borderBottom: "0px", paddingBottom: 8 } }}
     >
-      <div className="-mt-2 mb-3 opacity-75">{t.sectionSubtitle}</div>
-
-      <div className="flex w-full flex-col gap-6">
-        <Card
-          size="small"
-          className="w-full"
-          title={
-            <div className="flex items-center gap-2">
-              <BookOpen size={16} />
-              <span>{t.educationTitle}</span>
+      <AnimatePresence initial={false} mode="popLayout">
+        {education.length === 0 ? (
+          <motion.div
+            key="empty-edu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="rounded-xl bg-black/3 p-4">
+              <Empty description={t.educationEmpty} />
             </div>
-          }
-        >
-          <AnimatePresence initial={false}>
-            {education.length === 0 ? (
-              <motion.div
-                key="empty-edu"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="list-edu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex w-full flex-col gap-2"
+          >
+            {education.map((item) => (
+              <Row
+                key={item.id}
+                layout
+                size="small"
+                className="w-full rounded-xl"
+                styles={{ body: { padding: 12 } }}
               >
-                <Empty description={t.educationEmpty} />
-              </motion.div>
-            ) : (
-              <div className="flex w-full flex-col gap-3">
-                {education.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, height: 0 }}
-                  >
-                    <Card
-                      size="small"
-                      className="w-full"
-                      extra={
-                        <Button
-                          danger
-                          type="text"
-                          icon={<DeleteOutlined />}
-                          onClick={() => removeEducation(item.id)}
-                        />
-                      }
-                    >
-                      <Form
-                        layout="vertical"
-                        colon={false}
-                        className="space-y-1"
-                      >
-                        <Form.Item label={t.institution}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <Form layout="vertical" colon={false} className="space-y-1">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <Form.Item label={t.institution} className="mb-0">
                           <Input
                             value={item.institution}
                             onChange={(e) =>
@@ -162,7 +125,7 @@ export function EducationSection() {
                           />
                         </Form.Item>
 
-                        <Form.Item label={t.field}>
+                        <Form.Item label={t.field} className="mb-0">
                           <Input
                             value={item.field}
                             onChange={(e) =>
@@ -174,156 +137,73 @@ export function EducationSection() {
                             allowClear
                           />
                         </Form.Item>
+                      </div>
 
-                        <Form.Item label={t.degree}>
+                      <Form.Item label={t.degree} className="mb-0">
+                        <Input
+                          value={item.degree}
+                          onChange={(e) =>
+                            updateEducation(item.id, { degree: e.target.value })
+                          }
+                          placeholder={t.degreePlaceholder}
+                          allowClear
+                        />
+                      </Form.Item>
+
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <Form.Item label={t.startLabel} className="mb-0">
                           <Input
-                            value={item.degree}
+                            value={item.startDate}
                             onChange={(e) =>
                               updateEducation(item.id, {
-                                degree: e.target.value,
+                                startDate: e.target.value,
                               })
                             }
-                            placeholder={t.degreePlaceholder}
-                            allowClear
+                            placeholder={t.startPlaceholder}
+                            prefix={<CalendarOutlined />}
                           />
                         </Form.Item>
 
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                          <Form.Item label={t.startLabel} className="mb-0">
-                            <Input
-                              value={item.startDate}
-                              onChange={(e) =>
-                                updateEducation(item.id, {
-                                  startDate: e.target.value,
-                                })
-                              }
-                              placeholder={t.startPlaceholder}
-                              prefix={<CalendarOutlined />}
-                            />
-                          </Form.Item>
+                        <Form.Item label={t.endLabel} className="mb-0">
+                          <Input
+                            value={item.endDate}
+                            onChange={(e) =>
+                              updateEducation(item.id, {
+                                endDate: e.target.value,
+                              })
+                            }
+                            placeholder={t.endPlaceholder}
+                            prefix={<CalendarOutlined />}
+                          />
+                        </Form.Item>
+                      </div>
+                    </Form>
+                  </div>
 
-                          <Form.Item label={t.endLabel} className="mb-0">
-                            <Input
-                              value={item.endDate}
-                              onChange={(e) =>
-                                updateEducation(item.id, {
-                                  endDate: e.target.value,
-                                })
-                              }
-                              placeholder={t.endPlaceholder}
-                              prefix={<CalendarOutlined />}
-                            />
-                          </Form.Item>
-                        </div>
-                      </Form>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </AnimatePresence>
+                  <Button
+                    danger
+                    type="text"
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeEducation(item.id)}
+                    className="mt-1"
+                  />
+                </div>
+              </Row>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div className="mt-4">
-            <Button
-              type="dashed"
-              icon={<PlusOutlined />}
-              block
-              onClick={addEducation}
-            >
-              {t.addEducation}
-            </Button>
-          </div>
-        </Card>
-
-        <Divider className="my-0" />
-
-        <Card
-          size="small"
-          className="w-full"
-          title={
-            <div className="flex items-center gap-2">
-              <Languages size={16} />
-              <span>{t.languagesTitle}</span>
-            </div>
-          }
+      <div className="mt-4">
+        <Button
+          type="dashed"
+          icon={<PlusOutlined />}
+          block
+          onClick={addEducation}
+          className="rounded-xl"
         >
-          <AnimatePresence initial={false}>
-            {languages.length === 0 ? (
-              <motion.div
-                key="empty-lang"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <Empty description={t.languagesEmpty} />
-              </motion.div>
-            ) : (
-              <div className="flex w-full flex-col gap-3">
-                {languages.map((lang) => (
-                  <motion.div
-                    key={lang.id}
-                    layout
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, height: 0 }}
-                  >
-                    <Card
-                      size="small"
-                      className="w-full"
-                      extra={
-                        <Button
-                          danger
-                          type="text"
-                          icon={<DeleteOutlined />}
-                          onClick={() => removeLanguage(lang.id)}
-                        />
-                      }
-                    >
-                      <Form
-                        layout="vertical"
-                        colon={false}
-                        className="space-y-1"
-                      >
-                        <Form.Item label={t.languageLabel}>
-                          <Input
-                            value={lang.name}
-                            onChange={(e) =>
-                              updateLanguage(lang.id, { name: e.target.value })
-                            }
-                            placeholder={t.languagePlaceholder}
-                            allowClear
-                          />
-                        </Form.Item>
-
-                        <Form.Item label={t.levelLabel} className="mb-0">
-                          <Input
-                            value={lang.level}
-                            onChange={(e) =>
-                              updateLanguage(lang.id, { level: e.target.value })
-                            }
-                            placeholder={t.levelPlaceholder}
-                            allowClear
-                          />
-                        </Form.Item>
-                      </Form>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </AnimatePresence>
-
-          <div className="mt-4">
-            <Button
-              type="dashed"
-              icon={<PlusOutlined />}
-              block
-              onClick={addLanguage}
-            >
-              {t.addLanguage}
-            </Button>
-          </div>
-        </Card>
+          {t.addEducation}
+        </Button>
       </div>
     </Card>
   );

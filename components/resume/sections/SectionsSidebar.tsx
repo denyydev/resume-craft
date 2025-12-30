@@ -2,10 +2,9 @@
 
 import { Card } from "antd";
 import { useParams } from "next/navigation";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import type { Locale } from "@/lib/useCurrentLocale";
-import { useResumeStore } from "@/store/useResumeStore";
 import type { ResumeSectionKey } from "@/types/resume";
 
 import {
@@ -13,29 +12,58 @@ import {
   Award,
   BadgeCheck,
   Briefcase,
-  Eye,
-  EyeOff,
   FileText,
   GraduationCap,
   Languages,
   Layers3,
   ShieldCheck,
   SlidersHorizontal,
-  User,
 } from "lucide-react";
 
-type Item = {
-  key: ResumeSectionKey;
-  icon: React.ReactNode;
-};
+export function useScrollSpy(ids: string[]) {
+  const [activeId, setActiveId] = useState<string>(ids[0] ?? "");
+
+  useEffect(() => {
+    const elements = ids
+      .map((id) => document.getElementById(id))
+      .filter(Boolean) as HTMLElement[];
+
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort(
+            (a, b) =>
+              (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0)
+          );
+
+        if (visible[0]?.target?.id) setActiveId(visible[0].target.id);
+      },
+      {
+        root: null,
+        rootMargin: "-45% 0px -55% 0px",
+        threshold: 0,
+      }
+    );
+
+    elements.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [ids]);
+
+  return activeId;
+}
+
+type Item = { key: ResumeSectionKey; icon: React.ReactNode };
 
 const ITEMS: Item[] = [
-  { key: "photo", icon: <User size={16} /> },
   { key: "summary", icon: <FileText size={16} /> },
+  { key: "contacts", icon: <Briefcase size={16} /> },
   { key: "experience", icon: <Briefcase size={16} /> },
-  { key: "projects", icon: <Layers3 size={16} /> },
   { key: "techSkills", icon: <ShieldCheck size={16} /> },
   { key: "softSkills", icon: <BadgeCheck size={16} /> },
+  { key: "projects", icon: <Layers3 size={16} /> },
   { key: "education", icon: <GraduationCap size={16} /> },
   { key: "languages", icon: <Languages size={16} /> },
   { key: "employmentPreferences", icon: <SlidersHorizontal size={16} /> },
@@ -45,8 +73,8 @@ const ITEMS: Item[] = [
 
 const messages = {
   ru: {
-    photo: "Фото",
     summary: "О себе",
+    contacts: "Контакты",
     experience: "Опыт",
     projects: "Проекты",
     techSkills: "Тех. навыки",
@@ -58,8 +86,8 @@ const messages = {
     activities: "Активности",
   },
   en: {
-    photo: "Photo",
     summary: "Summary",
+    contacts: "Contacts",
     experience: "Experience",
     projects: "Projects",
     techSkills: "Tech skills",
@@ -77,46 +105,71 @@ export function SectionsSidebar() {
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
   const dict = messages[locale];
 
-  const { resume, toggleSection } = useResumeStore();
-
-  const isVisible = (key: ResumeSectionKey) => resume.sectionsVisibility[key];
+  const ids = useMemo(() => ITEMS.map((x) => x.key as string), []);
+  const activeId = useScrollSpy(ids);
 
   const itemsWithLabels = useMemo(
     () =>
       ITEMS.map((it) => ({
         ...it,
         label: dict[it.key],
+        href: `#${it.key}`,
+        isActive: activeId === it.key,
       })),
-    [dict]
+    [dict, activeId]
   );
+
+  // --- Highlight animation (pill that moves)
+  const rowRef = useRef<HTMLAnchorElement | null>(null);
+  const [rowHeight, setRowHeight] = useState(34); // fallback
+
+  useEffect(() => {
+    if (!rowRef.current) return;
+    const h = rowRef.current.getBoundingClientRect().height;
+    if (h) setRowHeight(h);
+  }, []);
+
+  const activeIndex = useMemo(() => {
+    const idx = itemsWithLabels.findIndex((x) => x.isActive);
+    return idx >= 0 ? idx : 0;
+  }, [itemsWithLabels]);
+
+  const gap = 6; // соответствует gap-1.5 (6px)
+  const highlightY = activeIndex * (rowHeight + gap);
 
   return (
     <Card className="w-full">
-      <div className="flex w-full flex-col gap-1.5">
-        {itemsWithLabels.map((item) => {
-          const visible = isVisible(item.key);
+      <div className="relative flex w-full flex-col gap-1.5">
+        {/* moving highlight */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-0 top-0 w-full rounded-lg bg-black/5 transition-transform duration-300 ease-out"
+          style={{
+            height: rowHeight,
+            transform: `translateY(${highlightY}px)`,
+          }}
+        />
 
-          return (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => toggleSection(item.key)}
-              className={[
-                "flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left transition",
-                "hover:bg-black/5 active:scale-[0.99] cursor-pointer",
-                visible ? "opacity-100" : "opacity-45 bg-black/5",
-              ].join(" ")}
-            >
-              <span className="flex shrink-0 items-center">{item.icon}</span>
-              <span className="min-w-0 flex-1 truncate text-sm">
-                {item.label}
-              </span>
-              <span className="flex shrink-0 items-center">
-                {visible ? <Eye size={14} /> : <EyeOff size={14} />}
-              </span>
-            </button>
-          );
-        })}
+        {itemsWithLabels.map((item, idx) => (
+          <a
+            key={item.key}
+            href={item.href}
+            ref={idx === 0 ? rowRef : undefined}
+            className={[
+              "relative z-10 flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left",
+              "no-underline text-inherit", // <- убираем link-style
+              "transition",
+              "hover:bg-black/5 active:scale-[0.99] cursor-pointer",
+              item.isActive ? "opacity-100 font-medium" : "opacity-75",
+            ].join(" ")}
+            aria-current={item.isActive ? "true" : undefined}
+          >
+            <span className="flex shrink-0 items-center">{item.icon}</span>
+            <span className="min-w-0 flex-1 truncate text-sm">
+              {item.label}
+            </span>
+          </a>
+        ))}
       </div>
     </Card>
   );

@@ -96,7 +96,7 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
   );
 
   return (
-    <Card>
+    <Card id="contacts">
       <Form layout="vertical" colon={false} className="grid grid-cols-1 gap-4">
         <Form.Item label={t.position} style={{ marginBottom: 0 }}>
           <Input
