@@ -77,6 +77,7 @@ export function EmploymentPreferencesSection() {
 
   return (
     <Card
+      id="employmentPreferences"
       title={
         <Space>
           <Briefcase size={18} />

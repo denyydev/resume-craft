@@ -1,12 +1,9 @@
 "use client";
 
-import { Card } from "antd";
-import { useParams } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 import type { Locale } from "@/lib/useCurrentLocale";
 import type { ResumeSectionKey } from "@/types/resume";
-
+import { Card } from "antd";
 import {
   Activity,
   Award,
@@ -19,41 +16,8 @@ import {
   ShieldCheck,
   SlidersHorizontal,
 } from "lucide-react";
-
-export function useScrollSpy(ids: string[]) {
-  const [activeId, setActiveId] = useState<string>(ids[0] ?? "");
-
-  useEffect(() => {
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[];
-
-    if (!elements.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0)
-          );
-
-        if (visible[0]?.target?.id) setActiveId(visible[0].target.id);
-      },
-      {
-        root: null,
-        rootMargin: "-45% 0px -55% 0px",
-        threshold: 0,
-      }
-    );
-
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [ids]);
-
-  return activeId;
-}
+import { useParams } from "next/navigation";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type Item = { key: ResumeSectionKey; icon: React.ReactNode };
 
@@ -119,9 +83,8 @@ export function SectionsSidebar() {
     [dict, activeId]
   );
 
-  // --- Highlight animation (pill that moves)
   const rowRef = useRef<HTMLAnchorElement | null>(null);
-  const [rowHeight, setRowHeight] = useState(34); // fallback
+  const [rowHeight, setRowHeight] = useState(34);
 
   useEffect(() => {
     if (!rowRef.current) return;
@@ -134,13 +97,12 @@ export function SectionsSidebar() {
     return idx >= 0 ? idx : 0;
   }, [itemsWithLabels]);
 
-  const gap = 6; // соответствует gap-1.5 (6px)
+  const gap = 6;
   const highlightY = activeIndex * (rowHeight + gap);
 
   return (
     <Card className="w-full">
       <div className="relative flex w-full flex-col gap-1.5">
-        {/* moving highlight */}
         <div
           aria-hidden
           className="pointer-events-none absolute left-0 top-0 w-full rounded-lg bg-black/5 transition-transform duration-300 ease-out"
@@ -157,7 +119,7 @@ export function SectionsSidebar() {
             ref={idx === 0 ? rowRef : undefined}
             className={[
               "relative z-10 flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left",
-              "no-underline text-inherit", // <- убираем link-style
+              "no-underline text-inherit",
               "transition",
               "hover:bg-black/5 active:scale-[0.99] cursor-pointer",
               item.isActive ? "opacity-100 font-medium" : "opacity-75",

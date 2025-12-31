@@ -50,6 +50,7 @@ export function LanguagesSection() {
 
   return (
     <Card
+      id="languages"
       className="w-full"
       title={
         <div className="flex items-center gap-2">

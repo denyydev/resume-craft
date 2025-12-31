@@ -65,6 +65,7 @@ export function CertificationsSection() {
 
   return (
     <Card
+      id="certifications"
       className="w-full"
       title={
         <div className="flex items-center gap-2">

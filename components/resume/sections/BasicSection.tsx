@@ -1,18 +1,13 @@
-"use client"
+"use client";
 
-import { Card, Typography } from "antd"
-import { useCurrentLocale } from "@/lib/useCurrentLocale"
-import { BasicIdentitySection } from "./BasicIdentitySection"
-import { BasicContactsSection } from "./BasicContactsSection"
-
-const { Title, Text } = Typography
+import { useCurrentLocale } from "@/lib/useCurrentLocale";
+import { BasicContactsSection } from "./BasicContactsSection";
+import { BasicIdentitySection } from "./BasicIdentitySection";
 
 const messages = {
   ru: {
     sectionTitle: "Основная информация",
     sectionSubtitle: "Эти данные попадут в шапку резюме.",
-
-    // identity
     photo: "Фото",
     photoSubtitle: "Опционально",
     removePhoto: "Удалить",
@@ -25,8 +20,6 @@ const messages = {
     lastNamePlaceholder: "Иванов",
     firstNamePlaceholder: "Иван",
     patronymicPlaceholder: "Иванович",
-
-    // rest
     position: "Желаемая позиция",
     positionPlaceholder: "Frontend Developer / React",
     email: "Email",
@@ -42,15 +35,15 @@ const messages = {
     linkedin: "LinkedIn",
     linkedinPlaceholder: "username",
     summary: "Краткое резюме",
-    summaryPlaceholder: "2–4 предложения о твоём опыте, стеке и сильных сторонах.",
+    summaryPlaceholder:
+      "2–4 предложения о твоём опыте, стеке и сильных сторонах.",
     reset: "Сбросить все поля",
-    next: "Дальше к опыту"
+    next: "Дальше к опыту",
   },
   en: {
     sectionTitle: "Basic information",
-    sectionSubtitle: "This information will appear in the header of your resume.",
-
-    // identity
+    sectionSubtitle:
+      "This information will appear in the header of your resume.",
     photo: "Photo",
     photoSubtitle: "Optional",
     removePhoto: "Remove",
@@ -63,8 +56,6 @@ const messages = {
     lastNamePlaceholder: "Doe",
     firstNamePlaceholder: "John",
     patronymicPlaceholder: "",
-
-    // rest
     position: "Desired position",
     positionPlaceholder: "Frontend Developer / React",
     email: "Email",
@@ -80,22 +71,23 @@ const messages = {
     linkedin: "LinkedIn",
     linkedinPlaceholder: "username",
     summary: "Summary",
-    summaryPlaceholder: "2–4 sentences about your experience, stack and strengths.",
+    summaryPlaceholder:
+      "2–4 sentences about your experience, stack and strengths.",
     reset: "Reset all fields",
-    next: "Next: Experience"
-  }
-} as const
+    next: "Next: Experience",
+  },
+} as const;
 
-type Locale = keyof typeof messages
+type Locale = keyof typeof messages;
 
 export function BasicSection() {
-  const locale = useCurrentLocale() as Locale
-  const t = messages[locale]
+  const locale = useCurrentLocale() as Locale;
+  const t = messages[locale];
 
   return (
-        <>        
-        <BasicIdentitySection t={t} />
-        <BasicContactsSection t={t} />
-        </>
-  )
+    <>
+      <BasicIdentitySection t={t} />
+      <BasicContactsSection t={t} />
+    </>
+  );
 }

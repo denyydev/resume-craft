@@ -86,6 +86,7 @@ export function ActivitiesSection() {
 
   return (
     <Card
+      id="activities"
       className="w-full"
       title={
         <div className="flex items-center gap-2">

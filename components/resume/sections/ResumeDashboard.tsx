@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Card, Progress, Typography } from "antd";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
   ArrowRight,
@@ -40,7 +41,6 @@ const messages = {
     fix: "Исправить",
     allDoneTitle: "Отлично! Всё заполнено",
     allDoneDesc: "Проверь форматирование и экспортируй в PDF.",
-
     sections: {
       basic: "Шапка",
       summary: "О себе",
@@ -66,7 +66,6 @@ const messages = {
     fix: "Fix",
     allDoneTitle: "Great! Everything is filled",
     allDoneDesc: "Check formatting and export to PDF.",
-
     sections: {
       basic: "Header",
       summary: "Summary",
@@ -82,25 +81,28 @@ const messages = {
   },
 } as const;
 
-function statusStyles(status: Status) {
+function statusPalette(status: Status) {
   if (status === "good") {
     return {
-      chip: "bg-success/10 text-success border-success/25",
+      chip: "text-success bg-success/10",
       dot: "bg-success",
       icon: "text-success",
+      soft: "bg-success/8",
     };
   }
   if (status === "warn") {
     return {
-      chip: "bg-warning/10 text-warning border-warning/25",
+      chip: "text-warning bg-warning/10",
       dot: "bg-warning",
       icon: "text-warning",
+      soft: "bg-warning/8",
     };
   }
   return {
-    chip: "bg-danger/10 text-danger border-danger/25",
+    chip: "text-danger bg-danger/10",
     dot: "bg-danger",
     icon: "text-danger",
+    soft: "bg-danger/8",
   };
 }
 
@@ -135,7 +137,7 @@ function sectionMeta(section: string, dict: (typeof messages)["ru" | "en"]) {
   }
 }
 
-function MiniStat({
+function MetricPill({
   label,
   value,
   status,
@@ -144,24 +146,30 @@ function MiniStat({
   value: string;
   status: Status;
 }) {
-  const s = statusStyles(status);
+  const p = statusPalette(status);
+
   return (
-    <div
+    <motion.div
+      whileHover={{ y: -1 }}
+      whileTap={{ scale: 0.99 }}
       className={[
-        "flex items-center justify-between gap-2 rounded-2xl border px-3 py-2",
-        s.chip,
+        "flex items-center justify-between gap-3 rounded-2xl px-3 py-2",
+        "bg-surface2/60 backdrop-blur",
+        "shadow-sm shadow-black/5 dark:shadow-black/30",
+        "transition",
       ].join(" ")}
     >
-      <div className="flex min-w-0 items-center gap-2">
-        <span className={["h-2 w-2 shrink-0 rounded-full", s.dot].join(" ")} />
-        <span className="min-w-0 truncate text-[12px] font-semibold">
+      <div className="min-w-0 flex items-center gap-2">
+        <span className={["h-2 w-2 shrink-0 rounded-full", p.dot].join(" ")} />
+        <span className="min-w-0 truncate text-[12px] font-semibold text-text">
           {label}
         </span>
       </div>
-      <span className="shrink-0 text-[12px] font-semibold tabular-nums">
+
+      <span className="shrink-0 text-[12px] font-semibold tabular-nums text-text2">
         {value}
       </span>
-    </div>
+    </motion.div>
   );
 }
 
@@ -181,23 +189,31 @@ export function ResumeDashboard({
   );
 
   const badge = scoreLabel(data.percent, dict);
-  const badgeStyles = statusStyles(badge.status);
+  const badgeP = statusPalette(badge.status);
 
   const HintIcon = data.percent >= 85 ? CheckCircle2 : AlertTriangle;
   const hintStatus: Status = data.percent >= 85 ? "good" : "warn";
-  const hintStyles = statusStyles(hintStatus);
+  const hintP = statusPalette(hintStatus);
+
+  const hintMeta = data.nextHint
+    ? sectionMeta(data.nextHint.section, dict)
+    : null;
+  const HintSectionIcon = hintMeta?.icon ?? Sparkles;
 
   return (
     <Card
-      size="small"
-      bodyStyle={{ padding: 14 }}
-      className="!rounded-[20px] !border !border-border !bg-surface"
+      className={[
+        "!rounded-[24px] !border-0",
+        "bg-surface/60 backdrop-blur-xl",
+        "shadow-[0_16px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_60px_rgba(0,0,0,0.35)]",
+      ].join(" ")}
+      bodyStyle={{ padding: 16 }}
     >
-      <div className="space-y-3">
-        <div className="flex items-start justify-between gap-3">
+      <div className="space-y-4">
+        <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface2/70 shadow-sm shadow-black/5 dark:shadow-black/30">
                 <Sparkles className="h-4 w-4 text-text2" />
               </div>
 
@@ -209,15 +225,14 @@ export function ResumeDashboard({
 
                   <span
                     className={[
-                      "inline-flex items-center gap-2 rounded-full border px-2.5 py-1",
+                      "inline-flex items-center gap-2 rounded-full px-2.5 py-1",
                       "text-[12px] font-semibold",
-                      badgeStyles.chip,
+                      badgeP.chip,
+                      "shadow-sm shadow-black/5 dark:shadow-black/30",
                     ].join(" ")}
                   >
                     <span
-                      className={["h-2 w-2 rounded-full", badgeStyles.dot].join(
-                        " "
-                      )}
+                      className={["h-2 w-2 rounded-full", badgeP.dot].join(" ")}
                     />
                     {badge.text}
                   </span>
@@ -230,32 +245,39 @@ export function ResumeDashboard({
             </div>
           </div>
 
-          <div className="shrink-0 text-right">
-            <div className="text-[26px] font-bold leading-none tabular-nums text-text">
-              {data.percent}%
-            </div>
-            <div className="mt-0.5 text-[12px] text-text3">
-              {dict.readiness}
+          <div className="shrink-0">
+            <div className="rounded-2xl bg-surface2/70 px-2 py-2 shadow-sm shadow-black/5 dark:shadow-black/30">
+              <Progress
+                type="circle"
+                percent={data.percent}
+                size={64}
+                strokeWidth={10}
+                format={() => (
+                  <span className="text-[14px] font-bold tabular-nums text-text">
+                    {data.percent}%
+                  </span>
+                )}
+              />
             </div>
           </div>
         </div>
 
-        <div className="rounded-2xl bg-surface2 px-3 py-3">
+        <div className="rounded-2xl bg-surface2/60 px-3 py-3 shadow-sm shadow-black/5 dark:shadow-black/30">
           <Progress
             percent={data.percent}
             showInfo={false}
             size="small"
             className="m-0"
           />
-          <div className="mt-2 flex flex-col gap-1 text-[12px] text-text3">
+          <div className="mt-2 flex items-center justify-between text-[12px] text-text3">
             <span>{dict.minimum}</span>
             <span>{dict.strong}</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {data.metrics.map((m) => (
-            <MiniStat
+            <MetricPill
               key={m.key}
               label={m.label}
               value={m.value}
@@ -264,67 +286,76 @@ export function ResumeDashboard({
           ))}
         </div>
 
-        <div className="rounded-2xl bg-surface px-3 py-3">
-          {data.nextHint ? (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface2">
-                  <HintIcon
-                    className={["h-5 w-5", hintStyles.icon].join(" ")}
-                  />
+        <div className="rounded-2xl bg-surface2/60 p-3 shadow-sm shadow-black/5 dark:shadow-black/30">
+          <AnimatePresence mode="wait" initial={false}>
+            {data.nextHint ? (
+              <motion.div
+                key="hint"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="flex flex-col gap-3"
+              >
+                <div className="flex items-start gap-3">
+                  <div
+                    className={[
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl",
+                      hintP.soft,
+                    ].join(" ")}
+                  >
+                    <HintIcon className={["h-5 w-5", hintP.icon].join(" ")} />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-surface/70 px-2 py-1 text-[12px] font-semibold text-text2 shadow-sm shadow-black/5 dark:shadow-black/30">
+                      <HintSectionIcon className="h-4 w-4" />
+                      {hintMeta?.label ?? dict.sections.default}
+                    </div>
+
+                    <div className="mt-2 text-[13px] font-semibold text-text">
+                      {data.nextHint.title}
+                    </div>
+                    <div className="mt-1 whitespace-pre-line text-[12px] text-text2">
+                      {data.nextHint.description}
+                    </div>
+                  </div>
+                </div>
+
+                {onNavigate && (
+                  <Button
+                    type="primary"
+                    block
+                    className="!rounded-full !shadow-none"
+                    onClick={() => onNavigate(data.nextHint.section)}
+                    icon={<ArrowRight className="h-4 w-4" />}
+                  >
+                    {dict.fix}
+                  </Button>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="done"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="flex items-start gap-3"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-success/10">
+                  <CheckCircle2 className="h-5 w-5 text-success" />
                 </div>
 
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {(() => {
-                      const meta = sectionMeta(data.nextHint.section, dict);
-                      const Icon = meta.icon;
-                      return (
-                        <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-text2">
-                          <Icon className="h-4 w-4" />
-                          {meta.label}
-                        </span>
-                      );
-                    })()}
+                  <div className="text-[13px] font-semibold text-text">
+                    {dict.allDoneTitle}
                   </div>
-
-                  <div className="mt-1 text-[13px] font-semibold text-text">
-                    {data.nextHint.title}
-                  </div>
-                  <div className="mt-1 whitespace-pre-line text-[12px] text-text2">
-                    {data.nextHint.description}
+                  <div className="mt-1 text-[12px] text-text2">
+                    {dict.allDoneDesc}
                   </div>
                 </div>
-              </div>
-
-              {onNavigate && (
-                <Button
-                  type="primary"
-                  block
-                  className="!rounded-full"
-                  onClick={() => onNavigate(data.nextHint.section)}
-                  icon={<ArrowRight className="h-4 w-4" />}
-                >
-                  {dict.fix}
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-success/25 bg-success/10">
-                <CheckCircle2 className="h-5 w-5 text-success" />
-              </div>
-
-              <div className="min-w-0">
-                <div className="text-[13px] font-semibold text-text">
-                  {dict.allDoneTitle}
-                </div>
-                <div className="mt-1 text-[12px] text-text2">
-                  {dict.allDoneDesc}
-                </div>
-              </div>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </Card>
