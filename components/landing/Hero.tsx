@@ -2,14 +2,15 @@
 
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Button, ConfigProvider } from "antd";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import React from "react";
 
-const container = {
+const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.06, delayChildren: 0.04 } },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 14, filter: "blur(8px)" },
   show: {
     opacity: 1,
@@ -28,7 +29,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Tag({ children }: { children: string }) {
+function Tag({ children }: { children: React.ReactNode }) {
   return (
     <span className="rounded-full border border-white/14 bg-white/[0.07] px-3 py-1 text-xs text-white/75 shadow-[0_0_0_1px_rgba(255,255,255,0.03)] hover:bg-white/[0.10]">
       {children}
@@ -88,7 +89,7 @@ export default function Hero() {
                            active:!from-violet-300 active:!to-fuchsia-300
                            !shadow-[0_10px_30px_-14px_rgba(168,85,247,0.65)]"
                 icon={<ArrowRightOutlined />}
-                href={"./ru/editor"}
+                href="/ru/editor"
               >
                 Создать резюме
               </Button>
@@ -105,7 +106,7 @@ export default function Hero() {
             <div className="relative rounded-[28px] border border-white/12 bg-white/[0.035] p-5 backdrop-blur-xl">
               <div className="flex items-center justify-between">
                 <div className="text-xs font-medium text-white/65">
-                  Output & Structure
+                  Output &amp; Structure
                 </div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/[0.06] px-3 py-1 text-xs text-white/70">
                   <span className="h-1.5 w-1.5 rounded-full bg-violet-300/80" />
