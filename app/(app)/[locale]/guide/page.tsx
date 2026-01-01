@@ -1037,7 +1037,7 @@ export default function RecommendationsFaqPage() {
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_360px]">
                   <Card styles={{ body: { padding: 14 } }}>
                     <List
-                      dataSource={t.checklist}
+                      dataSource={[...t.checklist]}
                       renderItem={(x) => (
                         <List.Item>
                           <Space size={10}>
