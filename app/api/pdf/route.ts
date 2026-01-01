@@ -5,7 +5,10 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const { id, locale } = await req.json();
+    const { id, locale } = (await req.json()) as {
+      id?: string;
+      locale?: string;
+    };
 
     if (!id || !locale) {
       return NextResponse.json(
@@ -18,21 +21,21 @@ export async function POST(req: NextRequest) {
     const base = `${url.protocol}//${url.host}`;
     const target = `${base}/${locale}/print/${id}`;
 
-    console.log("PDF target URL:", target);
-
     const browser = await playwright.chromium.launch();
     const page = await browser.newPage();
 
     await page.goto(target, { waitUntil: "networkidle" });
 
-    const pdf = await page.pdf({
+    const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
     });
 
     await browser.close();
 
-    return new NextResponse(pdf, {
+    const body = new Uint8Array(pdfBuffer);
+
+    return new NextResponse(body, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="resume-${id}.pdf"`,
