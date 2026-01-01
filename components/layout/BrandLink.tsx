@@ -50,3 +50,4 @@ export function BrandLink({ href }: { href: string }) {
     </Link>
   );
 }
+

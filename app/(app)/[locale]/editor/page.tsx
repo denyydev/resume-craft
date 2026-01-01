@@ -10,9 +10,9 @@ import {
 import { useCallback, useEffect, useMemo } from "react";
 
 import { EditorBottomBar } from "@/components/editor/EditorBottomBar";
-import { ResetResumeButton } from "@/components/resume/ResetButton";
-import { SaveResumeButton } from "@/components/resume/SaveResumeButton";
-import { EditorShell } from "@/components/resume/sections/EditorShell";
+import { EditorShell } from "@/components/resume/EditorShell";
+import { ResetResumeButton } from "@/components/resume/nav/ResetButton";
+import { SaveResumeButton } from "@/components/resume/nav/SaveResumeButton";
 import { ResumeDashboard } from "@/components/resume/sections/ResumeDashboard";
 import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
 import type { Locale } from "@/lib/useCurrentLocale";

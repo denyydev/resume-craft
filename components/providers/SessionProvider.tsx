@@ -12,3 +12,4 @@ export function SessionProvider({
 }) {
   return <NextSessionProvider session={session}>{children}</NextSessionProvider>
 }
+

@@ -1,10 +1,10 @@
 "use client";
 
-import AccentColorPicker from "@/components/resume/AccentColorPicker";
-import { DownloadPdfButton } from "@/components/resume/DownloadPdfButton";
-import { PhotoExportToggle } from "@/components/resume/PhotoExportToggle";
+import AccentColorPicker from "@/components/resume/nav/AccentColorPicker";
+import { DownloadPdfButton } from "@/components/resume/nav/DownloadPdfButton";
+import { PhotoExportToggle } from "@/components/resume/nav/PhotoExportToggle";
 import { ResumePreview } from "@/components/resume/ResumePreview";
-import { TemplateSelector } from "@/components/resume/sections/TemplateSelector";
+import { TemplateSelector } from "@/components/resume/templates/TemplateSelector";
 import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { Button, Card, Divider, Grid } from "antd";

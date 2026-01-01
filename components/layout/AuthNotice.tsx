@@ -31,18 +31,18 @@ export function AuthNotice({ locale }: Props) {
   }[locale];
 
   return (
-    <div className="border-b border-slate-900/10 bg-white/80 backdrop-blur dark:border-white/10 dark:bg-white/[0.04]">
+    <div className="border-b border-slate-200 bg-blue-50/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/90">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3">
         <div className="flex items-start gap-3">
-          <div className="mt-0.5 text-violet-600 dark:text-violet-300">
+          <div className="mt-0.5 text-blue-600 dark:text-blue-400">
             <Info size={18} />
           </div>
 
           <div className="text-sm">
-            <div className="font-semibold text-slate-900 dark:text-white">
+            <div className="font-semibold text-slate-900 dark:text-slate-100">
               {t.title}
             </div>
-            <div className="text-slate-600 dark:text-white/60">
+            <div className="text-slate-700 dark:text-slate-300">
               {t.description}
             </div>
           </div>
@@ -52,7 +52,7 @@ export function AuthNotice({ locale }: Props) {
           <button
             onClick={() => setClosed(true)}
             className="rounded-full px-2 py-1 text-xs text-slate-500 hover:text-slate-900
-                       dark:text-white/40 dark:hover:text-white/70 cursor-pointer"
+                       dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer"
             aria-label="Close"
           >
             ✕

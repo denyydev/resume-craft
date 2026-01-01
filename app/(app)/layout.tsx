@@ -1,10 +1,10 @@
 "use client";
 
-import { AuthButton } from "@/components/AuthButton";
-import { AuthNotice } from "@/components/AuthNotice";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ThemeSwitcher } from "@/components/ThemeSwitcher";
-import { BrandLink } from "@/components/ui/BrandLink";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
+import { AuthButton } from "@/components/layout/AuthButton";
+import { AuthNotice } from "@/components/layout/AuthNotice";
+import { BrandLink } from "@/components/layout/BrandLink";
 import type { MenuProps } from "antd";
 import { Dropdown, Layout, Menu, Space } from "antd";
 import { FolderOpen, LayoutDashboard, ShieldCheck } from "lucide-react";

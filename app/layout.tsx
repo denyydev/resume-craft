@@ -1,8 +1,8 @@
 import type { ReactNode } from "react"
 import "antd/dist/reset.css"
 import "./globals.css"
-import { SessionProvider } from "@/components/SessionProvider"
-import { ThemeProvider } from "@/components/ThemeProvider"
+import { SessionProvider } from "@/components/providers/SessionProvider"
+import { ThemeProvider } from "@/components/providers/ThemeProvider"
 
 export const metadata = {
   title: "ResumeCraft",

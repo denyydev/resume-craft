@@ -105,24 +105,26 @@ export function SectionsSidebar() {
       <div className="relative flex w-full flex-col gap-1.5">
         <div
           aria-hidden
-          className="pointer-events-none absolute left-0 top-0 w-full rounded-lg bg-black/5 transition-transform duration-300 ease-out"
+          className="pointer-events-none absolute left-0 top-0 w-full rounded-lg transition-transform duration-300 ease-out"
           style={{
             height: rowHeight,
             transform: `translateY(${highlightY}px)`,
+            backgroundColor: "rgb(2 6 23 / 0.05)",
           }}
         />
 
         {itemsWithLabels.map((item, idx) => (
-          <a
+          <span
             key={item.key}
             href={item.href}
             ref={idx === 0 ? rowRef : undefined}
             className={[
               "relative z-10 flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left!",
-              "no-underline text-inherit",
-              "transition",
-              "hover:bg-black/5 active:scale-[0.99] cursor-pointer",
-              item.isActive ? "opacity-100 font-medium" : "opacity-75",
+              "no-underline transition cursor-pointer",
+              "hover:bg-slate-100 active:scale-[0.99] dark:hover:bg-slate-800",
+              item.isActive
+                ? "font-medium text-blue-600 dark:text-blue-400"
+                : "text-slate-700 dark:text-slate-400",
             ].join(" ")}
             aria-current={item.isActive ? "true" : undefined}
           >
@@ -130,7 +132,7 @@ export function SectionsSidebar() {
             <span className="min-w-0 flex-1 truncate text-sm">
               {item.label}
             </span>
-          </a>
+          </span>
         ))}
       </div>
     </Card>

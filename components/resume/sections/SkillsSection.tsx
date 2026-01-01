@@ -5,7 +5,7 @@ import { CodeOutlined, MessageOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Card, Divider, Flex, Input, Space, Typography } from "antd";
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useMemo, useState } from "react";
-import { SkillTag } from "./SkillTag";
+import { SkillTag } from "../nav/SkillTag";
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
