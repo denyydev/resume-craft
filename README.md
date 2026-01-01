@@ -162,7 +162,7 @@ _Добавьте скриншоты интерфейса приложения_
 
 **Ваше имя**
 
-- GitHub: [@yourusername](https://github.com/denyydev)
+- GitHub: [@denyydev](https://github.com/denyydev)
 - Email: denyspolehenky@gmail.com
 
 ---
