@@ -1,46 +1,44 @@
-import { notFound } from "next/navigation"
-import { prisma } from "@/lib/prisma"
-import { ResumePrint } from "@/components/resume/ResumePrint"
-import type { ResumeData } from "@/types/resume"
+import { ResumePrint } from "@/components/resume/ResumePrint";
+import { prisma } from "@/lib/prisma";
+import type { Locale } from "@/lib/useCurrentLocale";
+import type { ResumeData } from "@/types/resume";
+import { notFound } from "next/navigation";
 
-export const runtime = "nodejs"
-export const dynamic = "force-dynamic"
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 interface PrintPageProps {
   params: Promise<{
-    locale: string
-    id: string
-  }>
+    locale: string;
+    id: string;
+  }>;
+}
+
+function normalizeLocale(value: string): Locale {
+  const base = value.split("-")[0]?.toLowerCase();
+  return base === "en" ? "en" : "ru";
 }
 
 export default async function PrintPage(props: PrintPageProps) {
-  const { locale, id } = await props.params
+  const { locale: localeRaw, id } = await props.params;
 
-  console.log("PrintPage params resolved:", { locale, id })
+  if (!id) notFound();
 
-  if (!id) {
-    console.warn("PrintPage: no id in params")
-    notFound()
-  }
+  let resume: { data: unknown } | null = null;
 
   try {
-    const resume = await prisma.resume.findUnique({
+    resume = await prisma.resume.findUnique({
       where: { id },
-    })
-
-    if (!resume) {
-      console.warn("PrintPage: resume not found", { id })
-      notFound()
-    }
-
-    return (
-      <ResumePrint
-        data={resume.data as ResumeData}
-        locale={locale}
-      />
-    )
+      select: { data: true },
+    });
   } catch (error) {
-    console.error("PrintPage error:", error)
-    throw error
+    console.error("PrintPage prisma error:", error);
+    throw error;
   }
+
+  if (!resume) notFound();
+
+  const locale: Locale = normalizeLocale(localeRaw);
+
+  return <ResumePrint data={resume.data as ResumeData} locale={locale} />;
 }
