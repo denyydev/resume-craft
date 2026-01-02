@@ -227,34 +227,37 @@ export const useResumeStore = create<ResumeState>((set) => ({
 
   loadResume: (resume) =>
     set(() => {
-      const r = resume as any;
       return {
         resume: {
           ...createEmptyResume(),
           ...resume,
           accentColor: resume.accentColor ?? DEFAULT_ACCENT_COLOR,
-          includePhoto: r.includePhoto ?? DEFAULT_INCLUDE_PHOTO,
+          includePhoto: resume.includePhoto ?? DEFAULT_INCLUDE_PHOTO,
           techSkills:
             resume.techSkills ??
             ({
               tags: [],
-              note: typeof r.skills === "string" ? r.skills : "",
+              note: typeof (resume as unknown as { skills?: string }).skills === "string"
+                ? (resume as unknown as { skills: string }).skills
+                : "",
             } as Resume["techSkills"]),
           softSkills:
             resume.softSkills ??
             ({
               tags: [],
-              note: typeof r.softSkills === "string" ? r.softSkills : "",
+              note: typeof (resume as unknown as { softSkills?: string }).softSkills === "string"
+                ? (resume as unknown as { softSkills: string }).softSkills
+                : "",
             } as Resume["softSkills"]),
           employmentPreferences:
-            r.employmentPreferences ??
+            resume.employmentPreferences ??
             createEmptyResume().employmentPreferences,
           certifications:
-            r.certifications ?? createEmptyResume().certifications,
-          activities: r.activities ?? createEmptyResume().activities,
+            resume.certifications ?? createEmptyResume().certifications,
+          activities: resume.activities ?? createEmptyResume().activities,
           sectionsVisibility: {
             ...DEFAULT_SECTIONS_VISIBILITY,
-            ...(r.sectionsVisibility ?? {}),
+            ...(resume.sectionsVisibility ?? {}),
           },
         },
       };

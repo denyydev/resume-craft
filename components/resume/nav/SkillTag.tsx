@@ -21,7 +21,7 @@ import {
 
 const MotionTag = motion.create(Tag)
 
-type IconComp = React.ComponentType<any>
+type IconComp = React.ComponentType<Record<string, never>>
 
 type TagMeta = {
   color?: PresetColorType | "default"

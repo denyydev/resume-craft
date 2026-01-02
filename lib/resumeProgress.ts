@@ -202,7 +202,7 @@ export function computeResumeScore(resume: Resume, locale: Locale = "ru") {
   const certAnyOk = certs.length > 0;
   const certStrongOk =
     certs.some((c) => has(c.name) && has(c.issuer)) ||
-    certs.some((c) => has(c.name) && has((c as any).year));
+    certs.some((c) => has(c.name) && has(c.year));
 
   const actsAnyOk = acts.length > 0;
   const actsStrongOk = acts.some((a) => has(a.name) && has(a.description));

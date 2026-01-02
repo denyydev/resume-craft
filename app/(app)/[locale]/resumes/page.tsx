@@ -453,7 +453,7 @@ export default function MyResumesPage() {
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {paginated.map((resume) => {
-                  const data = (resume.data || {}) as any;
+                  const data = (resume.data || {}) as ResumeData;
                   const title = data.fullName || t.newResume;
                   const subtitle = data.position || t.noPosition;
                   const date = formatDate(resume.updatedAt, locale);
@@ -471,7 +471,7 @@ export default function MyResumesPage() {
                       >
                         <ResumePreviewThumb
                           data={data}
-                          locale={locale as any}
+                          locale={locale}
                           className="mb-3"
                         />
 
