@@ -117,10 +117,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             borderRadius: 999,
             controlHeight: 40,
           },
-          TextArea: {
-            borderRadius: 14,
-            borderRadiusLG: 16,
-          },
           Modal: {
             borderRadiusLG: 22,
             colorBgElevated: isDark ? "rgba(15,23,42,0.98)" : "#ffffff",
@@ -152,4 +148,3 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     </ConfigProvider>
   );
 }
-
