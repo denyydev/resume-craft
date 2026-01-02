@@ -207,7 +207,6 @@ export function ResumeDashboard({
         "bg-surface/60 backdrop-blur-xl",
         "shadow-[0_16px_50px_rgba(0,0,0,0.08)] dark:shadow-[0_16px_60px_rgba(0,0,0,0.35)]",
       ].join(" ")}
-      bodyStyle={{ padding: 16 }}
     >
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">

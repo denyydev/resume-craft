@@ -2,6 +2,12 @@
 
 import type { Locale } from "@/lib/useCurrentLocale";
 import type { Resume, ResumeSectionKey } from "@/types/resume";
+import {
+  normalizeGithubLink,
+  normalizeTelegramLink,
+  normalizeLinkedinLink,
+  normalizeGenericUrl,
+} from "@/lib/normalizeLinks";
 
 type ResumeTemplateProps = {
   data: Resume;
@@ -66,14 +72,19 @@ export function AtsFriendlyTemplate({ data }: ResumeTemplateProps) {
   const visible = (key: ResumeSectionKey) =>
     sectionsVisibility?.[key] !== false;
 
+  const githubLink = normalizeGithubLink(contacts.github);
+  const telegramLink = normalizeTelegramLink(contacts.telegram);
+  const linkedinLink = normalizeLinkedinLink(contacts.linkedin);
+  const websiteLink = normalizeGenericUrl(contacts.website);
+
   const headerLine = joinNonEmpty([
     lineOrDash(contacts.location),
     lineOrDash(contacts.email),
     lineOrDash(contacts.phone),
-    lineOrDash(contacts.website),
-    lineOrDash(contacts.linkedin),
-    lineOrDash(contacts.github),
-    lineOrDash(contacts.telegram),
+    websiteLink,
+    linkedinLink,
+    githubLink,
+    telegramLink,
   ]);
 
   const tech = [asCommaList(techSkills?.tags), (techSkills?.note ?? "").trim()]
@@ -191,9 +202,10 @@ export function AtsFriendlyTemplate({ data }: ResumeTemplateProps) {
                   p.name?.trim() ? p.name.trim() : "Project",
                   p.role?.trim() ? p.role.trim() : "",
                 ]);
+                const projectLink = normalizeGenericUrl(p.link);
                 const meta = joinNonEmpty([
                   p.stack?.trim() ? `Stack: ${p.stack.trim()}` : "",
-                  p.link?.trim() ? `Link: ${p.link.trim()}` : "",
+                  projectLink ? `Link: ${projectLink}` : "",
                 ]);
 
                 return (
@@ -260,14 +272,17 @@ export function AtsFriendlyTemplate({ data }: ResumeTemplateProps) {
           <section>
             {sectionTitle("Certifications")}
             <div className="space-y-1">
-              {certifications.map((c) => (
-                <p key={c.id} className="break-words">
-                  <span className="font-bold">{c.name}</span>
-                  {c.issuer?.trim() ? `, ${c.issuer.trim()}` : ""}
-                  {c.year?.trim() ? ` (${c.year.trim()})` : ""}
-                  {c.link?.trim() ? ` — ${c.link.trim()}` : ""}
-                </p>
-              ))}
+              {certifications.map((c) => {
+                const certLink = normalizeGenericUrl(c.link);
+                return (
+                  <p key={c.id} className="break-words">
+                    <span className="font-bold">{c.name}</span>
+                    {c.issuer?.trim() ? `, ${c.issuer.trim()}` : ""}
+                    {c.year?.trim() ? ` (${c.year.trim()})` : ""}
+                    {certLink ? ` — ${certLink}` : ""}
+                  </p>
+                );
+              })}
             </div>
           </section>
         )}
@@ -276,25 +291,28 @@ export function AtsFriendlyTemplate({ data }: ResumeTemplateProps) {
           <section>
             {sectionTitle("Activities")}
             <div className="space-y-2">
-              {activities.map((a) => (
-                <div key={a.id} className="break-inside-avoid">
-                  <p className="font-bold break-words">
-                    {joinNonEmpty([
-                      a.type?.trim() ? a.type.trim() : "",
-                      a.name?.trim() ? a.name.trim() : "",
-                      a.role?.trim() ? a.role.trim() : "",
-                    ])}
-                  </p>
-                  {a.link?.trim() && (
-                    <p className="text-[10px] break-words">{a.link.trim()}</p>
-                  )}
-                  {a.description?.trim() && (
-                    <p className="mt-1 whitespace-pre-line break-words">
-                      {a.description}
+              {activities.map((a) => {
+                const activityLink = normalizeGenericUrl(a.link);
+                return (
+                  <div key={a.id} className="break-inside-avoid">
+                    <p className="font-bold break-words">
+                      {joinNonEmpty([
+                        a.type?.trim() ? a.type.trim() : "",
+                        a.name?.trim() ? a.name.trim() : "",
+                        a.role?.trim() ? a.role.trim() : "",
+                      ])}
                     </p>
-                  )}
-                </div>
-              ))}
+                    {activityLink && (
+                      <p className="text-[10px] break-words">{activityLink}</p>
+                    )}
+                    {a.description?.trim() && (
+                      <p className="mt-1 whitespace-pre-line break-words">
+                        {a.description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
