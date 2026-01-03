@@ -1,13 +1,12 @@
 "use client";
 
-import { Grid } from "antd";
 import {
   useParams,
   usePathname,
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 
 import { EditorBottomBar } from "@/components/editor/EditorBottomBar";
 import { EditorShell } from "@/components/resume/EditorShell";
@@ -18,8 +17,6 @@ import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
 import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 
-const { useBreakpoint } = Grid;
-
 const messages = {
   ru: { openPreview: "Предпросмотр / Скачать PDF" },
   en: { openPreview: "Preview / Download PDF" },
@@ -29,9 +26,6 @@ export default function EditorPage() {
   const params = useParams<{ locale: Locale }>();
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
   const dict = messages[locale];
-
-  const screens = useBreakpoint();
-  const isMobile = useMemo(() => !screens.sm, [screens.sm]);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -71,34 +65,22 @@ export default function EditorPage() {
 
   return (
     <div className="min-h-screen bg-bg pb-12">
-      <div className="flex gap-5 py-5">
-        {!isMobile && (
-          <aside className="w-[240px] shrink-0">
-            <div className="sticky top-5">
-              <SectionsSidebar />
-            </div>
-          </aside>
-        )}
+      <div className="grid grid-cols-[240px_1fr_360px] gap-5 py-5">
+        <aside className="shrink-0">
+          <div className="sticky top-5">
+            <SectionsSidebar />
+          </div>
+        </aside>
 
-        <main className="min-w-0 flex-1">
+        <main className="min-w-0">
           <EditorShell />
         </main>
 
-        {!isMobile && (
-          <aside className="w-[360px] shrink-0">
-            <div className="sticky top-5">
-              <ResumeDashboard />
-            </div>
-          </aside>
-        )}
-
-        {isMobile && (
-          <div className="grid w-full grid-cols-1 gap-5">
-            <SectionsSidebar />
-            <EditorShell />
+        <aside className="shrink-0">
+          <div className="sticky top-5">
             <ResumeDashboard />
           </div>
-        )}
+        </aside>
       </div>
 
       <EditorBottomBar

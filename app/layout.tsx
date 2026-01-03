@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import { Inter } from "next/font/google"
 import "antd/dist/reset.css"
 import "./globals.css"
+import { AntdRegistry } from "@/components/providers/AntdRegistry"
 import { SessionProvider } from "@/components/providers/SessionProvider"
 import { ThemeProvider } from "@/components/providers/ThemeProvider"
 import { getServerSession } from "next-auth"
@@ -25,11 +26,13 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning className={inter.variable}>
       <body className="bg-slate-100 dark:bg-slate-900 transition-colors font-sans">
-        <SessionProvider session={session}>
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
-        </SessionProvider>
+        <AntdRegistry>
+          <SessionProvider session={session}>
+            <ThemeProvider>
+              {children}
+            </ThemeProvider>
+          </SessionProvider>
+        </AntdRegistry>
       </body>
     </html>
   )
