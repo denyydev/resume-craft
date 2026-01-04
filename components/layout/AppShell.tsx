@@ -6,7 +6,7 @@ import { AuthButton } from "@/components/layout/AuthButton";
 import { AuthNotice } from "@/components/layout/AuthNotice";
 import { BrandLink } from "@/components/layout/BrandLink";
 import type { MenuProps } from "antd";
-import { Dropdown, Layout, Menu, Space } from "antd";
+import { Layout, Menu, Space } from "antd";
 import { FolderOpen, LayoutDashboard, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -60,8 +60,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <Layout className="h-screen overflow-hidden">
-      <Header className="sticky top-0 z-50 h-16 flex items-center gap-4 border-b border-slate-400/20 px-4">
-        <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between gap-4">
+      <Header className="sticky top-0 z-50flex items-center gap-4 border-b border-slate-400/20 px-4">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4">
           <div className="flex items-center gap-5">
             <BrandLink href={editorHref} />
 
@@ -74,22 +74,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="sm:hidden">
-              <Dropdown
-                trigger={["click"]}
-                menu={{
-                  items,
-                  selectable: true,
-                  selectedKeys: [selectedKey],
-                }}
-                placement="bottomRight"
-              >
-                <a className="rounded-full border border-[rgba(148,163,184,0.25)] px-3 py-2">
-                  {currentLocale === "en" ? "Menu" : "Меню"}
-                </a>
-              </Dropdown>
-            </div>
-
             <Space
               size={10}
               separator={
@@ -110,4 +94,3 @@ export function AppShell({ children }: { children: ReactNode }) {
     </Layout>
   );
 }
-

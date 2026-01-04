@@ -1,21 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/authOptions";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    console.log("POST /api/resumes body:", body); // для отладки
-
-    const { data, locale, title, userEmail } = body;
+    const session = await getServerSession(authOptions);
+    const userEmail = session?.user?.email;
 
     if (!userEmail) {
       return NextResponse.json(
-        { error: "Unauthorized: no userEmail in body" },
+        { error: "Unauthorized" },
         { status: 401 }
       );
     }
+
+    const body = await req.json();
+
+    const { data, locale, title } = body;
 
     const resume = await prisma.resume.create({
       data: {
@@ -31,6 +35,68 @@ export async function POST(req: NextRequest) {
     console.error("POST /api/resumes error:", e);
     return NextResponse.json(
       { error: "Failed to save resume" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    const userEmail = session?.user?.email;
+
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const url = new URL(req.url);
+    const resumeId = url.searchParams.get("resumeId");
+
+    if (!resumeId) {
+      return NextResponse.json(
+        { error: "resumeId is required" },
+        { status: 400 }
+      );
+    }
+
+    const existingResume = await prisma.resume.findUnique({
+      where: { id: resumeId },
+    });
+
+    if (!existingResume) {
+      return NextResponse.json(
+        { error: "Resume not found" },
+        { status: 404 }
+      );
+    }
+
+    if (existingResume.userEmail !== userEmail) {
+      return NextResponse.json(
+        { error: "Forbidden" },
+        { status: 403 }
+      );
+    }
+
+    const body = await req.json();
+    const { data, locale, title } = body;
+
+    const updatedResume = await prisma.resume.update({
+      where: { id: resumeId },
+      data: {
+        locale: locale ?? existingResume.locale,
+        title: title ?? existingResume.title ?? data?.position ?? "",
+        data,
+      },
+    });
+
+    return NextResponse.json({ id: updatedResume.id });
+  } catch (e) {
+    console.error("PUT /api/resumes error:", e);
+    return NextResponse.json(
+      { error: "Failed to update resume" },
       { status: 500 }
     );
   }

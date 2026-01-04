@@ -12,6 +12,7 @@ import {
   Pagination,
   Skeleton,
   Tooltip,
+  message,
 } from "antd";
 import { Clock, File, Plus, Search, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -187,6 +188,7 @@ export default function MyResumesPage() {
   const [resumes, setResumes] = useState<ResumeListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
@@ -249,6 +251,68 @@ export default function MyResumesPage() {
   }, [filtered, page]);
 
   const createHref = `/${locale}/editor`;
+
+  const sanitizeFilename = (name: string): string => {
+    return name
+      .replace(/[<>:"/\\|?*]/g, "")
+      .replace(/\s+/g, "-")
+      .substring(0, 100)
+      .trim();
+  };
+
+  const getPdfFilename = (resume: ResumeListItem): string => {
+    const data = (resume.data || {}) as ResumeData;
+    const name = data.fullName || data.position || "resume";
+    const sanitized = sanitizeFilename(name);
+    return `${sanitized}-${resume.id.substring(0, 8)}.pdf`;
+  };
+
+  const onDownloadPdf = async (resume: ResumeListItem, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const resumeId = resume.id;
+    if (downloadingId === resumeId) return;
+
+    try {
+      setDownloadingId(resumeId);
+
+      const pdfRes = await fetch("/api/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: resumeId, locale }),
+      });
+
+      if (!pdfRes.ok) {
+        const error = (await pdfRes.json()) as { error?: string };
+        message.error(
+          locale === "ru"
+            ? error.error || "Не удалось скачать PDF"
+            : error.error || "Failed to download PDF"
+        );
+        return;
+      }
+
+      const blob = await pdfRes.blob();
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = getPdfFilename(resume);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      message.error(
+        locale === "ru"
+          ? "Ошибка при скачивании PDF"
+          : "Error downloading PDF"
+      );
+    } finally {
+      setDownloadingId(null);
+    }
+  };
 
   const onDelete = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -342,9 +406,11 @@ export default function MyResumesPage() {
                       current={page}
                       pageSize={PAGE_SIZE}
                       total={total}
+                      simple
+                      size="small"
                       showSizeChanger={false}
                       onChange={(p) => setPage(p)}
-                      className="!m-0"
+                      className="flex justify-center"
                     />
                   ) : null}
                 </div>
@@ -381,6 +447,7 @@ export default function MyResumesPage() {
                   const subtitle = data.position || t.noPosition;
                   const date = formatDate(resume.updatedAt, locale);
                   const isDeleting = deletingId === resume.id;
+                  const isDownloading = downloadingId === resume.id;
 
                   return (
                     <Card
@@ -418,16 +485,14 @@ export default function MyResumesPage() {
 
                         <div className="flex gap-1.5">
                           <Tooltip title={t.openPdf}>
-                            <Link
-                              href={`/${locale}/print/${resume.id}`}
-                              target="_blank"
-                            >
-                              <Button
-                                type="text"
-                                shape="circle"
-                                icon={<File size={16} />}
-                              />
-                            </Link>
+                            <Button
+                              type="text"
+                              shape="circle"
+                              loading={downloadingId === resume.id}
+                              disabled={downloadingId === resume.id}
+                              onClick={(e) => onDownloadPdf(resume, e)}
+                              icon={<File size={16} />}
+                            />
                           </Tooltip>
 
                           <Tooltip title={t.delete}>

@@ -47,7 +47,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
 
   return (
     <Space direction="vertical" size={20} className="w-full">
-      {/* Hero Section */}
       <Card>
         <Title level={2} style={{ margin: 0, marginBottom: 12 }}>
           {t.pageTitle}
@@ -96,7 +95,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
         </div>
       </Card>
 
-      {/* Common Wins */}
       <Card>
         <SectionHeader
           icon={<Sparkles size={16} />}
@@ -119,7 +117,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
         </div>
       </Card>
 
-      {/* TL;DR and Quick Tools */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <SectionHeader
@@ -162,7 +159,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
         </Card>
       </div>
 
-      {/* ATS Rules */}
       <Card>
         <SectionHeader
           icon={<ScanText size={16} />}
@@ -176,7 +172,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
         </div>
       </Card>
 
-      {/* Patterns */}
       <Card>
         <SectionHeader
           icon={<Sparkles size={16} />}
@@ -238,7 +233,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
         </div>
       </Card>
 
-      {/* Export */}
       <Card>
         <SectionHeader
           icon={<FileDown size={16} />}

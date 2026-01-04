@@ -62,7 +62,6 @@ export default function PreviewPage() {
   return (
     <div className="min-h-screen">
       <div className="flex flex-col gap-5 py-5 lg:flex-row">
-        {/* Desktop: Left Aside - Back + TemplateSelector */}
         <aside className="hidden w-[320px] shrink-0 lg:block">
           <div className="sticky top-5">
             <Card>
@@ -80,7 +79,6 @@ export default function PreviewPage() {
           </div>
         </aside>
 
-        {/* Mobile: Top Card - Back + TemplateSelector */}
         <Card className="mb-5 block lg:hidden">
           <Button
             type="text"
@@ -95,12 +93,10 @@ export default function PreviewPage() {
           <TemplateSelector />
         </Card>
 
-        {/* Main Content - ResumePreview */}
         <main className="min-w-0 flex-1 overflow-x-hidden">
           <ResumePreview />
         </main>
 
-        {/* Desktop: Right Aside - AccentColorPicker + Toggles + Download */}
         <aside className="hidden w-[320px] shrink-0 lg:block">
           <div className="sticky top-5">
             <Card>
@@ -113,7 +109,6 @@ export default function PreviewPage() {
           </div>
         </aside>
 
-        {/* Mobile: Bottom Card - AccentColorPicker + Toggles + Download */}
         <Card className="mt-5 block lg:hidden">
           <AccentColorPicker />
           <Divider />
