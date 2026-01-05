@@ -1,7 +1,9 @@
 import type { Resume } from "@/types/resume";
 
 export const MOCK_RESUME: Resume = {
-  fullName: "Алексей Воронов",
+  lastName: "Воронов",
+  firstName: "Алексей",
+  patronymic: "",
   position: "Senior Frontend Engineer (React / TypeScript)",
   contacts: {
     email: "alexey.voronov.dev@gmail.com",

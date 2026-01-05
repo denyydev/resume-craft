@@ -4,7 +4,9 @@ import { formatPeriod, type ResumeTemplateProps } from "./common";
 
 export function NeoTemplate({ data }: ResumeTemplateProps) {
   const {
-    fullName,
+    lastName,
+    firstName,
+    patronymic,
     position,
     contacts,
     summary,
@@ -15,6 +17,8 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
     education,
     languages,
   } = data;
+
+  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ");
 
   const techTags = techSkills?.tags ?? [];
   const techNote = techSkills?.note?.trim() ?? "";

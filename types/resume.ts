@@ -111,7 +111,9 @@ export type ResumeSectionKey =
 export type SectionsVisibility = Record<ResumeSectionKey, boolean>;
 
 export type ResumeData = {
-  fullName: string;
+  lastName: string;
+  firstName: string;
+  patronymic: string;
   position: string;
   contacts: Contacts;
   summary: string;

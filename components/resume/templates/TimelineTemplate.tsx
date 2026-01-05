@@ -17,7 +17,9 @@ function formatPeriod(start?: string, end?: string, isCurrent?: boolean) {
 
 export function TimelineTemplate({ data }: ResumeTemplateProps) {
   const {
-    fullName,
+    lastName,
+    firstName,
+    patronymic,
     position,
     contacts,
     summary,
@@ -35,6 +37,8 @@ export function TimelineTemplate({ data }: ResumeTemplateProps) {
     photo,
     sectionsVisibility,
   } = data;
+
+  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ");
 
   const visible = (key: ResumeSectionKey) =>
     sectionsVisibility?.[key] !== false;

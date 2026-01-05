@@ -24,7 +24,10 @@ type ResumeState = {
   loadResume: (resume: Resume) => void;
   reset: () => void;
 
-  setFullName: (fullName: string) => void;
+  setLastName: (lastName: string) => void;
+  setFirstName: (firstName: string) => void;
+  setPatronymic: (patronymic: string) => void;
+
   setPosition: (position: string) => void;
   setContacts: (contacts: Partial<ResumeContacts>) => void;
   setSummary: (summary: string) => void;
@@ -153,8 +156,14 @@ function ensureAtLeastOne<T>(
   return Array.isArray(arr) && arr.length > 0 ? arr : [createOne()];
 }
 
+function uniq(list: string[]) {
+  return [...new Set(list.map((x) => x.trim()).filter(Boolean))];
+}
+
 const createEmptyResume = (): Resume => ({
-  fullName: "",
+  lastName: "",
+  firstName: "",
+  patronymic: "",
   position: "",
   contacts: {
     email: "",
@@ -188,10 +197,6 @@ const createEmptyResume = (): Resume => ({
   sectionsVisibility: DEFAULT_SECTIONS_VISIBILITY,
 });
 
-function uniq(list: string[]) {
-  return [...new Set(list.map((x) => x.trim()).filter(Boolean))];
-}
-
 export const useResumeStore = create<ResumeState>((set) => ({
   resume: createEmptyResume(),
 
@@ -200,9 +205,19 @@ export const useResumeStore = create<ResumeState>((set) => ({
       resume: { ...state.resume, photo },
     })),
 
-  setFullName: (fullName) =>
+  setLastName: (lastName) =>
     set((state) => ({
-      resume: { ...state.resume, fullName },
+      resume: { ...state.resume, lastName },
+    })),
+
+  setFirstName: (firstName) =>
+    set((state) => ({
+      resume: { ...state.resume, firstName },
+    })),
+
+  setPatronymic: (patronymic) =>
+    set((state) => ({
+      resume: { ...state.resume, patronymic },
     })),
 
   setPosition: (position) =>
@@ -289,7 +304,6 @@ export const useResumeStore = create<ResumeState>((set) => ({
   loadResume: (resume) =>
     set(() => {
       const base = createEmptyResume();
-
       return {
         resume: {
           ...base,
@@ -300,26 +314,8 @@ export const useResumeStore = create<ResumeState>((set) => ({
           projects: ensureAtLeastOne(resume.projects, emptyProject),
           education: ensureAtLeastOne(resume.education, emptyEducation),
           languages: ensureAtLeastOne(resume.languages, emptyLanguage),
-          techSkills:
-            resume.techSkills ??
-            ({
-              tags: [],
-              note:
-                typeof (resume as unknown as { skills?: string }).skills ===
-                "string"
-                  ? (resume as unknown as { skills: string }).skills
-                  : "",
-            } as Resume["techSkills"]),
-          softSkills:
-            resume.softSkills ??
-            ({
-              tags: [],
-              note:
-                typeof (resume as unknown as { softSkills?: string })
-                  .softSkills === "string"
-                  ? (resume as unknown as { softSkills: string }).softSkills
-                  : "",
-            } as Resume["softSkills"]),
+          techSkills: resume.techSkills ?? base.techSkills,
+          softSkills: resume.softSkills ?? base.softSkills,
           employmentPreferences:
             resume.employmentPreferences ?? base.employmentPreferences,
           certifications: ensureAtLeastOne(
@@ -351,10 +347,7 @@ export const useResumeStore = create<ResumeState>((set) => ({
       return {
         resume: {
           ...state.resume,
-          techSkills: {
-            ...state.resume.techSkills,
-            tags: [...prev, value],
-          },
+          techSkills: { ...state.resume.techSkills, tags: [...prev, value] },
         },
       };
     }),
@@ -395,10 +388,7 @@ export const useResumeStore = create<ResumeState>((set) => ({
       return {
         resume: {
           ...state.resume,
-          softSkills: {
-            ...state.resume.softSkills,
-            tags: [...prev, value],
-          },
+          softSkills: { ...state.resume.softSkills, tags: [...prev, value] },
         },
       };
     }),

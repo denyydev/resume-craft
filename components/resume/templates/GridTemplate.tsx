@@ -42,7 +42,9 @@ function SectionCard({
 
 export function GridTemplate({ data }: ResumeTemplateProps) {
   const {
-    fullName,
+    lastName,
+    firstName,
+    patronymic,
     position,
     contacts,
     summary,
@@ -54,6 +56,8 @@ export function GridTemplate({ data }: ResumeTemplateProps) {
     languages,
     photo,
   } = data;
+
+  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ");
 
   const techTags = techSkills?.tags ?? [];
   const techNote = techSkills?.note?.trim() ?? "";

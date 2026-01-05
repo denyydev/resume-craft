@@ -60,7 +60,7 @@ export default async function SharePage(props: SharePageProps) {
   const locale: Locale = normalizeLocale(resume.locale);
   const data = resume.data as ResumeData;
 
-  const fullName = data.fullName || resume.title || "Resume";
+  const fullName = [data.lastName, data.firstName, data.patronymic].filter(Boolean).join(" ") || resume.title || "Resume";
   const position = data.position || "";
 
   return (

@@ -51,7 +51,9 @@ function asCommaList(values?: string[]) {
 
 export function AtsFriendlyTemplate({ data }: ResumeTemplateProps) {
   const {
-    fullName,
+    lastName,
+    firstName,
+    patronymic,
     position,
     contacts,
     summary,
@@ -68,6 +70,8 @@ export function AtsFriendlyTemplate({ data }: ResumeTemplateProps) {
     photo,
     sectionsVisibility,
   } = data;
+
+  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ");
 
   const visible = (key: ResumeSectionKey) =>
     sectionsVisibility?.[key] !== false;

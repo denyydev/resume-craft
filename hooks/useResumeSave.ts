@@ -25,7 +25,8 @@ export function useResumeSave(locale: Locale) {
   const router = useRouter();
 
   const getTitle = () => {
-    return resume.position || resume.fullName || "Untitled resume";
+    const fullName = [resume.lastName, resume.firstName, resume.patronymic].filter(Boolean).join(" ");
+    return resume.position || fullName || "Untitled resume";
   };
 
   /**

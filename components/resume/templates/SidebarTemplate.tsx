@@ -95,7 +95,9 @@ function KeyValueRow({
 
 export function SidebarTemplate({ data }: ResumeTemplateProps) {
   const {
-    fullName,
+    lastName,
+    firstName,
+    patronymic,
     position,
     contacts,
     summary,
@@ -113,6 +115,7 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
     activities,
   } = data;
 
+  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ");
   const accent = accentColor || "#1677ff";
 
   const techTags = techSkills?.tags ?? [];

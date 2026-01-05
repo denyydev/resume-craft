@@ -30,7 +30,7 @@ export function DownloadPdfButton({ locale }: Props) {
         body: JSON.stringify({
           data: resume,
           locale,
-          title: resume.position || resume.fullName || "Untitled resume",
+          title: resume.position || [resume.lastName, resume.firstName, resume.patronymic].filter(Boolean).join(" ") || "Untitled resume",
           userEmail: session!.user!.email!,
         }),
       });

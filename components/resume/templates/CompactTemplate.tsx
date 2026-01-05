@@ -1,6 +1,6 @@
 "use client"
 
-import { formatPeriod, type ResumeTemplateProps } from "./common"
+import { formatPeriod, type ResumeTemplateProps } from "./common";
 
 function TagPill({ label }: { label: string }) {
   return (
@@ -12,7 +12,9 @@ function TagPill({ label }: { label: string }) {
 
 export function CompactTemplate({ data }: ResumeTemplateProps) {
   const {
-    fullName,
+    lastName,
+    firstName,
+    patronymic,
     position,
     contacts,
     summary,
@@ -23,6 +25,8 @@ export function CompactTemplate({ data }: ResumeTemplateProps) {
     education,
     languages,
   } = data
+
+  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ")
 
   const techTags = techSkills?.tags ?? []
   const techNote = techSkills?.note?.trim() ?? ""

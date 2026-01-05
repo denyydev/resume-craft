@@ -207,8 +207,9 @@ export function computeResumeScore(resume: Resume, locale: Locale = "ru") {
   const actsAnyOk = acts.length > 0;
   const actsStrongOk = acts.some((a) => has(a.name) && has(a.description));
 
+  const hasName = has(resume.lastName) || has(resume.firstName) || has(resume.patronymic);
   const checks = [
-    { key: "fullName", weight: 10, ok: has(resume.fullName) },
+    { key: "fullName", weight: 10, ok: hasName },
     { key: "position", weight: 10, ok: has(resume.position) },
 
     { key: "email", weight: 8, ok: has(resume.contacts.email) },

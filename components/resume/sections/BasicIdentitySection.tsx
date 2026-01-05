@@ -14,7 +14,7 @@ import {
   Upload,
 } from "antd";
 import { Camera, Trash2, User } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 const { Title, Text } = Typography;
 
@@ -35,22 +35,6 @@ type LocaleMessages = {
   sectionTitle?: string;
   sectionSubtitle?: string;
 };
-
-function splitFullName(fullName: string) {
-  const parts = fullName.trim().split(/\s+/).filter(Boolean);
-  return {
-    lastName: parts[0] ?? "",
-    firstName: parts[1] ?? "",
-    patronymic: parts.slice(2).join(" ") ?? "",
-  };
-}
-
-function joinFullName(lastName: string, firstName: string, patronymic: string) {
-  return [lastName, firstName, patronymic]
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .join(" ");
-}
 
 type SectionsVisibility = NonNullable<
   ReturnType<typeof useResumeStore.getState>["resume"]["sectionsVisibility"]
@@ -185,45 +169,59 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
 }
 
 function NameInputsBlock({ t }: { t: LocaleMessages }) {
-  const fullName = useResumeStore((s) => s.resume.fullName);
-  const setFullName = useResumeStore((s) => s.setFullName);
+  const lastName = useResumeStore((s) => s.resume.lastName);
+  const firstName = useResumeStore((s) => s.resume.firstName);
+  const patronymic = useResumeStore((s) => s.resume.patronymic);
 
-  const name = useMemo(() => splitFullName(fullName ?? ""), [fullName]);
+  const setLastName = useResumeStore((s) => s.setLastName);
+  const setFirstName = useResumeStore((s) => s.setFirstName);
+  const setPatronymic = useResumeStore((s) => s.setPatronymic);
 
-  const setPart = (patch: Partial<typeof name>) => {
-    const next = { ...name, ...patch };
-    setFullName(joinFullName(next.lastName, next.firstName, next.patronymic));
+  const MAX_NAME_LEN = 30;
+
+  const maxLenRule = {
+    validator(_: unknown, value: string) {
+      if (!value) return Promise.resolve();
+      if (value.trim().length <= MAX_NAME_LEN) return Promise.resolve();
+      return Promise.reject(new Error(`Максимум ${MAX_NAME_LEN} символов`));
+    },
   };
 
   return (
     <Form layout="vertical" colon={false} className="space-y-1">
-      <Form.Item label={t.lastName}>
+      <Form.Item label={t.lastName} rules={[maxLenRule]}>
         <Input
           prefix={<User size={16} />}
           placeholder={t.lastNamePlaceholder}
-          value={name.lastName}
-          onChange={(e) => setPart({ lastName: e.target.value })}
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value.slice(0, MAX_NAME_LEN))}
           allowClear
+          maxLength={MAX_NAME_LEN}
+          showCount
         />
       </Form.Item>
 
-      <Form.Item label={t.firstName}>
+      <Form.Item label={t.firstName} rules={[maxLenRule]}>
         <Input
           prefix={<User size={16} />}
           placeholder={t.firstNamePlaceholder}
-          value={name.firstName}
-          onChange={(e) => setPart({ firstName: e.target.value })}
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value.slice(0, MAX_NAME_LEN))}
           allowClear
+          maxLength={MAX_NAME_LEN}
+          showCount
         />
       </Form.Item>
 
-      <Form.Item label={t.patronymic} className="mb-0">
+      <Form.Item label={t.patronymic} className="mb-0" rules={[maxLenRule]}>
         <Input
           prefix={<User size={16} />}
           placeholder={t.patronymicPlaceholder}
-          value={name.patronymic}
-          onChange={(e) => setPart({ patronymic: e.target.value })}
+          value={patronymic}
+          onChange={(e) => setPatronymic(e.target.value.slice(0, MAX_NAME_LEN))}
           allowClear
+          maxLength={MAX_NAME_LEN}
+          showCount
         />
       </Form.Item>
     </Form>
