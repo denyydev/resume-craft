@@ -3,8 +3,8 @@
 import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { LoadingOutlined, SaveOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Tooltip, message } from "antd";
 import type { MenuProps } from "antd";
+import { Button, Dropdown, Tooltip, message } from "antd";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -61,14 +61,10 @@ export function SaveResumeButton() {
         router.replace(`/${locale}/editor?${usp.toString()}`);
       }
 
-      message.success(
-        locale === "ru" ? "Резюме сохранено" : "Resume saved"
-      );
+      message.success(locale === "ru" ? "Резюме сохранено" : "Resume saved");
     } catch (error) {
       message.error(
-        locale === "ru"
-          ? "Ошибка при сохранении резюме"
-          : "Error saving resume"
+        locale === "ru" ? "Ошибка при сохранении резюме" : "Error saving resume"
       );
     } finally {
       setLoading(false);
@@ -110,9 +106,7 @@ export function SaveResumeButton() {
       }
 
       const { id } = (await res.json()) as { id: string };
-      message.success(
-        locale === "ru" ? "Резюме обновлено" : "Resume updated"
-      );
+      message.success(locale === "ru" ? "Резюме обновлено" : "Resume updated");
     } catch (error) {
       message.error(
         locale === "ru"
@@ -148,7 +142,7 @@ export function SaveResumeButton() {
         loading={loading}
         icon={loading ? <LoadingOutlined /> : <SaveOutlined />}
       >
-        {locale === "ru" ? "Сохранить резюме" : "Save resume"}
+        {locale === "ru" ? "Сохранить резюме" : "Saving your resume..."}
       </Button>
     );
 

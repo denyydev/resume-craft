@@ -2,12 +2,12 @@
 
 import { useResumeStore } from "@/store/useResumeStore";
 import { CodeOutlined, MessageOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Flex, Input, Space, Typography } from "antd";
+import { Button, Divider, Flex, Input, Space, Typography } from "antd";
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useMemo, useState } from "react";
 import { SkillTag } from "../nav/SkillTag";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 const TECH_SKILLS_TAGS = [
@@ -94,9 +94,7 @@ function SkillsBlock({
 
   const norm = (s: string) => s.trim().replace(/\s+/g, " ").toLowerCase();
 
-  const selectedSet = useMemo(() => {
-    return new Set(tags.map(norm));
-  }, [tags]);
+  const selectedSet = useMemo(() => new Set(tags.map(norm)), [tags]);
 
   const available = useMemo(() => {
     return suggestions.filter((t) => !selectedSet.has(norm(t)));
@@ -110,76 +108,86 @@ function SkillsBlock({
   }, [input, onAddTag]);
 
   return (
-    <Card size="small" styles={{ body: { padding: 16 } }} id={linkId}>
-      <Flex align="center" gap={8}>
-        {icon}
-        <Text strong>{title}</Text>
-      </Flex>
-      <Text>{subtitle}</Text>
-
-      <Divider style={{ margin: "12px 0" }} />
-
-      <Space orientation="vertical" size={12} style={{ width: "100%" }}>
-        {tags.length > 0 && (
-          <Flex wrap gap={8}>
-            <AnimatePresence initial={false}>
-              {tags.map((tag) => (
-                <SkillTag
-                  key={`selected-${tag}`}
-                  kind={kind}
-                  label={tag}
-                  onClose={() => onRemoveTag(tag)}
-                />
-              ))}
-            </AnimatePresence>
-          </Flex>
-        )}
-
-        <Flex gap={8}>
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleAddCustom();
-              }
-            }}
-            placeholder="Добавить навык..."
-            allowClear
-          />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAddCustom}
-          >
-            Добавить
-          </Button>
+    <section id={linkId} style={{ scrollMarginTop: 96 }}>
+      <Space direction="vertical" size={10} style={{ width: "100%" }}>
+        <Flex align="center" gap={10} wrap>
+          <span style={{ fontSize: 18, lineHeight: 1 }}>{icon}</span>
+          <Title level={3} style={{ margin: 0 }}>
+            {title}
+          </Title>
         </Flex>
 
-        {available.length > 0 && (
-          <Flex wrap gap={8}>
-            {available.slice(0, 14).map((tag) => (
-              <SkillTag
-                key={`available-${tag}`}
-                kind={kind}
-                variant="pick"
-                label={tag}
-                closable={false}
-                onClick={() => onAddTag(tag)}
-              />
-            ))}
-          </Flex>
-        )}
+        <Text type="secondary" style={{ fontSize: 14 }}>
+          {subtitle}
+        </Text>
 
-        <TextArea
-          value={note}
-          onChange={(e) => onChangeNote(e.target.value)}
-          placeholder={`Дополнительная информация о ${title.toLowerCase()}...`}
-          autoSize={{ minRows: 3, maxRows: 8 }}
-        />
+        <Divider style={{ margin: "8px 0 14px" }} />
+
+        <Space direction="vertical" size={12} style={{ width: "100%" }}>
+          {tags.length > 0 && (
+            <Flex wrap gap={8}>
+              <AnimatePresence initial={false}>
+                {tags.map((tag) => (
+                  <SkillTag
+                    key={`selected-${tag}`}
+                    kind={kind}
+                    label={tag}
+                    onClose={() => onRemoveTag(tag)}
+                  />
+                ))}
+              </AnimatePresence>
+            </Flex>
+          )}
+
+          <Flex gap={8} wrap>
+            <div style={{ flex: 1, minWidth: 240 }}>
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddCustom();
+                  }
+                }}
+                placeholder="Добавить навык..."
+                allowClear
+              />
+            </div>
+
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={handleAddCustom}
+            >
+              Добавить
+            </Button>
+          </Flex>
+
+          {available.length > 0 && (
+            <Flex wrap gap={8}>
+              {available.slice(0, 14).map((tag) => (
+                <SkillTag
+                  key={`available-${tag}`}
+                  kind={kind}
+                  variant="pick"
+                  label={tag}
+                  closable={false}
+                  onClick={() => onAddTag(tag)}
+                />
+              ))}
+            </Flex>
+          )}
+
+          <TextArea
+            value={note}
+            onChange={(e) => onChangeNote(e.target.value)}
+            placeholder={`Дополнительная информация о ${title.toLowerCase()}...`}
+            autoSize={{ minRows: 3, maxRows: 8 }}
+          />
+        </Space>
       </Space>
-    </Card>
+    </section>
   );
 }
 
@@ -218,36 +226,34 @@ export function SkillsSection() {
   );
 
   return (
-    <>
-      <Space orientation="vertical" size={14} style={{ width: "100%" }}>
-        <SkillsBlock
-          linkId="techSkills"
-          kind="tech"
-          title="HARD SKILLS"
-          subtitle="Технологии, инструменты и фреймворки, с которыми ты работаешь на практике"
-          icon={<CodeOutlined />}
-          tags={techTags}
-          note={techNote}
-          suggestions={TECH_SKILLS_TAGS}
-          onAddTag={addTechTag}
-          onRemoveTag={removeTechTag}
-          onChangeNote={setTechSkillsNote}
-        />
+    <Space direction="vertical" size={22} style={{ width: "100%" }}>
+      <SkillsBlock
+        linkId="techSkills"
+        kind="tech"
+        title="HARD SKILLS"
+        subtitle="Технологии, инструменты и фреймворки, с которыми ты работаешь на практике"
+        icon={<CodeOutlined />}
+        tags={techTags}
+        note={techNote}
+        suggestions={TECH_SKILLS_TAGS}
+        onAddTag={addTechTag}
+        onRemoveTag={removeTechTag}
+        onChangeNote={setTechSkillsNote}
+      />
 
-        <SkillsBlock
-          linkId="softSkills"
-          kind="soft"
-          title="SOFT SKILLS"
-          subtitle="Навыки взаимодействия и личные качества, влияющие на эффективность работы"
-          icon={<MessageOutlined />}
-          tags={softTags}
-          note={softNote}
-          suggestions={SOFT_SKILLS_TAGS}
-          onAddTag={addSoftTag}
-          onRemoveTag={removeSoftTag}
-          onChangeNote={setSoftSkillsNote}
-        />
-      </Space>
-    </>
+      <SkillsBlock
+        linkId="softSkills"
+        kind="soft"
+        title="SOFT SKILLS"
+        subtitle="Навыки взаимодействия и личные качества, влияющие на эффективность работы"
+        icon={<MessageOutlined />}
+        tags={softTags}
+        note={softNote}
+        suggestions={SOFT_SKILLS_TAGS}
+        onAddTag={addSoftTag}
+        onRemoveTag={removeSoftTag}
+        onChangeNote={setSoftSkillsNote}
+      />
+    </Space>
   );
 }

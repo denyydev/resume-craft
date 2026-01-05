@@ -8,9 +8,10 @@ import {
   LinkOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Empty, Form, Input } from "antd";
-import { AnimatePresence, motion } from "framer-motion";
+import { Button, Divider, Empty, Form, Input, Typography } from "antd";
 import { FolderGit2 } from "lucide-react";
+
+const { Title, Text } = Typography;
 
 const messages = {
   ru: {
@@ -72,120 +73,138 @@ export function ProjectsSection() {
   const removeProject = useResumeStore((s) => s.removeProject);
 
   return (
-    <Card
-      id="projects"
-      className="w-full"
-      title={
-        <div className="flex items-center gap-2">
-          <FolderGit2 size={18} />
-          <span>{t.sectionTitle}</span>
+    <section id="projects" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <FolderGit2 size={16} />
+            </span>
+
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.sectionTitle}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.sectionSubtitle}
+              </Text>
+            </div>
+          </div>
+
+          <Divider className="my-4" />
         </div>
-      }
-    >
-      <div className="-mt-2 mb-3 opacity-75">{t.sectionSubtitle}</div>
+      </div>
 
-      <AnimatePresence initial={false}>
+      <div className="flex-1 min-h-0 overflow-auto p-5">
         {projects.length === 0 ? (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-          >
+          <div className="rounded-xl bg-black/3 p-4">
             <Empty description={t.emptyState} />
-          </motion.div>
+          </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="space-y-6">
             {projects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0, overflow: "hidden" }}
-              >
-                <Card
-                  size="small"
-                  className="w-full"
-                  title={<span className="tabular-nums">{index + 1}</span>}
-                  extra={
-                    <Button
-                      danger
-                      type="text"
-                      icon={<DeleteOutlined />}
-                      onClick={() => removeProject(project.id)}
+              <div key={project.id} className="space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 gap-2">
+                    <Text type="secondary" className="text-xs tabular-nums">
+                      {index + 1}
+                    </Text>
+
+                    <div className="min-w-0">
+                      <Text strong className="text-sm">
+                        {project.name?.trim()
+                          ? project.name
+                          : t.namePlaceholder}
+                      </Text>
+
+                      {project.role?.trim() ? (
+                        <div>
+                          <Text type="secondary" className="text-sm">
+                            {project.role}
+                          </Text>
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <Button
+                    danger
+                    type="text"
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeProject(project.id)}
+                  />
+                </div>
+
+                <Form layout="vertical" colon={false} className="space-y-1">
+                  <Form.Item label={t.name} className="mb-0">
+                    <Input
+                      value={project.name ?? ""}
+                      onChange={(e) =>
+                        updateProject(project.id, { name: e.target.value })
+                      }
+                      placeholder={t.namePlaceholder}
+                      allowClear
                     />
-                  }
-                >
-                  <Form layout="vertical" colon={false} className="space-y-1">
-                    <Form.Item label={t.name}>
-                      <Input
-                        value={project.name ?? ""}
-                        onChange={(e) =>
-                          updateProject(project.id, { name: e.target.value })
-                        }
-                        placeholder={t.namePlaceholder}
-                        allowClear
-                      />
-                    </Form.Item>
+                  </Form.Item>
 
-                    <Form.Item label={t.role}>
-                      <Input
-                        value={project.role ?? ""}
-                        onChange={(e) =>
-                          updateProject(project.id, { role: e.target.value })
-                        }
-                        placeholder={t.rolePlaceholder}
-                        allowClear
-                      />
-                    </Form.Item>
+                  <Form.Item label={t.role} className="mb-0">
+                    <Input
+                      value={project.role ?? ""}
+                      onChange={(e) =>
+                        updateProject(project.id, { role: e.target.value })
+                      }
+                      placeholder={t.rolePlaceholder}
+                      allowClear
+                    />
+                  </Form.Item>
 
-                    <Form.Item label={t.stack}>
-                      <Input
-                        value={project.stack ?? ""}
-                        onChange={(e) =>
-                          updateProject(project.id, { stack: e.target.value })
-                        }
-                        placeholder={t.stackPlaceholder}
-                        prefix={<AppstoreOutlined />}
-                        allowClear
-                      />
-                    </Form.Item>
+                  <Form.Item label={t.stack} className="mb-0">
+                    <Input
+                      value={project.stack ?? ""}
+                      onChange={(e) =>
+                        updateProject(project.id, { stack: e.target.value })
+                      }
+                      placeholder={t.stackPlaceholder}
+                      prefix={<AppstoreOutlined />}
+                      allowClear
+                    />
+                  </Form.Item>
 
-                    <Form.Item label={t.link}>
-                      <Input
-                        value={project.link ?? ""}
-                        onChange={(e) =>
-                          updateProject(project.id, { link: e.target.value })
-                        }
-                        placeholder={t.linkPlaceholder}
-                        prefix={<LinkOutlined />}
-                        allowClear
-                      />
-                    </Form.Item>
+                  <Form.Item label={t.link} className="mb-0">
+                    <Input
+                      value={project.link ?? ""}
+                      onChange={(e) =>
+                        updateProject(project.id, { link: e.target.value })
+                      }
+                      placeholder={t.linkPlaceholder}
+                      prefix={<LinkOutlined />}
+                      allowClear
+                    />
+                  </Form.Item>
 
-                    <Form.Item label={t.description} className="mb-0">
-                      <Input.TextArea
-                        value={project.description ?? ""}
-                        onChange={(e) =>
-                          updateProject(project.id, {
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder={t.descriptionPlaceholder}
-                        autoSize={{ minRows: 4, maxRows: 10 }}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Form>
-                </Card>
-              </motion.div>
+                  <Form.Item label={t.description} className="mb-0">
+                    <Input.TextArea
+                      value={project.description ?? ""}
+                      onChange={(e) =>
+                        updateProject(project.id, {
+                          description: e.target.value,
+                        })
+                      }
+                      placeholder={t.descriptionPlaceholder}
+                      autoSize={{ minRows: 4, maxRows: 10 }}
+                      allowClear
+                    />
+                  </Form.Item>
+                </Form>
+
+                {index !== projects.length - 1 && <Divider className="my-4" />}
+              </div>
             ))}
           </div>
         )}
-      </AnimatePresence>
 
-      <div className="mt-4">
+        <Divider className="my-6" />
+
         <Button
           block
           type="dashed"
@@ -195,6 +214,6 @@ export function ProjectsSection() {
           {t.addButton}
         </Button>
       </div>
-    </Card>
+    </section>
   );
 }

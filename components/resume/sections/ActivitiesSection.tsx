@@ -3,10 +3,11 @@
 import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { DeleteOutlined, LinkOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Divider, Empty, Form, Input, Select } from "antd";
-import { AnimatePresence, motion } from "framer-motion";
+import { Button, Divider, Empty, Form, Input, Select, Typography } from "antd";
 import { Briefcase, Building2, Github, HandHeart, Users } from "lucide-react";
 import React from "react";
+
+const { Title, Text } = Typography;
 
 const messages = {
   ru: {
@@ -85,64 +86,72 @@ export function ActivitiesSection() {
   };
 
   return (
-    <Card
-      id="activities"
-      className="w-full"
-      title={
-        <div className="flex items-center gap-2">
-          <Github size={18} />
-          <span>{t.title}</span>
-        </div>
-      }
-    >
-      <div className="-mt-2 mb-3 opacity-75">{t.subtitle}</div>
+    <section id="activities" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <Github size={16} />
+            </span>
 
-      <AnimatePresence initial={false}>
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.title}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.subtitle}
+              </Text>
+            </div>
+          </div>
+
+          <Divider className="my-4" />
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
         {list.length === 0 ? (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-          >
+          <div className="rounded-xl bg-black/3 p-4">
             <Empty description={t.empty} />
-          </motion.div>
+          </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {list.map((item, index) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0, overflow: "hidden" }}
-              >
-                <Card
-                  size="small"
-                  className="w-full"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <span className="tabular-nums">{index + 1}</span>
-                      <span className="opacity-65">
-                        {
-                          iconByType[
-                            (item.type as ActivityType) ?? "open-source"
-                          ]
-                        }
-                      </span>
+          <div className="space-y-6">
+            {list.map((item, index) => {
+              const type = (item.type as ActivityType) ?? "open-source";
+              const headerIcon = iconByType[type];
+
+              return (
+                <div key={item.id} className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex min-w-0 items-baseline gap-2">
+                      <Text type="secondary" className="text-xs tabular-nums">
+                        {index + 1}
+                      </Text>
+                      <span className="opacity-70">{headerIcon}</span>
+
+                      <div className="min-w-0">
+                        <Text strong className="text-sm">
+                          {item.name?.trim() ? item.name : t.namePh}
+                        </Text>
+                        {item.role?.trim() ? (
+                          <div>
+                            <Text type="secondary" className="text-sm">
+                              {item.role}
+                            </Text>
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
-                  }
-                  extra={
+
                     <Button
                       danger
                       type="text"
                       icon={<DeleteOutlined />}
                       onClick={() => removeActivity(item.id)}
                     />
-                  }
-                >
+                  </div>
+
                   <Form layout="vertical" colon={false} className="space-y-1">
-                    <Form.Item label={t.type}>
+                    <Form.Item label={t.type} className="mb-0">
                       <Select
                         value={item.type}
                         onChange={(v) => updateActivity(item.id, { type: v })}
@@ -151,7 +160,7 @@ export function ActivitiesSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.name}>
+                    <Form.Item label={t.name} className="mb-0">
                       <Input
                         value={item.name ?? ""}
                         onChange={(e) =>
@@ -163,7 +172,7 @@ export function ActivitiesSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.role}>
+                    <Form.Item label={t.role} className="mb-0">
                       <Input
                         value={item.role ?? ""}
                         onChange={(e) =>
@@ -175,7 +184,7 @@ export function ActivitiesSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.link}>
+                    <Form.Item label={t.link} className="mb-0">
                       <Input
                         value={item.link ?? ""}
                         onChange={(e) =>
@@ -201,41 +210,44 @@ export function ActivitiesSection() {
                       />
                     </Form.Item>
                   </Form>
-                </Card>
-              </motion.div>
-            ))}
+
+                  {index !== list.length - 1 && <Divider className="my-4" />}
+                </div>
+              );
+            })}
           </div>
         )}
-      </AnimatePresence>
 
-      <Divider className="my-4" />
+        <Divider className="my-6" />
 
-      <div className="flex flex-col gap-2">
-        <Button
-          block
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={() => addActivity("open-source")}
-        >
-          {t.addOpenSource}
-        </Button>
-        <Button
-          block
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={() => addActivity("volunteering")}
-        >
-          {t.addVolunteering}
-        </Button>
-        <Button
-          block
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={() => addActivity("community")}
-        >
-          {t.addCommunity}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button
+            block
+            type="dashed"
+            icon={<PlusOutlined />}
+            onClick={() => addActivity("open-source")}
+          >
+            {t.addOpenSource}
+          </Button>
+          <Button
+            block
+            type="dashed"
+            icon={<PlusOutlined />}
+            onClick={() => addActivity("volunteering")}
+          >
+            {t.addVolunteering}
+          </Button>
+          <Button
+            block
+            type="dashed"
+            icon={<PlusOutlined />}
+            onClick={() => addActivity("community")}
+          >
+            {t.addCommunity}
+          </Button>
+        </div>
       </div>
-    </Card>
+    </section>
   );
 }
+``;

@@ -14,4 +14,10 @@ model Resume {
   data      Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Share fields: добавляем в модель Resume, т.к. отношение 1:1 (одно резюме - одна share ссылка)
+  // Это проще, чем отдельная таблица: меньше JOIN-ов, меньше запросов, проще в поддержке
+  shareId  String?   @unique // Крипто-рандомный ID для публичной ссылки
+  isShared Boolean   @default(false) // Флаг доступности по share ссылке
+  sharedAt DateTime? // Дата включения share (для истории)
 }

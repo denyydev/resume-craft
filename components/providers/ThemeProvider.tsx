@@ -16,11 +16,11 @@ const commonTokens = {
 
 const lightTokens = {
   ...commonTokens,
-  colorBgLayout: "#f1f5f9",
+  colorBgLayout: "#f8fafc",
   colorBgBase: "#ffffff",
   colorBgContainer: "#ffffff",
-  colorBorder: "#e5e7eb",
-  colorBorderSecondary: "#e5e7eb",
+  colorBorder: "#e2e8f0",
+  colorBorderSecondary: "#e2e8f0",
   colorTextBase: "#0f172a",
   colorTextSecondary: "#64748b",
   colorPrimary: "#020617",
@@ -97,7 +97,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             paddingLG: 20,
           },
           Button: {
-            borderRadius: 999,
+            borderRadius: 5,
             controlHeight: 40,
             colorPrimary: isDark ? "#0A84FF" : "#020617",
             colorPrimaryHover: isDark ? "#0060df" : "#020617",
@@ -112,6 +112,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             colorText: isDark ? "#e5e7eb" : "#0f172a",
             activeBorderColor: "#0A84FF",
             hoverBorderColor: "#0A84FF",
+            borderRadius: 5,
           },
           InputNumber: {
             borderRadius: 999,

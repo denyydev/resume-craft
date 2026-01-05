@@ -8,9 +8,10 @@ import {
   LinkOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Empty, Form, Input } from "antd";
-import { AnimatePresence, motion } from "framer-motion";
+import { Button, Divider, Empty, Form, Input, Typography } from "antd";
 import { BadgeCheck, Building2 } from "lucide-react";
+
+const { Title, Text } = Typography;
 
 const messages = {
   ru: {
@@ -88,111 +89,121 @@ export function CertificationsSection() {
   );
 
   return (
-    <Card
+    <section
       id="certifications"
-      className="w-full"
-      title={
-        <div className="flex items-center gap-2">
-          <BadgeCheck size={18} />
-          <span>{t.title}</span>
-        </div>
-      }
+      className="w-full h-full min-h-0 flex flex-col"
     >
-      <div className="-mt-2 mb-3 opacity-75">{t.subtitle}</div>
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <BadgeCheck size={16} />
+            </span>
 
-      <AnimatePresence initial={false}>
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.title}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.subtitle}
+              </Text>
+            </div>
+          </div>
+
+          <Divider className="my-4" />
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
         {list.length === 0 ? (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-          >
+          <div className="rounded-xl bg-black/3 p-4">
             <Empty description={t.empty} />
-          </motion.div>
+          </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="space-y-6">
             {list.map((item, index) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0, overflow: "hidden" }}
-              >
-                <Card
-                  size="small"
-                  className="w-full"
-                  title={<span className="tabular-nums">{index + 1}</span>}
-                  extra={
-                    <Button
-                      danger
-                      type="text"
-                      icon={<DeleteOutlined />}
-                      onClick={() => removeCertification(item.id)}
+              <div key={item.id} className="space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Text strong className="text-sm">
+                      {item.name?.trim() ? item.name : t.namePh}
+                    </Text>
+                    {item.issuer?.trim() ? (
+                      <div>
+                        <Text type="secondary" className="text-sm">
+                          {item.issuer}
+                        </Text>
+                      </div>
+                    ) : null}
+                  </div>
+
+                  <Button
+                    danger
+                    type="text"
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeCertification(item.id)}
+                  />
+                </div>
+
+                <Form layout="vertical" colon={false} className="space-y-1">
+                  <Form.Item label={t.name} className="mb-0">
+                    <Input
+                      value={item.name ?? ""}
+                      onChange={(e) =>
+                        updateCertification(item.id, { name: e.target.value })
+                      }
+                      placeholder={t.namePh}
+                      prefix={<BadgeCheck size={16} />}
+                      allowClear
                     />
-                  }
-                >
-                  <Form layout="vertical" colon={false} className="space-y-1">
-                    <Form.Item label={t.name}>
-                      <Input
-                        value={item.name ?? ""}
-                        onChange={(e) =>
-                          updateCertification(item.id, { name: e.target.value })
-                        }
-                        placeholder={t.namePh}
-                        prefix={<BadgeCheck size={16} />}
-                        allowClear
-                      />
-                    </Form.Item>
+                  </Form.Item>
 
-                    <Form.Item label={t.issuer}>
-                      <Input
-                        value={item.issuer ?? ""}
-                        onChange={(e) =>
-                          updateCertification(item.id, {
-                            issuer: e.target.value,
-                          })
-                        }
-                        placeholder={t.issuerPh}
-                        prefix={<Building2 size={16} />}
-                        allowClear
-                      />
-                    </Form.Item>
+                  <Form.Item label={t.issuer} className="mb-0">
+                    <Input
+                      value={item.issuer ?? ""}
+                      onChange={(e) =>
+                        updateCertification(item.id, { issuer: e.target.value })
+                      }
+                      placeholder={t.issuerPh}
+                      prefix={<Building2 size={16} />}
+                      allowClear
+                    />
+                  </Form.Item>
 
-                    <Form.Item label={t.year}>
-                      <Input
-                        value={item.year ?? ""}
-                        onChange={(e) =>
-                          updateCertification(item.id, { year: e.target.value })
-                        }
-                        placeholder={t.yearPh}
-                        prefix={<CalendarOutlined />}
-                        inputMode="numeric"
-                        allowClear
-                      />
-                    </Form.Item>
+                  <Form.Item label={t.year} className="mb-0">
+                    <Input
+                      value={item.year ?? ""}
+                      onChange={(e) =>
+                        updateCertification(item.id, { year: e.target.value })
+                      }
+                      placeholder={t.yearPh}
+                      prefix={<CalendarOutlined />}
+                      inputMode="numeric"
+                      allowClear
+                    />
+                  </Form.Item>
 
-                    <Form.Item label={t.link} className="mb-0">
-                      <Input
-                        value={item.link ?? ""}
-                        onChange={(e) =>
-                          updateCertification(item.id, { link: e.target.value })
-                        }
-                        placeholder={t.linkPh}
-                        prefix={<LinkOutlined />}
-                        allowClear
-                      />
-                    </Form.Item>
-                  </Form>
-                </Card>
-              </motion.div>
+                  <Form.Item label={t.link} className="mb-0">
+                    <Input
+                      value={item.link ?? ""}
+                      onChange={(e) =>
+                        updateCertification(item.id, { link: e.target.value })
+                      }
+                      placeholder={t.linkPh}
+                      prefix={<LinkOutlined />}
+                      allowClear
+                    />
+                  </Form.Item>
+                </Form>
+
+                {index !== list.length - 1 && <Divider className="my-4" />}
+              </div>
             ))}
           </div>
         )}
-      </AnimatePresence>
 
-      <div className="mt-4">
+        <Divider className="my-6" />
+
         <Button
           block
           type="dashed"
@@ -202,6 +213,6 @@ export function CertificationsSection() {
           {t.add}
         </Button>
       </div>
-    </Card>
+    </section>
   );
 }

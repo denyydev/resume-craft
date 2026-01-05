@@ -2,9 +2,21 @@
 
 import { useResumeStore } from "@/store/useResumeStore";
 import type { UploadProps } from "antd";
-import { Button, Card, Form, Input, message, Upload } from "antd";
+import {
+  Button,
+  Divider,
+  Flex,
+  Form,
+  Input,
+  message,
+  Space,
+  Typography,
+  Upload,
+} from "antd";
 import { Camera, Trash2, User } from "lucide-react";
 import { useMemo, useState } from "react";
+
+const { Title, Text } = Typography;
 
 type LocaleMessages = {
   lastName: string;
@@ -20,6 +32,8 @@ type LocaleMessages = {
   errorSize: string;
   errorType: string;
   replacePhoto?: string;
+  sectionTitle?: string;
+  sectionSubtitle?: string;
 };
 
 function splitFullName(fullName: string) {
@@ -46,6 +60,7 @@ function useVisible(sectionKey: keyof SectionsVisibility) {
   const sectionsVisibility = useResumeStore((s) => s.resume.sectionsVisibility);
   return sectionsVisibility?.[sectionKey] !== false;
 }
+
 function PhotoBlock({ t }: { t: LocaleMessages }) {
   const [msgApi, contextHolder] = message.useMessage();
   const [hover, setHover] = useState(false);
@@ -54,6 +69,7 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
   const setPhoto = useResumeStore((s) => s.setPhoto);
 
   const visible = useVisible("photo");
+  if (!visible) return null;
 
   const beforeUpload: UploadProps["beforeUpload"] = (file) => {
     const isImage = file.type?.startsWith("image/");
@@ -78,84 +94,92 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
     return Upload.LIST_IGNORE;
   };
 
-  if (!visible) return null;
-
   return (
     <div className="flex flex-col gap-2">
       {contextHolder}
 
-      <div className="text-sm font-semibold">{t.photo}</div>
+      <Text strong>{t.photo}</Text>
 
-      <Upload.Dragger
-        accept="image/*"
-        multiple={false}
-        showUploadList={false}
-        beforeUpload={beforeUpload}
-        className="!rounded-2xl"
-      >
-        <div
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          className="relative aspect-square w-full overflow-hidden rounded-2xl border border-[var(--ant-colorBorderSecondary)] bg-[var(--ant-colorFillSecondary)]"
+      <div className="flex items-center gap-3">
+        <Upload
+          accept="image/*"
+          multiple={false}
+          showUploadList={false}
+          beforeUpload={beforeUpload}
         >
-          {photo ? (
-            <img
-              src={photo}
-              alt="Avatar"
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <User size={32} className="opacity-60" />
-            </div>
-          )}
-
-          <div
+          <button
+            type="button"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
             className={[
-              "pointer-events-none absolute inset-0 flex items-center justify-center transition-colors duration-150",
-              photo && hover ? "bg-black/35" : "bg-transparent",
+              "relative grid place-items-center",
+              "size-24 overflow-hidden rounded-full",
+              "border border-[var(--ant-colorBorderSecondary)]",
+              "bg-[var(--ant-colorFillSecondary)]",
+              "transition hover:brightness-[0.98]",
+              "focus:outline-none focus:ring-2 focus:ring-[var(--ant-colorPrimary)] focus:ring-offset-2 focus:ring-offset-transparent",
             ].join(" ")}
+            aria-label={photo ? "Change photo" : "Upload photo"}
           >
             {photo ? (
+              <img
+                src={photo}
+                alt="Avatar"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <User size={28} className="opacity-60" />
+            )}
+
+            <div
+              className={[
+                "pointer-events-none absolute inset-0 grid place-items-center transition",
+                hover ? "bg-black/35" : "bg-transparent",
+              ].join(" ")}
+            >
               <Camera
                 size={18}
                 className={hover ? "opacity-100" : "opacity-0"}
                 color="#fff"
               />
-            ) : null}
-          </div>
-        </div>
-      </Upload.Dragger>
-
-      <div className="text-xs text-[var(--ant-colorTextSecondary)]">
-        {t.photoSubtitle}
-      </div>
-
-      {photo ? (
-        <div className="flex flex-col gap-2">
-          {t.replacePhoto ? (
-            <div className="text-xs text-[var(--ant-colorTextSecondary)]">
-              {t.replacePhoto}
             </div>
-          ) : null}
+          </button>
+        </Upload>
 
-          <Button
-            danger
-            type="default"
-            icon={<Trash2 size={16} />}
-            onClick={(e) => {
-              e.stopPropagation();
-              setPhoto(undefined);
-            }}
-          >
-            {t.removePhoto}
-          </Button>
+        <div className="min-w-0 space-y-1">
+          <Text type="secondary" className="text-xs">
+            {t.photoSubtitle}
+          </Text>
+
+          {!photo ? (
+            <Text type="secondary" className="text-xs">
+              {t.dragDrop}
+            </Text>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {t.replacePhoto ? (
+                <Text type="secondary" className="text-xs">
+                  {t.replacePhoto}
+                </Text>
+              ) : null}
+
+              <Button
+                danger
+                size="small"
+                type="default"
+                icon={<Trash2 size={14} />}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setPhoto(undefined);
+                }}
+              >
+                {t.removePhoto}
+              </Button>
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="text-xs text-[var(--ant-colorTextSecondary)]">
-          {t.dragDrop}
-        </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -212,11 +236,32 @@ export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
   );
 
   return (
-    <Card id="summary">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-[140px_1fr]">
-        {photoVisible ? <PhotoBlock t={t} /> : <div />}
-        <NameInputsBlock t={t} />
+    <section id="summary" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <Flex align="center" gap={10} wrap>
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <User size={18} />
+            </span>
+            <Title level={4} className="!m-0">
+              {t.sectionTitle ?? "Основная информация"}
+            </Title>
+          </Flex>
+
+          <Text type="secondary" className="text-sm">
+            {t.sectionSubtitle ?? "Имя и фото для шапки резюме (по желанию)."}
+          </Text>
+
+          <Divider className="my-4" />
+        </div>
       </div>
-    </Card>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
+        <Space direction="vertical" size={12} className="w-full">
+          {photoVisible ? <PhotoBlock t={t} /> : null}
+          <NameInputsBlock t={t} />
+        </Space>
+      </div>
+    </section>
   );
 }

@@ -3,9 +3,10 @@
 import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Empty, Form, Input } from "antd";
-import { AnimatePresence, motion } from "framer-motion";
+import { Button, Divider, Empty, Form, Input, Typography } from "antd";
 import { Languages } from "lucide-react";
+
+const { Title, Text } = Typography;
 
 const messages = {
   ru: {
@@ -38,88 +39,60 @@ function normalizeLocale(value: unknown): Locale {
   return base === "en" ? "en" : "ru";
 }
 
-const Row = motion(Card);
-
 export function LanguagesSection() {
   const rawLocale = useCurrentLocale();
   const locale = normalizeLocale(rawLocale) satisfies Locale;
   const t = messages[locale];
 
   const languages = useResumeStore((s) => s.resume.languages ?? []);
-  const { addLanguage, updateLanguage, removeLanguage } = useResumeStore();
+  const addLanguage = useResumeStore((s) => s.addLanguage);
+  const updateLanguage = useResumeStore((s) => s.updateLanguage);
+  const removeLanguage = useResumeStore((s) => s.removeLanguage);
 
   return (
-    <Card
-      id="languages"
-      className="w-full"
-      title={
-        <div className="flex items-center gap-2">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
-            <Languages size={16} />
-          </span>
-          <div className="flex flex-col">
-            <div className="leading-tight">{t.sectionTitle}</div>
-            <div className="text-xs opacity-70">{t.sectionSubtitle}</div>
-          </div>
-        </div>
-      }
-      styles={{ header: { borderBottom: "0px", paddingBottom: 8 } }}
-    >
-      <AnimatePresence initial={false} mode="popLayout">
-        {languages.length === 0 ? (
-          <motion.div
-            key="empty-lang"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="rounded-xl bg-black/3 p-4">
-              <Empty description={t.languagesEmpty} />
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="list-lang"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex w-full flex-col gap-2"
-          >
-            {languages.map((lang) => (
-              <Row
-                key={lang.id}
-                layout
-                size="small"
-                className="w-full rounded-xl"
-                styles={{ body: { padding: 12 } }}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <Form layout="vertical" colon={false} className="space-y-1">
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <Form.Item label={t.languageLabel} className="mb-0">
-                          <Input
-                            value={lang.name}
-                            onChange={(e) =>
-                              updateLanguage(lang.id, { name: e.target.value })
-                            }
-                            placeholder={t.languagePlaceholder}
-                            allowClear
-                          />
-                        </Form.Item>
+    <section id="languages" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <Languages size={16} />
+            </span>
 
-                        <Form.Item label={t.levelLabel} className="mb-0">
-                          <Input
-                            value={lang.level}
-                            onChange={(e) =>
-                              updateLanguage(lang.id, { level: e.target.value })
-                            }
-                            placeholder={t.levelPlaceholder}
-                            allowClear
-                          />
-                        </Form.Item>
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.sectionTitle}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.sectionSubtitle}
+              </Text>
+            </div>
+          </div>
+
+          <Divider className="my-4" />
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
+        {languages.length === 0 ? (
+          <div className="rounded-xl bg-black/3 p-4">
+            <Empty description={t.languagesEmpty} />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {languages.map((lang, index) => (
+              <div key={lang.id} className="space-y-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <Text strong className="text-sm">
+                      {lang.name?.trim() ? lang.name : t.languagePlaceholder}
+                    </Text>
+                    {lang.level?.trim() ? (
+                      <div>
+                        <Text type="secondary" className="text-sm">
+                          {lang.level}
+                        </Text>
                       </div>
-                    </Form>
+                    ) : null}
                   </div>
 
                   <Button
@@ -127,26 +100,52 @@ export function LanguagesSection() {
                     type="text"
                     icon={<DeleteOutlined />}
                     onClick={() => removeLanguage(lang.id)}
-                    className="mt-1"
                   />
                 </div>
-              </Row>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      <div className="mt-4">
+                <Form layout="vertical" colon={false} className="space-y-1">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <Form.Item label={t.languageLabel} className="mb-0">
+                      <Input
+                        value={lang.name ?? ""}
+                        onChange={(e) =>
+                          updateLanguage(lang.id, { name: e.target.value })
+                        }
+                        placeholder={t.languagePlaceholder}
+                        allowClear
+                      />
+                    </Form.Item>
+
+                    <Form.Item label={t.levelLabel} className="mb-0">
+                      <Input
+                        value={lang.level ?? ""}
+                        onChange={(e) =>
+                          updateLanguage(lang.id, { level: e.target.value })
+                        }
+                        placeholder={t.levelPlaceholder}
+                        allowClear
+                      />
+                    </Form.Item>
+                  </div>
+                </Form>
+
+                {index !== languages.length - 1 && <Divider className="my-4" />}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <Divider className="my-6" />
+
         <Button
+          block
           type="dashed"
           icon={<PlusOutlined />}
-          block
           onClick={addLanguage}
-          className="rounded-xl"
         >
           {t.addLanguage}
         </Button>
       </div>
-    </Card>
+    </section>
   );
 }

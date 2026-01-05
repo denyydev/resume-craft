@@ -2,8 +2,10 @@
 
 import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
-import { Card, Form, Input, Select, Space, Switch, Typography } from "antd";
+import { Divider, Form, Input, Select, Switch, Typography } from "antd";
 import { Briefcase, Globe2, MapPin, ShieldCheck } from "lucide-react";
+
+const { Title, Text } = Typography;
 
 const messages = {
   ru: {
@@ -76,89 +78,104 @@ export function EmploymentPreferencesSection() {
   ];
 
   return (
-    <Card
+    <section
       id="employmentPreferences"
-      title={
-        <Space>
-          <Briefcase size={18} />
-          <span>{t.title}</span>
-        </Space>
-      }
+      className="w-full h-full min-h-0 flex flex-col"
     >
-      <Typography.Paragraph type="secondary" style={{ marginTop: -8 }}>
-        {t.subtitle}
-      </Typography.Paragraph>
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <Briefcase size={16} />
+            </span>
 
-      <Form layout="vertical" colon={false}>
-        <Form.Item label={t.employmentType}>
-          <Select
-            mode="multiple"
-            value={pref.employmentType ?? []}
-            onChange={(v) => setEmploymentPreferences({ employmentType: v })}
-            placeholder={t.employmentTypePh}
-            options={employmentTypeOptions}
-            style={{ width: "100%" }}
-            allowClear
-          />
-        </Form.Item>
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.title}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.subtitle}
+              </Text>
+            </div>
+          </div>
 
-        <Form.Item label={t.workFormat}>
-          <Select
-            mode="multiple"
-            value={pref.workFormat ?? []}
-            onChange={(v) => setEmploymentPreferences({ workFormat: v })}
-            placeholder={t.workFormatPh}
-            options={workFormatOptions}
-            style={{ width: "100%" }}
-            allowClear
-          />
-        </Form.Item>
+          <Divider className="my-4" />
+        </div>
+      </div>
 
-        <Form.Item
-          label={
-            <Space orientation="vertical" size={0}>
-              <Space>
-                <Globe2 size={16} />
-                <span>{t.relocation}</span>
-              </Space>
-              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-                {t.relocationHint}
-              </Typography.Text>
-            </Space>
-          }
-        >
-          <Switch
-            checked={Boolean(pref.relocation)}
-            onChange={(checked) =>
-              setEmploymentPreferences({ relocation: checked })
+      <div className="flex-1 min-h-0 overflow-auto p-5">
+        <Form layout="vertical" colon={false} className="space-y-1">
+          <Form.Item label={t.employmentType} className="mb-0">
+            <Select
+              mode="multiple"
+              value={pref.employmentType ?? []}
+              onChange={(v) => setEmploymentPreferences({ employmentType: v })}
+              placeholder={t.employmentTypePh}
+              options={employmentTypeOptions}
+              className="w-full"
+              allowClear
+            />
+          </Form.Item>
+
+          <Form.Item label={t.workFormat} className="mb-0">
+            <Select
+              mode="multiple"
+              value={pref.workFormat ?? []}
+              onChange={(v) => setEmploymentPreferences({ workFormat: v })}
+              placeholder={t.workFormatPh}
+              options={workFormatOptions}
+              className="w-full"
+              allowClear
+            />
+          </Form.Item>
+
+          <Form.Item
+            label={
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <Globe2 size={16} />
+                  <span>{t.relocation}</span>
+                </div>
+                <Text type="secondary" className="text-xs">
+                  {t.relocationHint}
+                </Text>
+              </div>
             }
-          />
-        </Form.Item>
+            className="mb-0"
+          >
+            <Switch
+              checked={Boolean(pref.relocation)}
+              onChange={(checked) =>
+                setEmploymentPreferences({ relocation: checked })
+              }
+            />
+          </Form.Item>
 
-        <Form.Item label={t.timezone}>
-          <Input
-            value={pref.timezone ?? ""}
-            onChange={(e) =>
-              setEmploymentPreferences({ timezone: e.target.value })
-            }
-            placeholder={t.timezonePh}
-            prefix={<MapPin size={16} />}
-            allowClear
-          />
-        </Form.Item>
+          <Form.Item label={t.timezone} className="mb-0">
+            <Input
+              value={pref.timezone ?? ""}
+              onChange={(e) =>
+                setEmploymentPreferences({ timezone: e.target.value })
+              }
+              placeholder={t.timezonePh}
+              prefix={<MapPin size={16} />}
+              allowClear
+            />
+          </Form.Item>
 
-        <Form.Item label={t.authorization}>
-          <Input
-            value={pref.workAuthorization ?? ""}
-            onChange={(e) =>
-              setEmploymentPreferences({ workAuthorization: e.target.value })
-            }
-            placeholder={t.authorizationPh}
-            prefix={<ShieldCheck size={16} />}
-            allowClear
-          />
-        </Form.Item>
-      </Form>
-    </Card>
+          <Form.Item label={t.authorization} className="mb-0">
+            <Input
+              value={pref.workAuthorization ?? ""}
+              onChange={(e) =>
+                setEmploymentPreferences({ workAuthorization: e.target.value })
+              }
+              placeholder={t.authorizationPh}
+              prefix={<ShieldCheck size={16} />}
+              allowClear
+            />
+          </Form.Item>
+        </Form>
+      </div>
+    </section>
   );
 }

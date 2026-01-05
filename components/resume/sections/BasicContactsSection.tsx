@@ -1,7 +1,7 @@
 "use client";
 
 import { useResumeStore } from "@/store/useResumeStore";
-import { Card, Form, Input, Typography } from "antd";
+import { Divider, Flex, Form, Input, Space, Typography } from "antd";
 import {
   Github,
   Linkedin,
@@ -13,8 +13,7 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
-const { Text } = Typography;
-const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 type LocaleMessages = {
   position: string;
@@ -35,11 +34,13 @@ type LocaleMessages = {
   summaryPlaceholder: string;
   reset: string;
   next: string;
+  sectionTitle?: string;
+  sectionSubtitle?: string;
 };
 
 export function BasicContactsSection({ t }: { t: LocaleMessages }) {
-  const { resume, setPosition, setContacts, setSummary, reset } =
-    useResumeStore();
+  const resume = useResumeStore((s) => s.resume);
+  const setContacts = useResumeStore((s) => s.setContacts);
 
   const contactItems = useMemo(
     () => [
@@ -96,47 +97,48 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
   );
 
   return (
-    <Card id="contacts">
-      <Form layout="vertical" colon={false} className="grid grid-cols-1 gap-4">
-        <Form.Item label={t.position} style={{ marginBottom: 0 }}>
-          <Input
-            prefix={<LinkIcon size={16} />}
-            placeholder={t.positionPlaceholder}
-            value={resume.position}
-            onChange={(e) => setPosition(e.target.value)}
-          />
-        </Form.Item>
+    <section id="contacts" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <Flex align="center" gap={10} wrap>
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <LinkIcon size={18} />
+            </span>
+            <Title level={4} className="!m-0">
+              {t.sectionTitle ?? "Контакты и заголовок"}
+            </Title>
+          </Flex>
 
-        {contactItems.map((f) => (
-          <Form.Item key={f.key} label={f.label} style={{ marginBottom: 0 }}>
-            <Input
-              prefix={f.icon}
-              placeholder={f.placeholder}
-              value={f.value}
-              onChange={(e) => f.onChange(e.target.value)}
-            />
-          </Form.Item>
-        ))}
+          <Text type="secondary" className="text-sm">
+            {t.sectionSubtitle ??
+              "Должность, контакты и короткое summary — это первое, что читают рекрутеры."}
+          </Text>
 
-        <Form.Item
-          label={
-            <div className="flex w-full items-baseline justify-between">
-              <span>{t.summary}</span>
-              <span className="text-xs text-slate-400 dark:text-slate-500">
-                {resume.summary.length}/300
-              </span>
-            </div>
-          }
-          style={{ marginBottom: 0 }}
-        >
-          <TextArea
-            autoSize={{ minRows: 4, maxRows: 6 }}
-            placeholder={t.summaryPlaceholder}
-            value={resume.summary}
-            onChange={(e) => setSummary(e.target.value.slice(0, 300))}
-          />
-        </Form.Item>
-      </Form>
-    </Card>
+          <Divider className="my-4" />
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
+        <Space direction="vertical" size={12} className="w-full">
+          <Form
+            layout="vertical"
+            colon={false}
+            className="grid grid-cols-1 gap-4"
+          >
+            {contactItems.map((f) => (
+              <Form.Item key={f.key} label={f.label} className="mb-0">
+                <Input
+                  prefix={f.icon}
+                  placeholder={f.placeholder}
+                  value={f.value}
+                  onChange={(e) => f.onChange(e.target.value)}
+                  allowClear
+                />
+              </Form.Item>
+            ))}
+          </Form>
+        </Space>
+      </div>
+    </section>
   );
 }

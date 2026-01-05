@@ -11,48 +11,52 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
-  Card,
   Checkbox,
   DatePicker,
   Divider,
   Empty,
   Form,
   Input,
+  Typography,
 } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import { AnimatePresence, motion } from "framer-motion";
 import { Briefcase } from "lucide-react";
 
 dayjs.extend(customParseFormat);
 
+const { Title, Text } = Typography;
+
 const messages = {
   ru: {
     sectionTitle: "Опыт работы",
-    sectionSubtitle: "Укажи самые релевантные позиции за последние годы.",
+    sectionSubtitle:
+      "Добавь релевантный профессиональный опыт за последние годы.",
     addButton: "Добавить место работы",
     emptyState:
-      "Пока нет ни одной записи. Нажми кнопку ниже, чтобы добавить опыт.",
+      "В этом разделе будет отображаться твой опыт работы. Добавь первую запись, чтобы начать.",
     company: "Компания",
-    companyPlaceholder: "ООО «Рога и Копыта»",
+    companyPlaceholder: "Название компании",
     position: "Должность",
     positionPlaceholder: "Frontend Developer",
     location: "Локация",
     locationPlaceholder: "Москва / Remote",
-    startDate: "Начало",
-    endDate: "Окончание",
+    startDate: "Дата начала",
+    endDate: "Дата окончания",
     currentCheckbox: "Работаю здесь сейчас",
     description: "Описание",
-    descriptionPlaceholder: "Опиши задачи и достижения...",
+    descriptionPlaceholder:
+      "Кратко опиши обязанности, достижения и используемые технологии.",
   },
   en: {
     sectionTitle: "Work experience",
-    sectionSubtitle: "List the most relevant positions from recent years.",
-    addButton: "Add experience",
+    sectionSubtitle:
+      "Add your most relevant professional experience from recent years.",
+    addButton: "Add work experience",
     emptyState:
-      "No experience added yet. Click the button below to add experience.",
+      "Your work experience will appear here. Add your first entry to get started.",
     company: "Company",
-    companyPlaceholder: "Acme Inc.",
+    companyPlaceholder: "Company name",
     position: "Position",
     positionPlaceholder: "Frontend Developer",
     location: "Location",
@@ -61,7 +65,8 @@ const messages = {
     endDate: "End date",
     currentCheckbox: "I currently work here",
     description: "Description",
-    descriptionPlaceholder: "Describe tasks and achievements...",
+    descriptionPlaceholder:
+      "Briefly describe your responsibilities, achievements and technologies used.",
   },
 } as const;
 
@@ -86,53 +91,63 @@ export function ExperienceSection() {
   const removeExperience = useResumeStore((s) => s.removeExperience);
 
   return (
-    <Card
-      id="experience"
-      className="w-full"
-      title={
-        <div className="flex items-center gap-2">
-          <Briefcase size={18} />
-          <span>{t.sectionTitle}</span>
-        </div>
-      }
-    >
-      <div className="-mt-2 mb-3 opacity-75">{t.sectionSubtitle}</div>
+    <section id="experience" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <Briefcase size={16} />
+            </span>
 
-      <AnimatePresence initial={false}>
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.sectionTitle}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.sectionSubtitle}
+              </Text>
+            </div>
+          </div>
+
+          <Divider className="my-4" />
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
         {experience.length === 0 ? (
-          <motion.div
-            key="empty"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-          >
+          <div className="rounded-xl bg-black/3 p-4">
             <Empty description={t.emptyState} />
-          </motion.div>
+          </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="space-y-6">
             {experience.map((item, index) => (
-              <motion.div
-                key={item.id}
-                layout
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, height: 0, overflow: "hidden" }}
-              >
-                <Card
-                  size="small"
-                  className="w-full"
-                  title={<span className="tabular-nums">{index + 1}</span>}
-                  extra={
-                    <Button
-                      danger
-                      type="text"
-                      icon={<DeleteOutlined />}
-                      onClick={() => removeExperience(item.id)}
-                    />
-                  }
-                >
-                  <Form layout="vertical" colon={false} className="space-y-1">
-                    <Form.Item label={t.company}>
+              <div key={item.id} className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-baseline gap-2">
+                    <Text type="secondary" className="text-xs tabular-nums">
+                      {index + 1}
+                    </Text>
+                    <Text className="text-sm">
+                      {item.position?.trim() || t.position}
+                    </Text>
+                    {item.company?.trim() ? (
+                      <Text type="secondary" className="text-sm">
+                        · {item.company.trim()}
+                      </Text>
+                    ) : null}
+                  </div>
+
+                  <Button
+                    danger
+                    type="text"
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeExperience(item.id)}
+                  />
+                </div>
+
+                <Form layout="vertical" colon={false} className="space-y-1">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Form.Item label={t.company} className="mb-0">
                       <Input
                         value={item.company ?? ""}
                         onChange={(e) =>
@@ -144,7 +159,7 @@ export function ExperienceSection() {
                       />
                     </Form.Item>
 
-                    <Form.Item label={t.position}>
+                    <Form.Item label={t.position} className="mb-0">
                       <Input
                         value={item.position ?? ""}
                         onChange={(e) =>
@@ -156,109 +171,109 @@ export function ExperienceSection() {
                         allowClear
                       />
                     </Form.Item>
+                  </div>
 
-                    <Form.Item label={t.location}>
-                      <Input
-                        value={item.location ?? ""}
-                        onChange={(e) =>
+                  <Form.Item label={t.location} className="mb-0">
+                    <Input
+                      value={item.location ?? ""}
+                      onChange={(e) =>
+                        updateExperience(item.id, { location: e.target.value })
+                      }
+                      placeholder={t.locationPlaceholder}
+                      prefix={<EnvironmentOutlined />}
+                      allowClear
+                    />
+                  </Form.Item>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <Form.Item label={t.startDate} className="mb-0">
+                      <DatePicker
+                        picker="month"
+                        format={MONTH_FORMAT}
+                        value={
+                          item.startDate
+                            ? dayjs(item.startDate, MONTH_FORMAT)
+                            : null
+                        }
+                        onChange={(v) =>
                           updateExperience(item.id, {
-                            location: e.target.value,
+                            startDate: v ? v.format(MONTH_FORMAT) : "",
                           })
                         }
-                        placeholder={t.locationPlaceholder}
-                        prefix={<EnvironmentOutlined />}
-                        allowClear
+                        className="w-full"
+                        suffixIcon={<CalendarOutlined />}
                       />
                     </Form.Item>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                      <Form.Item label={t.startDate} className="mb-0">
-                        <DatePicker
-                          picker="month"
-                          format={MONTH_FORMAT}
-                          value={
-                            item.startDate
-                              ? dayjs(item.startDate, MONTH_FORMAT)
-                              : null
-                          }
-                          onChange={(v) =>
-                            updateExperience(item.id, {
-                              startDate: v ? v.format(MONTH_FORMAT) : "",
-                            })
-                          }
-                          allowClear
-                          className="w-full"
-                          suffixIcon={<CalendarOutlined />}
-                        />
-                      </Form.Item>
-
-                      <Form.Item label={t.endDate} className="mb-0">
-                        <DatePicker
-                          picker="month"
-                          format={MONTH_FORMAT}
-                          disabled={Boolean(item.isCurrent)}
-                          value={
-                            item.endDate
-                              ? dayjs(item.endDate, MONTH_FORMAT)
-                              : null
-                          }
-                          onChange={(v) =>
-                            updateExperience(item.id, {
-                              endDate: v ? v.format(MONTH_FORMAT) : "",
-                            })
-                          }
-                          allowClear
-                          className="w-full"
-                          suffixIcon={<CalendarOutlined />}
-                        />
-                      </Form.Item>
-                    </div>
-
-                    <Form.Item className="mb-0">
-                      <Checkbox
-                        checked={Boolean(item.isCurrent)}
-                        onChange={(e) =>
+                    <Form.Item label={t.endDate} className="mb-0">
+                      <DatePicker
+                        picker="month"
+                        format={MONTH_FORMAT}
+                        disabled={Boolean(item.isCurrent)}
+                        value={
+                          item.endDate
+                            ? dayjs(item.endDate, MONTH_FORMAT)
+                            : null
+                        }
+                        onChange={(v) =>
                           updateExperience(item.id, {
-                            isCurrent: e.target.checked,
-                            endDate: e.target.checked ? "" : item.endDate,
+                            endDate: v ? v.format(MONTH_FORMAT) : "",
                           })
                         }
-                      >
-                        {t.currentCheckbox}
-                      </Checkbox>
-                    </Form.Item>
-
-                    <Form.Item label={t.description} className="mb-0">
-                      <Input.TextArea
-                        value={item.description ?? ""}
-                        onChange={(e) =>
-                          updateExperience(item.id, {
-                            description: e.target.value,
-                          })
-                        }
-                        placeholder={t.descriptionPlaceholder}
-                        autoSize={{ minRows: 4, maxRows: 10 }}
-                        allowClear
+                        className="w-full"
+                        suffixIcon={<CalendarOutlined />}
                       />
                     </Form.Item>
-                  </Form>
-                </Card>
-              </motion.div>
+                  </div>
+
+                  <Form.Item className="mb-0">
+                    <Checkbox
+                      checked={Boolean(item.isCurrent)}
+                      onChange={(e) =>
+                        updateExperience(item.id, {
+                          isCurrent: e.target.checked,
+                          endDate: e.target.checked ? "" : item.endDate,
+                        })
+                      }
+                    >
+                      {t.currentCheckbox}
+                    </Checkbox>
+                  </Form.Item>
+
+                  <Form.Item label={t.description} className="mb-0">
+                    <Input.TextArea
+                      value={item.description ?? ""}
+                      onChange={(e) =>
+                        updateExperience(item.id, {
+                          description: e.target.value,
+                        })
+                      }
+                      placeholder={t.descriptionPlaceholder}
+                      autoSize={{ minRows: 4, maxRows: 10 }}
+                      allowClear
+                    />
+                  </Form.Item>
+                </Form>
+
+                {index !== experience.length - 1 && (
+                  <Divider className="my-4" />
+                )}
+              </div>
             ))}
           </div>
         )}
-      </AnimatePresence>
 
-      <Divider className="my-4" />
+        <Divider className="my-6" />
 
-      <Button
-        block
-        type="dashed"
-        icon={<PlusOutlined />}
-        onClick={addExperience}
-      >
-        {t.addButton}
-      </Button>
-    </Card>
+        <Button
+          block
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={addExperience}
+        >
+          {t.addButton}
+        </Button>
+      </div>
+    </section>
   );
 }

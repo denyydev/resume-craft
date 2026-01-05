@@ -1,9 +1,8 @@
 "use client";
 
-import { useScrollSpy } from "@/hooks/useScrollSpy";
 import type { Locale } from "@/lib/useCurrentLocale";
 import type { ResumeSectionKey } from "@/types/resume";
-import { Card } from "antd";
+import { Divider, Typography } from "antd";
 import {
   Activity,
   Award,
@@ -17,9 +16,14 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 import { useParams } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 
-type Item = { key: ResumeSectionKey; icon: React.ReactNode };
+const { Text } = Typography;
+
+type Item = {
+  key: ResumeSectionKey;
+  icon: React.ReactNode;
+};
 
 const ITEMS: Item[] = [
   { key: "summary", icon: <FileText size={16} /> },
@@ -37,7 +41,6 @@ const ITEMS: Item[] = [
 
 const messages = {
   ru: {
-    photo: "Фото",
     summary: "О себе",
     contacts: "Контакты",
     experience: "Опыт",
@@ -49,9 +52,9 @@ const messages = {
     employmentPreferences: "Предпочтения",
     certifications: "Сертификаты",
     activities: "Активности",
+    sections: "Разделы",
   },
   en: {
-    photo: "Photo",
     summary: "Summary",
     contacts: "Contacts",
     experience: "Experience",
@@ -63,77 +66,57 @@ const messages = {
     employmentPreferences: "Preferences",
     certifications: "Certifications",
     activities: "Activities",
+    sections: "Sections",
   },
 } as const;
 
-export function SectionsSidebar() {
+export function SectionsSidebar({ setSelected }) {
   const params = useParams<{ locale: Locale }>();
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
   const dict = messages[locale];
 
-  const ids = useMemo(() => ITEMS.map((x) => x.key as string), []);
-  const activeId = useScrollSpy(ids);
+  const [activeKey, setActiveKey] = useState<ResumeSectionKey>("summary");
 
-  const itemsWithLabels = useMemo(
+  const items = useMemo(
     () =>
       ITEMS.map((it) => ({
         ...it,
         label: dict[it.key],
-        href: `#${it.key}`,
-        isActive: activeId === it.key,
+        isActive: activeKey === it.key,
       })),
-    [dict, activeId]
+    [dict, activeKey]
   );
 
-  const rowRef = useRef<HTMLAnchorElement | null>(null);
-  const [rowHeight, setRowHeight] = useState(34);
-
-  useEffect(() => {
-    if (!rowRef.current) return;
-    const h = rowRef.current.getBoundingClientRect().height;
-    if (h) setRowHeight(h);
-  }, []);
-
-  const activeIndex = useMemo(() => {
-    const idx = itemsWithLabels.findIndex((x) => x.isActive);
-    return idx >= 0 ? idx : 0;
-  }, [itemsWithLabels]);
-
-  const gap = 6;
-  const highlightY = activeIndex * (rowHeight + gap);
-
   return (
-    <Card className="w-full">
-      <div className="relative flex w-full flex-col gap-1.5">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-0 top-0 w-full rounded-lg transition-transform duration-300 ease-out"
-          style={{
-            height: rowHeight,
-            transform: `translateY(${highlightY}px)`,
-            backgroundColor: "rgb(2 6 23 / 0.05)",
-          }}
-        />
+    <div className="w-[300px] bg-white h-full py-5">
+      <div>
+        {items.map((item, idx) => (
+          <React.Fragment key={item.key}>
+            <button
+              type="button"
+              onClick={() => {
+                setActiveKey(item.key);
+                setSelected(item.key);
+              }}
+              aria-current={item.isActive ? "true" : undefined}
+              className={[
+                "flex w-full items-center gap-2.5 px-2 text-left transition active:scale-[0.99]",
+                "hover:bg-(--ant-colorFillSecondary) cursor-pointer px-5",
+                item.isActive
+                  ? "font-medium text-(--ant-colorPrimary)"
+                  : "text-(--ant-colorTextSecondary) hover:text-(--ant-colorText)",
+              ].join(" ")}
+            >
+              <span className="flex shrink-0 items-center">{item.icon}</span>
+              <span className="min-w-0 flex-1 truncate">{item.label}</span>
+            </button>
 
-        {itemsWithLabels.map((item, idx) => (
-          <a
-            key={item.key}
-            href={item.href}
-            ref={idx === 0 ? rowRef : undefined}
-            className={`relative z-10 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.5 text-left no-underline transition active:scale-[0.99] hover:bg-slate-100 dark:hover:bg-slate-800 ${
-              item.isActive
-                ? "font-medium text-blue-600 dark:text-blue-400"
-                : "text-slate-700 dark:text-slate-400"
-            }`}
-            aria-current={item.isActive ? "true" : undefined}
-          >
-            <span className="flex shrink-0 items-center">{item.icon}</span>
-            <span className="min-w-0 flex-1 truncate text-sm">
-              {item.label}
-            </span>
-          </a>
+            {idx !== items.length - 1 && (
+              <Divider className="my-0 border-1 border-gray-200" />
+            )}
+          </React.Fragment>
         ))}
       </div>
-    </Card>
+    </div>
   );
 }

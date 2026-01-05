@@ -1,37 +1,17 @@
 "use client";
 
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { EditorBottomBar } from "@/components/editor/EditorBottomBar";
 import { EditorShell } from "@/components/resume/EditorShell";
-import { ResetResumeButton } from "@/components/resume/nav/ResetButton";
-import { SaveResumeButton } from "@/components/resume/nav/SaveResumeButton";
-import { ResumeDashboard } from "@/components/resume/sections/ResumeDashboard";
+import { ResumePreview } from "@/components/resume/ResumePreview";
 import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
-import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 
-const messages = {
-  ru: { openPreview: "Предпросмотр / Скачать PDF" },
-  en: { openPreview: "Preview / Download PDF" },
-} as const;
-
 export default function EditorPage() {
-  const params = useParams<{ locale: Locale }>();
-  const locale: Locale = params?.locale === "en" ? "en" : "ru";
-  const dict = messages[locale];
-
+  const [selected, setSelected] = useState("summary");
   const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const router = useRouter();
   const resumeId = searchParams.get("resumeId") || undefined;
-
   const loadResume = useResumeStore((s) => s.loadResume);
 
   useEffect(() => {
@@ -53,46 +33,23 @@ export default function EditorPage() {
     fetchResume();
   }, [resumeId, loadResume]);
 
-  const handleOpenPreview = useCallback(() => {
-    const basePath = pathname.endsWith("/preview")
-      ? pathname.replace(/\/preview$/, "")
-      : pathname;
-
-    const queryString = searchParams.toString();
-    const suffix = queryString ? `?${queryString}` : "";
-    router.push(`${basePath}/preview${suffix}`);
-  }, [pathname, router, searchParams]);
-
   return (
-    <div className="min-h-screen bg-bg pb-12">
-      <div className="grid grid-cols-[240px_1fr_360px] gap-5 py-5">
-        <aside className="shrink-0">
-          <div className="sticky top-5">
-            <SectionsSidebar />
+    <div className="h-full">
+      <div className="grid h-full grid-cols-2">
+        <div className="flex h-full min-h-0">
+          <div className="h-full">
+            <SectionsSidebar setSelected={setSelected} />
           </div>
-        </aside>
-
-        <main className="min-w-0">
-          <EditorShell />
-        </main>
-
-        <aside className="shrink-0">
-          <div className="sticky top-5">
-            <ResumeDashboard />
+          <div className="flex-1 min-h-0">
+            <EditorShell selected={selected} />
           </div>
-        </aside>
+        </div>
+        <div className="h-full min-h-0 p-5">
+          <div className="h-full min-h-0 overflow-auto bg-white flex justify-center">
+            <ResumePreview />
+          </div>
+        </div>
       </div>
-
-      <EditorBottomBar
-        previewLabel={dict.openPreview}
-        onOpenPreview={handleOpenPreview}
-        actions={
-          <>
-            <SaveResumeButton />
-            <ResetResumeButton />
-          </>
-        }
-      />
     </div>
   );
 }

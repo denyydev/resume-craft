@@ -92,6 +92,67 @@ const DEFAULT_SECTIONS_VISIBILITY: SectionsVisibility = {
   activities: true,
 };
 
+const emptyExperience = (): ExperienceItem => ({
+  id: nanoid(),
+  company: "",
+  position: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  isCurrent: false,
+  description: "",
+});
+
+const emptyProject = (): ProjectItem => ({
+  id: nanoid(),
+  name: "",
+  role: "",
+  stack: "",
+  link: "",
+  description: "",
+});
+
+const emptyEducation = (): EducationItem => ({
+  id: nanoid(),
+  institution: "",
+  degree: "",
+  field: "",
+  startDate: "",
+  endDate: "",
+});
+
+const emptyLanguage = (): LanguageItem => ({
+  id: nanoid(),
+  name: "",
+  level: "",
+});
+
+const emptyCertification = (): CertificationItem => ({
+  id: nanoid(),
+  name: "",
+  issuer: "",
+  year: "",
+  link: "",
+});
+
+const emptyActivity = (
+  type: ActivityItem["type"] = "open-source"
+): ActivityItem => ({
+  id: nanoid(),
+  type,
+  name: "",
+  role: "",
+  description: "",
+  link: "",
+});
+
+function ensureAtLeastOne<T>(
+  arr: T[] | undefined | null,
+  createOne: () => T
+): T[] {
+  return Array.isArray(arr) && arr.length > 0 ? arr : [createOne()];
+}
+
 const createEmptyResume = (): Resume => ({
   fullName: "",
   position: "",
@@ -105,12 +166,12 @@ const createEmptyResume = (): Resume => ({
     website: "",
   },
   summary: "",
-  experience: [],
-  projects: [],
+  experience: [emptyExperience()],
+  projects: [emptyProject()],
   techSkills: { tags: [], note: "" },
   softSkills: { tags: [], note: "" },
-  education: [],
-  languages: [],
+  education: [emptyEducation()],
+  languages: [emptyLanguage()],
   employmentPreferences: {
     employmentType: [],
     workFormat: [],
@@ -118,8 +179,8 @@ const createEmptyResume = (): Resume => ({
     timezone: "",
     workAuthorization: "",
   },
-  certifications: [],
-  activities: [],
+  certifications: [emptyCertification()],
+  activities: [emptyActivity()],
   templateKey: "default",
   accentColor: DEFAULT_ACCENT_COLOR,
   includePhoto: DEFAULT_INCLUDE_PHOTO,
@@ -227,34 +288,47 @@ export const useResumeStore = create<ResumeState>((set) => ({
 
   loadResume: (resume) =>
     set(() => {
+      const base = createEmptyResume();
+
       return {
         resume: {
-          ...createEmptyResume(),
+          ...base,
           ...resume,
           accentColor: resume.accentColor ?? DEFAULT_ACCENT_COLOR,
           includePhoto: resume.includePhoto ?? DEFAULT_INCLUDE_PHOTO,
+          experience: ensureAtLeastOne(resume.experience, emptyExperience),
+          projects: ensureAtLeastOne(resume.projects, emptyProject),
+          education: ensureAtLeastOne(resume.education, emptyEducation),
+          languages: ensureAtLeastOne(resume.languages, emptyLanguage),
           techSkills:
             resume.techSkills ??
             ({
               tags: [],
-              note: typeof (resume as unknown as { skills?: string }).skills === "string"
-                ? (resume as unknown as { skills: string }).skills
-                : "",
+              note:
+                typeof (resume as unknown as { skills?: string }).skills ===
+                "string"
+                  ? (resume as unknown as { skills: string }).skills
+                  : "",
             } as Resume["techSkills"]),
           softSkills:
             resume.softSkills ??
             ({
               tags: [],
-              note: typeof (resume as unknown as { softSkills?: string }).softSkills === "string"
-                ? (resume as unknown as { softSkills: string }).softSkills
-                : "",
+              note:
+                typeof (resume as unknown as { softSkills?: string })
+                  .softSkills === "string"
+                  ? (resume as unknown as { softSkills: string }).softSkills
+                  : "",
             } as Resume["softSkills"]),
           employmentPreferences:
-            resume.employmentPreferences ??
-            createEmptyResume().employmentPreferences,
-          certifications:
-            resume.certifications ?? createEmptyResume().certifications,
-          activities: resume.activities ?? createEmptyResume().activities,
+            resume.employmentPreferences ?? base.employmentPreferences,
+          certifications: ensureAtLeastOne(
+            resume.certifications,
+            emptyCertification
+          ),
+          activities: ensureAtLeastOne(resume.activities, () =>
+            emptyActivity("open-source")
+          ),
           sectionsVisibility: {
             ...DEFAULT_SECTIONS_VISIBILITY,
             ...(resume.sectionsVisibility ?? {}),
@@ -360,19 +434,7 @@ export const useResumeStore = create<ResumeState>((set) => ({
     set((state) => ({
       resume: {
         ...state.resume,
-        experience: [
-          ...state.resume.experience,
-          {
-            id: nanoid(),
-            company: "",
-            position: "",
-            location: "",
-            startDate: "",
-            endDate: "",
-            isCurrent: false,
-            description: "",
-          },
-        ],
+        experience: [...state.resume.experience, emptyExperience()],
       },
     })),
 
@@ -387,28 +449,21 @@ export const useResumeStore = create<ResumeState>((set) => ({
     })),
 
   removeExperience: (id) =>
-    set((state) => ({
-      resume: {
-        ...state.resume,
-        experience: state.resume.experience.filter((item) => item.id !== id),
-      },
-    })),
+    set((state) => {
+      const next = state.resume.experience.filter((item) => item.id !== id);
+      return {
+        resume: {
+          ...state.resume,
+          experience: next.length > 0 ? next : [emptyExperience()],
+        },
+      };
+    }),
 
   addProject: () =>
     set((state) => ({
       resume: {
         ...state.resume,
-        projects: [
-          ...state.resume.projects,
-          {
-            id: nanoid(),
-            name: "",
-            role: "",
-            stack: "",
-            link: "",
-            description: "",
-          },
-        ],
+        projects: [...state.resume.projects, emptyProject()],
       },
     })),
 
@@ -423,28 +478,21 @@ export const useResumeStore = create<ResumeState>((set) => ({
     })),
 
   removeProject: (id) =>
-    set((state) => ({
-      resume: {
-        ...state.resume,
-        projects: state.resume.projects.filter((item) => item.id !== id),
-      },
-    })),
+    set((state) => {
+      const next = state.resume.projects.filter((item) => item.id !== id);
+      return {
+        resume: {
+          ...state.resume,
+          projects: next.length > 0 ? next : [emptyProject()],
+        },
+      };
+    }),
 
   addEducation: () =>
     set((state) => ({
       resume: {
         ...state.resume,
-        education: [
-          ...state.resume.education,
-          {
-            id: nanoid(),
-            institution: "",
-            degree: "",
-            field: "",
-            startDate: "",
-            endDate: "",
-          },
-        ],
+        education: [...state.resume.education, emptyEducation()],
       },
     })),
 
@@ -459,25 +507,21 @@ export const useResumeStore = create<ResumeState>((set) => ({
     })),
 
   removeEducation: (id) =>
-    set((state) => ({
-      resume: {
-        ...state.resume,
-        education: state.resume.education.filter((item) => item.id !== id),
-      },
-    })),
+    set((state) => {
+      const next = state.resume.education.filter((item) => item.id !== id);
+      return {
+        resume: {
+          ...state.resume,
+          education: next.length > 0 ? next : [emptyEducation()],
+        },
+      };
+    }),
 
   addLanguage: () =>
     set((state) => ({
       resume: {
         ...state.resume,
-        languages: [
-          ...state.resume.languages,
-          {
-            id: nanoid(),
-            name: "",
-            level: "",
-          },
-        ],
+        languages: [...state.resume.languages, emptyLanguage()],
       },
     })),
 
@@ -492,12 +536,15 @@ export const useResumeStore = create<ResumeState>((set) => ({
     })),
 
   removeLanguage: (id) =>
-    set((state) => ({
-      resume: {
-        ...state.resume,
-        languages: state.resume.languages.filter((item) => item.id !== id),
-      },
-    })),
+    set((state) => {
+      const next = state.resume.languages.filter((item) => item.id !== id);
+      return {
+        resume: {
+          ...state.resume,
+          languages: next.length > 0 ? next : [emptyLanguage()],
+        },
+      };
+    }),
 
   addCertification: () =>
     set((state) => ({
@@ -505,13 +552,7 @@ export const useResumeStore = create<ResumeState>((set) => ({
         ...state.resume,
         certifications: [
           ...(state.resume.certifications ?? []),
-          {
-            id: nanoid(),
-            name: "",
-            issuer: "",
-            year: "",
-            link: "",
-          },
+          emptyCertification(),
         ],
       },
     })),
@@ -527,30 +568,23 @@ export const useResumeStore = create<ResumeState>((set) => ({
     })),
 
   removeCertification: (id) =>
-    set((state) => ({
-      resume: {
-        ...state.resume,
-        certifications: (state.resume.certifications ?? []).filter(
-          (item) => item.id !== id
-        ),
-      },
-    })),
+    set((state) => {
+      const next = (state.resume.certifications ?? []).filter(
+        (item) => item.id !== id
+      );
+      return {
+        resume: {
+          ...state.resume,
+          certifications: next.length > 0 ? next : [emptyCertification()],
+        },
+      };
+    }),
 
   addActivity: (type = "open-source") =>
     set((state) => ({
       resume: {
         ...state.resume,
-        activities: [
-          ...(state.resume.activities ?? []),
-          {
-            id: nanoid(),
-            type,
-            name: "",
-            role: "",
-            description: "",
-            link: "",
-          },
-        ],
+        activities: [...(state.resume.activities ?? []), emptyActivity(type)],
       },
     })),
 
@@ -565,12 +599,15 @@ export const useResumeStore = create<ResumeState>((set) => ({
     })),
 
   removeActivity: (id) =>
-    set((state) => ({
-      resume: {
-        ...state.resume,
-        activities: (state.resume.activities ?? []).filter(
-          (item) => item.id !== id
-        ),
-      },
-    })),
+    set((state) => {
+      const next = (state.resume.activities ?? []).filter(
+        (item) => item.id !== id
+      );
+      return {
+        resume: {
+          ...state.resume,
+          activities: next.length > 0 ? next : [emptyActivity("open-source")],
+        },
+      };
+    }),
 }));

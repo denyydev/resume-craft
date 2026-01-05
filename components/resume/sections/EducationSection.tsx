@@ -7,9 +7,10 @@ import {
   DeleteOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { Button, Card, Empty, Form, Input } from "antd";
-import { AnimatePresence, motion } from "framer-motion";
+import { Button, Divider, Empty, Form, Input, Typography } from "antd";
 import { BookOpen } from "lucide-react";
+
+const { Title, Text } = Typography;
 
 const messages = {
   ru: {
@@ -54,131 +55,62 @@ function normalizeLocale(value: unknown): Locale {
   return base === "en" ? "en" : "ru";
 }
 
-const Row = motion(Card);
-
 export function EducationSection() {
   const rawLocale = useCurrentLocale();
   const locale = normalizeLocale(rawLocale) satisfies Locale;
   const t = messages[locale];
 
   const education = useResumeStore((s) => s.resume.education ?? []);
-  const { addEducation, updateEducation, removeEducation } = useResumeStore();
+  const addEducation = useResumeStore((s) => s.addEducation);
+  const updateEducation = useResumeStore((s) => s.updateEducation);
+  const removeEducation = useResumeStore((s) => s.removeEducation);
 
   return (
-    <Card
-      id="education"
-      className="w-full"
-      title={
-        <div className="flex items-center gap-2">
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
-            <BookOpen size={16} />
-          </span>
-          <div className="flex flex-col">
-            <div className="leading-tight">{t.sectionTitle}</div>
-            <div className="text-xs opacity-70">{t.sectionSubtitle}</div>
-          </div>
-        </div>
-      }
-      styles={{ header: { borderBottom: "0px", paddingBottom: 8 } }}
-    >
-      <AnimatePresence initial={false} mode="popLayout">
-        {education.length === 0 ? (
-          <motion.div
-            key="empty-edu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div className="rounded-xl bg-black/3 p-4">
-              <Empty description={t.educationEmpty} />
+    <section id="education" className="w-full h-full min-h-0 flex flex-col">
+      <div className="sticky top-0 z-10 bg-white px-5 pt-5">
+        <div className="pt-1">
+          <div className="flex items-start gap-3">
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-black/5">
+              <BookOpen size={16} />
+            </span>
+
+            <div className="flex flex-col">
+              <Title level={4} className="!m-0">
+                {t.sectionTitle}
+              </Title>
+              <Text type="secondary" className="text-sm">
+                {t.sectionSubtitle}
+              </Text>
             </div>
-          </motion.div>
+          </div>
+
+          <Divider className="my-4" />
+        </div>
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-auto p-5">
+        {education.length === 0 ? (
+          <div className="rounded-xl bg-black/3 p-4">
+            <Empty description={t.educationEmpty} />
+          </div>
         ) : (
-          <motion.div
-            key="list-edu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex w-full flex-col gap-2"
-          >
-            {education.map((item) => (
-              <Row
-                key={item.id}
-                layout
-                size="small"
-                className="w-full rounded-xl"
-                styles={{ body: { padding: 12 } }}
-              >
+          <div className="space-y-6">
+            {education.map((item, index) => (
+              <div key={item.id} className="space-y-3">
                 <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0 flex-1">
-                    <Form layout="vertical" colon={false} className="space-y-1">
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <Form.Item label={t.institution} className="mb-0">
-                          <Input
-                            value={item.institution}
-                            onChange={(e) =>
-                              updateEducation(item.id, {
-                                institution: e.target.value,
-                              })
-                            }
-                            placeholder={t.institutionPlaceholder}
-                            allowClear
-                          />
-                        </Form.Item>
-
-                        <Form.Item label={t.field} className="mb-0">
-                          <Input
-                            value={item.field}
-                            onChange={(e) =>
-                              updateEducation(item.id, {
-                                field: e.target.value,
-                              })
-                            }
-                            placeholder={t.fieldPlaceholder}
-                            allowClear
-                          />
-                        </Form.Item>
+                  <div className="min-w-0">
+                    <Text strong className="text-sm">
+                      {item.institution?.trim()
+                        ? item.institution
+                        : t.institutionPlaceholder}
+                    </Text>
+                    {item.field?.trim() ? (
+                      <div>
+                        <Text type="secondary" className="text-sm">
+                          {item.field}
+                        </Text>
                       </div>
-
-                      <Form.Item label={t.degree} className="mb-0">
-                        <Input
-                          value={item.degree}
-                          onChange={(e) =>
-                            updateEducation(item.id, { degree: e.target.value })
-                          }
-                          placeholder={t.degreePlaceholder}
-                          allowClear
-                        />
-                      </Form.Item>
-
-                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                        <Form.Item label={t.startLabel} className="mb-0">
-                          <Input
-                            value={item.startDate}
-                            onChange={(e) =>
-                              updateEducation(item.id, {
-                                startDate: e.target.value,
-                              })
-                            }
-                            placeholder={t.startPlaceholder}
-                            prefix={<CalendarOutlined />}
-                          />
-                        </Form.Item>
-
-                        <Form.Item label={t.endLabel} className="mb-0">
-                          <Input
-                            value={item.endDate}
-                            onChange={(e) =>
-                              updateEducation(item.id, {
-                                endDate: e.target.value,
-                              })
-                            }
-                            placeholder={t.endPlaceholder}
-                            prefix={<CalendarOutlined />}
-                          />
-                        </Form.Item>
-                      </div>
-                    </Form>
+                    ) : null}
                   </div>
 
                   <Button
@@ -186,26 +118,93 @@ export function EducationSection() {
                     type="text"
                     icon={<DeleteOutlined />}
                     onClick={() => removeEducation(item.id)}
-                    className="mt-1"
                   />
                 </div>
-              </Row>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      <div className="mt-4">
+                <Form layout="vertical" colon={false} className="space-y-1">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <Form.Item label={t.institution} className="mb-0">
+                      <Input
+                        value={item.institution ?? ""}
+                        onChange={(e) =>
+                          updateEducation(item.id, {
+                            institution: e.target.value,
+                          })
+                        }
+                        placeholder={t.institutionPlaceholder}
+                        allowClear
+                      />
+                    </Form.Item>
+
+                    <Form.Item label={t.field} className="mb-0">
+                      <Input
+                        value={item.field ?? ""}
+                        onChange={(e) =>
+                          updateEducation(item.id, { field: e.target.value })
+                        }
+                        placeholder={t.fieldPlaceholder}
+                        allowClear
+                      />
+                    </Form.Item>
+                  </div>
+
+                  <Form.Item label={t.degree} className="mb-0">
+                    <Input
+                      value={item.degree ?? ""}
+                      onChange={(e) =>
+                        updateEducation(item.id, { degree: e.target.value })
+                      }
+                      placeholder={t.degreePlaceholder}
+                      allowClear
+                    />
+                  </Form.Item>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <Form.Item label={t.startLabel} className="mb-0">
+                      <Input
+                        value={item.startDate ?? ""}
+                        onChange={(e) =>
+                          updateEducation(item.id, {
+                            startDate: e.target.value,
+                          })
+                        }
+                        placeholder={t.startPlaceholder}
+                        prefix={<CalendarOutlined />}
+                        allowClear
+                      />
+                    </Form.Item>
+
+                    <Form.Item label={t.endLabel} className="mb-0">
+                      <Input
+                        value={item.endDate ?? ""}
+                        onChange={(e) =>
+                          updateEducation(item.id, { endDate: e.target.value })
+                        }
+                        placeholder={t.endPlaceholder}
+                        prefix={<CalendarOutlined />}
+                        allowClear
+                      />
+                    </Form.Item>
+                  </div>
+                </Form>
+
+                {index !== education.length - 1 && <Divider className="my-4" />}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <Divider className="my-6" />
+
         <Button
           type="dashed"
           icon={<PlusOutlined />}
           block
           onClick={addEducation}
-          className="rounded-xl"
         >
           {t.addEducation}
         </Button>
       </div>
-    </Card>
+    </section>
   );
 }

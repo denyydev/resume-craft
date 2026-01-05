@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { formatPeriod, type ResumeTemplateProps } from "./common"
+import { formatPeriod, type ResumeTemplateProps } from "./common";
 
 export function NeoTemplate({ data }: ResumeTemplateProps) {
   const {
@@ -14,15 +14,15 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
     softSkills,
     education,
     languages,
-  } = data
+  } = data;
 
-  const techTags = techSkills?.tags ?? []
-  const techNote = techSkills?.note?.trim() ?? ""
-  const softTags = softSkills?.tags ?? []
-  const softNote = softSkills?.note?.trim() ?? ""
+  const techTags = techSkills?.tags ?? [];
+  const techNote = techSkills?.note?.trim() ?? "";
+  const softTags = softSkills?.tags ?? [];
+  const softNote = softSkills?.note?.trim() ?? "";
 
-  const hasTech = techTags.length > 0 || techNote.length > 0
-  const hasSoft = softTags.length > 0 || softNote.length > 0
+  const hasTech = techTags.length > 0 || techNote.length > 0;
+  const hasSoft = softTags.length > 0 || softNote.length > 0;
 
   return (
     <div className="w-[794px] min-h-[1123px] bg-white text-slate-900 px-10 py-9 flex flex-col gap-6">
@@ -73,20 +73,33 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
                   <div className="flex justify-between gap-4">
                     <p className="font-medium text-slate-900">
                       {item.position || "Position"}
-                      {item.company && <span className="text-slate-600"> · {item.company}</span>}
+                      {item.company && (
+                        <span className="text-slate-600">
+                          {" "}
+                          · {item.company}
+                        </span>
+                      )}
                     </p>
                     <p className="text-[10px] text-slate-500 whitespace-nowrap">
-                      {formatPeriod(item.startDate, item.endDate, item.isCurrent)}
+                      {formatPeriod(
+                        item.startDate,
+                        item.endDate,
+                        item.isCurrent
+                      )}
                     </p>
                   </div>
 
                   {(item.location || item.description) && (
                     <div className="space-y-0.5">
                       {item.location && (
-                        <p className="text-[10px] text-slate-500">{item.location}</p>
+                        <p className="text-[10px] text-slate-500">
+                          {item.location}
+                        </p>
                       )}
                       {item.description && (
-                        <p className="text-slate-800 whitespace-pre-line">{item.description}</p>
+                        <p className="text-slate-800 whitespace-pre-line">
+                          {item.description}
+                        </p>
                       )}
                     </div>
                   )}
@@ -106,7 +119,9 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
                   <div className="flex justify-between gap-4">
                     <p className="font-medium text-slate-900">
                       {p.name || "Project"}
-                      {p.role && <span className="text-slate-600"> · {p.role}</span>}
+                      {p.role && (
+                        <span className="text-slate-600"> · {p.role}</span>
+                      )}
                     </p>
                     {p.link && (
                       <p className="text-[10px] text-sky-600 truncate max-w-[180px] text-right">
@@ -115,9 +130,13 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
                     )}
                   </div>
 
-                  {p.stack && <p className="text-[10px] text-slate-500">{p.stack}</p>}
+                  {p.stack && (
+                    <p className="text-[10px] text-slate-500">{p.stack}</p>
+                  )}
                   {p.description && (
-                    <p className="text-slate-800 whitespace-pre-line">{p.description}</p>
+                    <p className="text-slate-800 whitespace-pre-line">
+                      {p.description}
+                    </p>
                   )}
                 </div>
               ))}
@@ -147,7 +166,11 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
                     </div>
                   )}
 
-                  {techNote && <p className="text-slate-800 whitespace-pre-line">{techNote}</p>}
+                  {techNote && (
+                    <p className="text-slate-800 whitespace-pre-line">
+                      {techNote}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -170,7 +193,11 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
                     </div>
                   )}
 
-                  {softNote && <p className="text-slate-800 whitespace-pre-line">{softNote}</p>}
+                  {softNote && (
+                    <p className="text-slate-800 whitespace-pre-line">
+                      {softNote}
+                    </p>
+                  )}
                 </div>
               )}
             </section>
@@ -184,8 +211,14 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
 
               {education.map((e) => (
                 <div key={e.id} className="space-y-0.5">
-                  <p className="font-medium text-slate-900">{e.degree || e.field || "Education"}</p>
-                  {e.institution && <p className="text-[10px] text-slate-600">{e.institution}</p>}
+                  <p className="font-medium text-slate-900">
+                    {e.degree || e.field || "Education"}
+                  </p>
+                  {e.institution && (
+                    <p className="text-[10px] text-slate-600">
+                      {e.institution}
+                    </p>
+                  )}
                   {(e.startDate || e.endDate) && (
                     <p className="text-[10px] text-slate-500">
                       {formatPeriod(e.startDate, e.endDate)}
@@ -208,7 +241,9 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
                     className="rounded-full border border-slate-200 px-2 py-0.5 text-[10px] text-slate-700"
                   >
                     {l.name}
-                    {l.level && <span className="text-slate-500"> · {l.level}</span>}
+                    {l.level && (
+                      <span className="text-slate-500"> · {l.level}</span>
+                    )}
                   </span>
                 ))}
               </div>
@@ -217,5 +252,5 @@ export function NeoTemplate({ data }: ResumeTemplateProps) {
         </aside>
       </main>
     </div>
-  )
+  );
 }

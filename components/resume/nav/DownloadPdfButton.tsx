@@ -63,8 +63,8 @@ export function DownloadPdfButton({ locale }: Props) {
   };
 
   const labelByLocale: Record<Locale, string> = {
-    ru: "Скачать PDF",
-    en: "Download PDF",
+    ru: "Скачать",
+    en: "Download",
   };
 
   const tooltipByLocale: Record<Locale, string> = {
@@ -75,7 +75,7 @@ export function DownloadPdfButton({ locale }: Props) {
   const button = (
     <Button
       type="primary"
-      className="rounded-full w-full"
+      className="font-medium!"
       disabled={!isAuthed || loading}
       onClick={handleClick}
       icon={<FileDown className="w-4 h-4" />}

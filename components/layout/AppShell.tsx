@@ -11,6 +11,9 @@ import { FolderOpen, LayoutDashboard, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { DownloadPdfButton } from "../resume/nav/DownloadPdfButton";
+import { SaveResumeButton } from "../resume/nav/SaveResumeButton";
+import ShareResumeButton from "../resume/nav/ShareResumeButton";
 
 const { Header, Content } = Layout;
 
@@ -25,8 +28,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const selectedKey = pathname?.includes("/resumes")
     ? "resumes"
     : pathname?.includes("/guide")
-      ? "guide"
-      : "editor";
+    ? "guide"
+    : "editor";
 
   const items: MenuProps["items"] = [
     {
@@ -60,8 +63,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <Layout className="h-screen overflow-hidden">
-      <Header className="sticky top-0 z-50flex items-center gap-4 border-b border-slate-400/20 px-4">
-        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4">
+      <Header className="sticky top-0 z-50 flex items-center gap-4 border-b-2 border-gray-200 px-4">
+        <div className="mx-auto flex w-full items-center justify-between gap-4">
           <div className="flex items-center gap-5">
             <BrandLink href={editorHref} />
 
@@ -72,7 +75,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               disabledOverflow
             />
           </div>
-
+          <div className="flex items-center gap-5">
+            <SaveResumeButton />
+          </div>
           <div className="flex items-center gap-3">
             <Space
               size={10}
@@ -80,6 +85,8 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <span className="h-5 w-px bg-[rgba(148,163,184,0.25)]" />
               }
             >
+              <DownloadPdfButton locale={currentLocale} />
+              <ShareResumeButton />
               <ThemeSwitcher />
               <LanguageSwitcher currentLocale={currentLocale} />
               <AuthButton />
@@ -88,8 +95,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </Header>
       <AuthNotice locale={currentLocale} />
-      <Content className="flex-1 min-h-0 overflow-y-auto">
-        <div className="mx-auto w-full max-w-[1440px]">{children}</div>
+      <Content className="flex-1 min-h-0">
+        <div className="h-full w-full">{children}</div>
       </Content>
     </Layout>
   );
