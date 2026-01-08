@@ -119,7 +119,7 @@ export function EditorShell({ selected }: EditorShellProps) {
   const Section = sections[selected];
 
   return (
-    <div className="h-full min-h-0 overflow-auto bg-white w-full border-l-2 border-r-2 border-gray-200">
+    <div className="h-full min-h-0 overflow-auto bg-white border-l-2 border-r-2 border-gray-200">
       {Section ? (
         <Section t={t} />
       ) : (

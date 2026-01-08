@@ -7,7 +7,36 @@ import type { MenuProps } from "antd";
 import { Button, Dropdown, Tooltip, message } from "antd";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+const messages = {
+  ru: {
+    signInTooltip: "Войдите, чтобы сохранять резюме",
+    save: "Сохранить",
+    update: "Обновить",
+    saveAsNew: "Сохранить как новое",
+    saved: "Резюме сохранено",
+    updated: "Резюме обновлено",
+    saveFailed: "Не удалось сохранить резюме",
+    updateFailed: "Не удалось обновить резюме",
+    saveError: "Ошибка при сохранении резюме",
+    updateError: "Ошибка при обновлении резюме",
+    notFoundOrDenied: "Резюме не найдено или у вас нет доступа",
+  },
+  en: {
+    signInTooltip: "Sign in to save your resume",
+    save: "Save",
+    update: "Update",
+    saveAsNew: "Save as new",
+    saved: "Resume saved",
+    updated: "Resume updated",
+    saveFailed: "Failed to save resume",
+    updateFailed: "Failed to update resume",
+    saveError: "Error saving resume",
+    updateError: "Error updating resume",
+    notFoundOrDenied: "Resume not found or access denied",
+  },
+} as const;
 
 export function SaveResumeButton() {
   const { data: session } = useSession();
@@ -20,11 +49,14 @@ export function SaveResumeButton() {
   const router = useRouter();
   const params = useParams() as { locale: Locale };
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
+  const t = messages[locale];
 
   const existingId = searchParams.get("resumeId");
 
   const getTitle = () => {
-    const fullName = [resume.lastName, resume.firstName, resume.patronymic].filter(Boolean).join(" ");
+    const fullName = [resume.lastName, resume.firstName, resume.patronymic]
+      .filter(Boolean)
+      .join(" ");
     return resume.position || fullName || "Untitled resume";
   };
 
@@ -46,11 +78,7 @@ export function SaveResumeButton() {
 
       if (!res.ok) {
         const error = (await res.json()) as { error?: string };
-        message.error(
-          locale === "ru"
-            ? error.error || "Не удалось сохранить резюме"
-            : error.error || "Failed to save resume"
-        );
+        message.error(error.error || t.saveFailed);
         return;
       }
 
@@ -62,11 +90,9 @@ export function SaveResumeButton() {
         router.replace(`/${locale}/editor?${usp.toString()}`);
       }
 
-      message.success(locale === "ru" ? "Резюме сохранено" : "Resume saved");
-    } catch (error) {
-      message.error(
-        locale === "ru" ? "Ошибка при сохранении резюме" : "Error saving resume"
-      );
+      message.success(t.saved);
+    } catch {
+      message.error(t.saveError);
     } finally {
       setLoading(false);
     }
@@ -91,97 +117,70 @@ export function SaveResumeButton() {
       if (!res.ok) {
         const error = (await res.json()) as { error?: string };
         if (res.status === 403 || res.status === 404) {
-          message.error(
-            locale === "ru"
-              ? "Резюме не найдено или у вас нет доступа"
-              : "Resume not found or access denied"
-          );
+          message.error(t.notFoundOrDenied);
         } else {
-          message.error(
-            locale === "ru"
-              ? error.error || "Не удалось обновить резюме"
-              : error.error || "Failed to update resume"
-          );
+          message.error(error.error || t.updateFailed);
         }
         return;
       }
 
-      const { id } = (await res.json()) as { id: string };
-      message.success(locale === "ru" ? "Резюме обновлено" : "Resume updated");
-    } catch (error) {
-      message.error(
-        locale === "ru"
-          ? "Ошибка при обновлении резюме"
-          : "Error updating resume"
-      );
+      message.success(t.updated);
+    } catch {
+      message.error(t.updateError);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpdate = () => {
-    if (existingId) {
-      updateResume(existingId);
-    }
-  };
+  const icon = loading ? <LoadingOutlined /> : <SaveOutlined />;
 
-  const handleSaveAsNew = () => {
-    createResume();
-  };
+  const menuItems: MenuProps["items"] = useMemo(() => {
+    if (!existingId) return [];
+    return [
+      {
+        key: "update",
+        label: t.update,
+        onClick: () => updateResume(existingId),
+        disabled: loading,
+      },
+      {
+        key: "save-as-new",
+        label: t.saveAsNew,
+        onClick: () => createResume(),
+        disabled: loading,
+      },
+    ];
+  }, [existingId, loading, t.update, t.saveAsNew]);
 
-  const tooltipText =
-    locale === "ru"
-      ? "Войдите, чтобы сохранять резюме"
-      : "Sign in to save your resume";
-
-  if (!existingId) {
-    const button = (
-      <Button
-        type="text"
-        onClick={handleSaveAsNew}
-        disabled={!isAuthed || loading}
-        loading={loading}
-        icon={loading ? <LoadingOutlined /> : <SaveOutlined />}
-      >
-        {locale === "ru" ? "Сохранить резюме" : "Saving your resume..."}
-      </Button>
-    );
-
-    return !isAuthed ? (
-      <Tooltip title={tooltipText} placement="top">
-        <span className="inline-flex cursor-not-allowed">{button}</span>
-      </Tooltip>
-    ) : (
-      button
-    );
-  }
-
-  const menuItems: MenuProps["items"] = [
-    {
-      key: "save-as-new",
-      label: locale === "ru" ? "Сохранить как новое" : "Save as new",
-      onClick: handleSaveAsNew,
-    },
-  ];
-
-  const dropdownButton = (
-    <Dropdown.Button
+  const baseButton = (
+    <Button
       type="text"
-      menu={{ items: menuItems }}
-      onClick={handleUpdate}
       disabled={!isAuthed || loading}
       loading={loading}
-      icon={loading ? <LoadingOutlined /> : <SaveOutlined />}
+      icon={icon}
+      onClick={!existingId ? createResume : undefined}
     >
-      {locale === "ru" ? "Обновить" : "Update"}
-    </Dropdown.Button>
+      {t.save}
+    </Button>
+  );
+
+  const buttonNode = existingId ? (
+    <Dropdown
+      trigger={["click"]}
+      menu={{ items: menuItems }}
+      disabled={!isAuthed || loading}
+    >
+      <span onClick={(e) => e.preventDefault()}>{baseButton}</span>
+    </Dropdown>
+  ) : (
+    baseButton
   );
 
   return !isAuthed ? (
-    <Tooltip title={tooltipText} placement="top">
-      <span className="inline-flex cursor-not-allowed">{dropdownButton}</span>
+    <Tooltip title={t.signInTooltip} placement="top">
+      <span className="inline-flex cursor-not-allowed">{buttonNode}</span>
     </Tooltip>
   ) : (
-    dropdownButton
+    buttonNode
   );
 }

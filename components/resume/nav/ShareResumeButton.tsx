@@ -1,12 +1,12 @@
 "use client";
 
-import type { Locale } from "@/lib/useCurrentLocale";
 import { useResumeSave } from "@/hooks/useResumeSave";
-import { Button, Modal, Input, Tooltip, message, Dropdown } from "antd";
-import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Share2, Copy, Check, X } from "lucide-react";
+import type { Locale } from "@/lib/useCurrentLocale";
 import type { MenuProps } from "antd";
+import { Button, Dropdown, Input, Modal, Tooltip, message } from "antd";
+import { Check, Copy, Share2, X } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type ShareStatus = {
   shareId: string | null;
@@ -17,7 +17,8 @@ type ShareStatus = {
 export default function ShareResumeButton() {
   const params = useParams() as { locale: Locale };
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
-  const { ensureResumeSaved, isAuthed, currentResumeId } = useResumeSave(locale);
+  const { ensureResumeSaved, isAuthed, currentResumeId } =
+    useResumeSave(locale);
 
   const resumeId = currentResumeId;
   const [loading, setLoading] = useState(false);
@@ -47,7 +48,9 @@ export default function ShareResumeButton() {
     fetchShareStatus();
   }, [resumeId, isAuthed]);
 
-  const enableShare = async (resumeIdToUse: string): Promise<ShareStatus | null> => {
+  const enableShare = async (
+    resumeIdToUse: string
+  ): Promise<ShareStatus | null> => {
     try {
       const res = await fetch(`/api/resumes/${resumeIdToUse}/share`, {
         method: "POST",
@@ -99,9 +102,7 @@ export default function ShareResumeButton() {
       setShareStatus((prev) =>
         prev ? { ...prev, isShared: data.isShared } : null
       );
-      message.success(
-        locale === "ru" ? "Share выключен" : "Share disabled"
-      );
+      message.success(locale === "ru" ? "Share выключен" : "Share disabled");
       setModalOpen(false);
     } catch (error) {
       message.error(
@@ -134,7 +135,8 @@ export default function ShareResumeButton() {
       if (!saveResult.success) {
         message.error(
           locale === "ru"
-            ? saveResult.error || "Не удалось сохранить резюме, попробуйте ещё раз"
+            ? saveResult.error ||
+                "Не удалось сохранить резюме, попробуйте ещё раз"
             : saveResult.error || "Failed to save resume, please try again"
         );
         return;
@@ -165,9 +167,7 @@ export default function ShareResumeButton() {
     try {
       await navigator.clipboard.writeText(shareStatus.shareUrl);
       setCopied(true);
-      message.success(
-        locale === "ru" ? "Ссылка скопирована" : "Link copied"
-      );
+      message.success(locale === "ru" ? "Ссылка скопирована" : "Link copied");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       message.error(
@@ -182,18 +182,17 @@ export default function ShareResumeButton() {
       ? "Войдите, чтобы поделиться резюме"
       : "Sign in to share your resume";
 
-  const menuItems: MenuProps["items"] =
-    shareStatus?.isShared
-      ? [
-          {
-            key: "unshare",
-            label: locale === "ru" ? "Выключить share" : "Disable share",
-            icon: <X className="w-4 h-4" />,
-            onClick: disableShare,
-            danger: true,
-          },
-        ]
-      : [];
+  const menuItems: MenuProps["items"] = shareStatus?.isShared
+    ? [
+        {
+          key: "unshare",
+          label: locale === "ru" ? "Выключить share" : "Disable share",
+          icon: <X className="w-4 h-4" />,
+          onClick: disableShare,
+          danger: true,
+        },
+      ]
+    : [];
 
   const button = (
     <Dropdown.Button
@@ -244,7 +243,13 @@ export default function ShareResumeButton() {
             />
             <Button
               type="primary"
-              icon={copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              icon={
+                copied ? (
+                  <Check className="w-4 h-4" />
+                ) : (
+                  <Copy className="w-4 h-4" />
+                )
+              }
               onClick={handleCopy}
             >
               {copied

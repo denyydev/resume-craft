@@ -19,6 +19,8 @@ import { useState } from "react";
 const { Title, Text } = Typography;
 
 type LocaleMessages = {
+  position: string;
+  positionPlaceholder: string;
   lastName: string;
   firstName: string;
   patronymic: string;
@@ -84,7 +86,7 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
 
       <Text strong>{t.photo}</Text>
 
-      <div className="flex items-center gap-3">
+      <div>
         <Upload
           accept="image/*"
           multiple={false}
@@ -131,10 +133,6 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
         </Upload>
 
         <div className="min-w-0 space-y-1">
-          <Text type="secondary" className="text-xs">
-            {t.photoSubtitle}
-          </Text>
-
           {!photo ? (
             <Text type="secondary" className="text-xs">
               {t.dragDrop}
@@ -169,10 +167,12 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
 }
 
 function NameInputsBlock({ t }: { t: LocaleMessages }) {
+  const position = useResumeStore((s) => s.resume.position);
   const lastName = useResumeStore((s) => s.resume.lastName);
   const firstName = useResumeStore((s) => s.resume.firstName);
   const patronymic = useResumeStore((s) => s.resume.patronymic);
 
+  const setPosition = useResumeStore((s) => s.setPosition);
   const setLastName = useResumeStore((s) => s.setLastName);
   const setFirstName = useResumeStore((s) => s.setFirstName);
   const setPatronymic = useResumeStore((s) => s.setPatronymic);
@@ -189,6 +189,19 @@ function NameInputsBlock({ t }: { t: LocaleMessages }) {
 
   return (
     <Form layout="vertical" colon={false} className="space-y-1">
+      {/* NEW: position перед фамилией */}
+      <Form.Item label={t.position} rules={[maxLenRule]}>
+        <Input
+          prefix={<User size={16} />}
+          placeholder={t.positionPlaceholder}
+          value={position}
+          onChange={(e) => setPosition(e.target.value.slice(0, MAX_NAME_LEN))}
+          allowClear
+          maxLength={MAX_NAME_LEN}
+          showCount
+        />
+      </Form.Item>
+
       <Form.Item label={t.lastName} rules={[maxLenRule]}>
         <Input
           prefix={<User size={16} />}

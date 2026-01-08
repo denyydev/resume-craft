@@ -88,7 +88,7 @@ export function SectionsSidebar({ setSelected }) {
   );
 
   return (
-    <div className="w-[300px] bg-white h-full py-5">
+    <div className="xl:w-[15rem] bg-white h-full py-5">
       <div>
         {items.map((item, idx) => (
           <React.Fragment key={item.key}>
@@ -111,9 +111,7 @@ export function SectionsSidebar({ setSelected }) {
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
             </button>
 
-            {idx !== items.length - 1 && (
-              <Divider className="my-0 border-1 border-gray-200" />
-            )}
+            <Divider className="my-4! border-1 border-gray-200" />
           </React.Fragment>
         ))}
       </div>

@@ -11,9 +11,6 @@ import { FolderOpen, LayoutDashboard, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { DownloadPdfButton } from "../resume/nav/DownloadPdfButton";
-import { SaveResumeButton } from "../resume/nav/SaveResumeButton";
-import ShareResumeButton from "../resume/nav/ShareResumeButton";
 
 const { Header, Content } = Layout;
 
@@ -75,9 +72,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               disabledOverflow
             />
           </div>
-          <div className="flex items-center gap-5">
-            <SaveResumeButton />
-          </div>
+
           <div className="flex items-center gap-3">
             <Space
               size={10}
@@ -85,8 +80,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <span className="h-5 w-px bg-[rgba(148,163,184,0.25)]" />
               }
             >
-              <DownloadPdfButton locale={currentLocale} />
-              <ShareResumeButton />
               <ThemeSwitcher />
               <LanguageSwitcher currentLocale={currentLocale} />
               <AuthButton />
@@ -95,7 +88,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </Header>
       <AuthNotice locale={currentLocale} />
-      <Content className="flex-1 min-h-0">
+      <Content className="flex-1 min-h-0 overflow-auto">
         <div className="h-full w-full">{children}</div>
       </Content>
     </Layout>

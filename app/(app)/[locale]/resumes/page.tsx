@@ -91,7 +91,10 @@ function filterResumes(resumes: ResumeListItem[], q: string) {
   if (!query) return resumes;
   return resumes.filter((r) => {
     const data = (r.data || {}) as ResumeData;
-    const fullName = [data.lastName, data.firstName, data.patronymic].filter(Boolean).join(" ").toLowerCase();
+    const fullName = [data.lastName, data.firstName, data.patronymic]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
     const position = (data.position || "").toLowerCase();
     return fullName.includes(query) || position.includes(query);
   });
@@ -263,7 +266,9 @@ export default function MyResumesPage() {
 
   const getPdfFilename = (resume: ResumeListItem): string => {
     const data = (resume.data || {}) as ResumeData;
-    const fullName = [data.lastName, data.firstName, data.patronymic].filter(Boolean).join(" ");
+    const fullName = [data.lastName, data.firstName, data.patronymic]
+      .filter(Boolean)
+      .join(" ");
     const name = fullName || data.position || "resume";
     const sanitized = sanitizeFilename(name);
     return `${sanitized}-${resume.id.substring(0, 8)}.pdf`;
@@ -307,9 +312,7 @@ export default function MyResumesPage() {
       URL.revokeObjectURL(url);
     } catch (error) {
       message.error(
-        locale === "ru"
-          ? "Ошибка при скачивании PDF"
-          : "Error downloading PDF"
+        locale === "ru" ? "Ошибка при скачивании PDF" : "Error downloading PDF"
       );
     } finally {
       setDownloadingId(null);
@@ -445,7 +448,13 @@ export default function MyResumesPage() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
                 {paginated.map((resume) => {
                   const data = (resume.data || {}) as ResumeData;
-                  const fullName = [data.lastName, data.firstName, data.patronymic].filter(Boolean).join(" ");
+                  const fullName = [
+                    data.lastName,
+                    data.firstName,
+                    data.patronymic,
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
                   const title = fullName || t.newResume;
                   const subtitle = data.position || t.noPosition;
                   const date = formatDate(resume.updatedAt, locale);

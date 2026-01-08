@@ -5,15 +5,18 @@ import { useResumeStore } from "@/store/useResumeStore";
 import { Button, Tooltip } from "antd";
 import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
   locale: Locale;
 };
 
-export function DownloadPdfButton({ locale }: Props) {
+export function DownloadPdfButton() {
   const [loading, setLoading] = useState(false);
   const resume = useResumeStore((s) => s.resume);
+  const params = useParams() as { locale: Locale };
+  const locale: Locale = params?.locale === "en" ? "en" : "ru";
   const { data: session } = useSession();
 
   const isAuthed = Boolean(session?.user?.email);
@@ -30,7 +33,12 @@ export function DownloadPdfButton({ locale }: Props) {
         body: JSON.stringify({
           data: resume,
           locale,
-          title: resume.position || [resume.lastName, resume.firstName, resume.patronymic].filter(Boolean).join(" ") || "Untitled resume",
+          title:
+            resume.position ||
+            [resume.lastName, resume.firstName, resume.patronymic]
+              .filter(Boolean)
+              .join(" ") ||
+            "Untitled resume",
           userEmail: session!.user!.email!,
         }),
       });
