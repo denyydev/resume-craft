@@ -156,7 +156,7 @@ function A4PreviewFrame({
           return () => ro.disconnect();
         }}
       >
-        <div className="pt-4 pb-10 w-full min-w-0">
+        <div className="pb-10 w-full min-w-0">
           {/* viewport */}
           <div
             className="relative mx-auto shadow-lg overflow-hidden rounded-xl bg-white"
