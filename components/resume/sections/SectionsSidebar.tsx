@@ -84,7 +84,7 @@ export function SectionsSidebar({
     () =>
       ITEMS.map((it) => ({
         ...it,
-        label: dict[it.key],
+        label: dict[it.key as keyof typeof dict],
         isActive: activeKey === it.key,
       })),
     [dict, activeKey]

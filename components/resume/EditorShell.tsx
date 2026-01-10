@@ -97,7 +97,7 @@ type EditorShellProps = {
 };
 
 const sections: Partial<
-  Record<ResumeSectionKey, React.ComponentType<{ t: typeof t }>>
+  Record<ResumeSectionKey, React.ComponentType<{ t: typeof messages.ru | typeof messages.en }>>
 > = {
   summary: BasicIdentitySection,
   contacts: BasicContactsSection,

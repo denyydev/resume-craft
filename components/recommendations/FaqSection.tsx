@@ -29,7 +29,7 @@ export function FaqSection({ locale }: { locale: Locale }) {
                 {!!it.tags?.length && (
                   <Space size={6} wrap>
                     {it.tags.map((tag) => (
-                      <Tag key={tag} size="small">
+                      <Tag key={tag}>
                         {tag}
                       </Tag>
                     ))}

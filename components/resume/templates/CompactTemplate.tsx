@@ -313,8 +313,7 @@ export function CompactTemplate({ data, locale }: ResumeTemplateProps) {
                   const dates = formatPeriod(
                     item.startDate,
                     item.endDate,
-                    item.isCurrent,
-                    t.present
+                    item.isCurrent
                   );
                   const meta = joinNonEmpty([
                     hasText(dates) ? dates : "",
@@ -555,8 +554,7 @@ export function CompactTemplate({ data, locale }: ResumeTemplateProps) {
                   const dates = formatPeriod(
                     e.startDate,
                     e.endDate,
-                    false,
-                    t.present
+                    false
                   );
                   const meta = joinNonEmpty([
                     hasText(e.institution) ? e.institution!.trim() : "",

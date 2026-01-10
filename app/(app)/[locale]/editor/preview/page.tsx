@@ -104,7 +104,7 @@ export default function PreviewPage() {
               <Divider />
               <PhotoExportToggle />
               <Divider />
-              <DownloadPdfButton locale={locale} />
+              <DownloadPdfButton />
             </Card>
           </div>
         </aside>
@@ -114,7 +114,7 @@ export default function PreviewPage() {
           <Divider />
           <PhotoExportToggle />
           <Divider />
-          <DownloadPdfButton locale={locale} />
+          <DownloadPdfButton />
         </Card>
       </div>
     </div>

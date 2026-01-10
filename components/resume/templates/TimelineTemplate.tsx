@@ -238,12 +238,12 @@ export function TimelineTemplate({ data, locale }: ResumeTemplateProps) {
             }`
           : "",
         hasText(employmentPreferences?.timezone)
-          ? `${t.prefs.timezone}: ${employmentPreferences.timezone.trim()}`
+          ? `${t.prefs.timezone}: ${employmentPreferences.timezone?.trim()}`
           : "",
         hasText(employmentPreferences?.workAuthorization)
           ? `${
               t.prefs.workAuthorization
-            }: ${employmentPreferences.workAuthorization.trim()}`
+            }: ${employmentPreferences.workAuthorization?.trim()}`
           : "",
       ].filter(Boolean)
     : [];

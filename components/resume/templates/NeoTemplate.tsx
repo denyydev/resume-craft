@@ -344,8 +344,7 @@ export function NeoTemplate({ data, locale }: ResumeTemplateProps) {
                 const dates = formatPeriod(
                   item.startDate,
                   item.endDate,
-                  item.isCurrent,
-                  t.present
+                  item.isCurrent
                 );
                 const bullets = splitBullets(item.description);
 
@@ -533,7 +532,7 @@ export function NeoTemplate({ data, locale }: ResumeTemplateProps) {
 
                   {hasAnyText([e.startDate, e.endDate]) ? (
                     <p className="text-[10px] text-slate-500 break-words">
-                      {formatPeriod(e.startDate, e.endDate, false, t.present)}
+                      {formatPeriod(e.startDate, e.endDate, false)}
                     </p>
                   ) : null}
                 </div>

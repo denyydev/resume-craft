@@ -13,10 +13,11 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
 import { TemplateSelector } from "@/components/resume/templates/TemplateSelector";
 import { useResumeStore } from "@/store/useResumeStore";
+import type { ResumeSectionKey } from "@/types/resume";
 import { Card } from "antd";
 
 export default function EditorPage() {
-  const [selected, setSelected] = useState("summary");
+  const [selected, setSelected] = useState<ResumeSectionKey>("summary");
   const searchParams = useSearchParams();
   const resumeId = searchParams.get("resumeId") || undefined;
   const loadResume = useResumeStore((s) => s.loadResume);

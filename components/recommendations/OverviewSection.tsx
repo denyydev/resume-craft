@@ -227,7 +227,6 @@ export function OverviewSection({ locale }: { locale: Locale }) {
                   ? "Навыки должны быть текстом, без иконок вместо названий."
                   : "Skills must be plain text (avoid icons replacing names)."
               }
-              size="small"
             />
           </div>
         </div>
