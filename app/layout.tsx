@@ -16,8 +16,9 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Resumify",
-  description: "Конструктор резюме с PDF-экспортом",
+  title: "Resumify — Resume builder with ATS-ready templates",
+  description:
+    "Build resumes that work with applicant tracking systems. Simple editor, clean layouts, instant PDF export.",
 };
 
 export default async function RootLayout({
