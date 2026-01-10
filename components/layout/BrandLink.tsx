@@ -1,47 +1,63 @@
 "use client";
 
-import { useThemeStore } from "@/store/useThemeStore";
-import { FileText } from "lucide-react";
 import Link from "next/link";
 
 export function BrandLink({ href }: { href: string }) {
-  const theme = useThemeStore((s) => s.theme);
-  const isDark = theme === "dark";
-
   return (
-    <Link href={href} className="group flex select-none items-center gap-2.5">
-      <div
-        className={`relative grid h-8 w-8 place-items-center overflow-hidden rounded-lg border shadow-sm transition-all group-hover:-translate-y-0.5 group-hover:shadow-md ${
-          isDark
-            ? "border-slate-400/20 bg-[#0A84FF]"
-            : "border-slate-950/12 bg-[#020617]"
-        }`}
-      >
-        <div
-          className={`pointer-events-none absolute -right-3 -top-3 h-10 w-10 rounded-full blur-xl opacity-70 transition-opacity group-hover:opacity-90 ${
-            isDark ? "bg-white/30" : "bg-[#0A84FF]/30"
-          }`}
-        />
-        <FileText className="relative h-4 w-4 text-white" />
-      </div>
+    <Link
+      href={href}
+      aria-label="ResumeCraft"
+      className="
+        group relative flex h-8 w-24 select-none items-center justify-center
+      "
+    >
+      {/* outer glow (air) */}
+      <span
+        className="
+          pointer-events-none absolute -inset-2 rounded-2xl
+          bg-black/40 blur-xl
+          opacity-0 transition-opacity duration-300
+          group-hover:opacity-100
+        "
+      />
 
-      <div className="flex flex-col leading-none">
-        <span
-          className={`text-base font-semibold tracking-tight transition-colors ${
-            isDark ? "text-white" : "text-[#020617]"
-          }`}
+      {/* body */}
+      <div
+        className="
+          relative z-10 flex h-full w-full items-center justify-center
+          rounded-xl p-[1px]
+          border border-white/10
+
+          /* same gradient as nav */
+          bg-gradient-to-b
+          from-[#0b0b0e]
+          via-[#0f1117]
+          to-[#0b0b0e]
+
+          backdrop-blur
+          shadow-[0_8px_20px_rgba(0,0,0,0.45)]
+          transition-all duration-300
+          group-hover:-translate-y-0.5
+        "
+      >
+        {/* inner surface */}
+        <div
+          className="
+            relative flex h-full w-full items-center justify-center
+            rounded-[10px]
+
+            /* subtle inner highlight */
+            bg-gradient-to-b
+            from-white/10
+            to-transparent
+          "
         >
-          ResumeCraft
-        </span>
-        <span
-          className={`mt-0.5 text-[11px] tracking-wide transition-colors ${
-            isDark ? "text-white/60" : "text-slate-500"
-          }`}
-        >
-          Simple builder
-        </span>
+          {/* letters */}
+          <span className="text-[13px] font-semibold tracking-tight text-white/90">
+            ResumeCraft
+          </span>
+        </div>
       </div>
     </Link>
   );
 }
-

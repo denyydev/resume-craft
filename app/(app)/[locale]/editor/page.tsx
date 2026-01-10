@@ -12,6 +12,7 @@ import { ResumePreview } from "@/components/resume/ResumePreview";
 import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
 import { TemplateSelector } from "@/components/resume/templates/TemplateSelector";
 import { useResumeStore } from "@/store/useResumeStore";
+import { Card } from "antd";
 
 export default function EditorPage() {
   const [selected, setSelected] = useState("summary");
@@ -39,34 +40,153 @@ export default function EditorPage() {
   }, [resumeId, loadResume]);
 
   return (
-    <div className="h-full">
-      <div className="grid h-full grid-cols-1 xl:grid-cols-5">
-        <div className="flex h-full min-h-0 col-span-2">
-          <div className="h-full">
-            <SectionsSidebar setSelected={setSelected} />
-          </div>
-          <div className="flex-1 min-h-0 ">
-            <EditorShell selected={selected} />
-          </div>
-        </div>
-        <div className="flex flex-col col-span-3">
-          <div className="bg-white w-full px-5 py-3 border-b-2 border-gray-200 flex items-center gap-5 justify-between">
-            <div className="flex items-center gap-5">
-              <AccentColorPicker />
-              <TemplateSelector />
+    // SCROLL CONTAINER — без padding (скроллбар прижат вправо)
+    <div className="h-full min-h-0 overflow-auto">
+      {/* PADDED CANVAS */}
+      <div className="px-5 h-full min-h-0">
+        <div
+          className="
+          h-full min-h-0
+          grid gap-5
+          grid-cols-1
+          lg:grid-cols-[240px_minmax(0,1fr)]
+        "
+        >
+          {/* LEFT: sidebar (desktop) */}
+          <aside className="hidden lg:block min-h-0">
+            <div className="sticky top-20 h-[calc(100dvh-5rem)]">
+              <SectionsSidebar setSelected={setSelected} />
             </div>
-            <SaveResumeButton />
-            <div className="flex items-center gap-5">
-              <ShareResumeButton />
-              <DownloadPdfButton />
+          </aside>
+
+          {/* MOBILE: твой “воздушный” навигейшн сверху */}
+          <div className="lg:hidden">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur p-2">
+              <SectionsSidebar setSelected={setSelected} />
             </div>
           </div>
-          <div className="h-full min-h-0 p-5 flex  justify-center items-center">
-            <div className="border-2 border-gray-200">
-              <div className="min-h-0 overflow-auto bg-white flex justify-center h-[700] w-[700px]">
-                <ResumePreview />
+
+          {/* RIGHT: content */}
+          <main className="min-w-0 min-h-0">
+            {/* Toolbar: sticky только на lg+ */}
+            <div
+              className="
+              z-20 pt-4 pb-3
+              bg-[#f3f5f9]
+              lg:bg-[#f3f5f9]/70 lg:backdrop-blur-md lg:supports-[backdrop-filter]:bg-[#f3f5f9]/55
+              lg:sticky lg:top-0
+            "
+            >
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <TemplateSelector />
+                  <AccentColorPicker />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <ShareResumeButton />
+                  <SaveResumeButton />
+                  <DownloadPdfButton />
+                </div>
+              </div>
+
+              <div className="mt-3 h-px w-full bg-slate-200/80" />
+            </div>
+
+            {/* Content */}
+            <div className="py-5">
+              <div className="flex min-h-0 flex-col gap-5 xl:flex-row">
+                <div className="min-w-0 xl:flex-[0_0_420px]">
+                  <Card className="h-fit">
+                    <EditorShell selected={selected} />
+                  </Card>
+                </div>
+
+                <div className="min-w-0 xl:flex-1">
+                  <A4PreviewFrame>
+                    <ResumePreview />
+                  </A4PreviewFrame>
+                </div>
               </div>
             </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function A4PreviewFrame({
+  children,
+  maxScale = 0.82, // как было на десктопе
+  padding = 16, // "воздух" по бокам внутри контейнера
+}: {
+  children: React.ReactNode;
+  maxScale?: number;
+  padding?: number;
+}) {
+  const W = 794;
+  const H = 1123;
+
+  const [containerW, setContainerW] = useState<number>(0);
+
+  return (
+    <div className="w-full min-w-0">
+      <div
+        className="w-full min-w-0 flex justify-center"
+        ref={(el) => {
+          if (!el) return;
+
+          // ResizeObserver, чтобы пересчитывать scale при изменении ширины
+          const ro = new ResizeObserver((entries) => {
+            const w = entries[0]?.contentRect?.width ?? 0;
+            setContainerW(w);
+          });
+          ro.observe(el);
+          return () => ro.disconnect();
+        }}
+      >
+        <div className="pt-4 pb-10 w-full min-w-0">
+          {/* viewport */}
+          <div
+            className="relative mx-auto shadow-lg overflow-hidden rounded-xl bg-white"
+            style={{
+              // доступная ширина минус "воздух"
+              width: containerW
+                ? Math.min(containerW - padding * 2, W * maxScale)
+                : "100%",
+            }}
+          >
+            {(() => {
+              const available = Math.max(0, containerW - padding * 2);
+              const fitScale =
+                available > 0 ? Math.min(maxScale, available / W) : maxScale;
+
+              // реальный "видимый" размер
+              const viewW = W * fitScale;
+              const viewH = H * fitScale;
+
+              return (
+                <div
+                  style={{
+                    width: viewW,
+                    height: viewH,
+                  }}
+                  className="mx-auto"
+                >
+                  <div
+                    style={{
+                      width: W,
+                      height: H,
+                      transform: `scale(${fitScale})`,
+                      transformOrigin: "top left",
+                    }}
+                  >
+                    {children}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       </div>

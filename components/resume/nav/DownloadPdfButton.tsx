@@ -83,7 +83,8 @@ export function DownloadPdfButton() {
   const button = (
     <Button
       type="primary"
-      className="font-medium!"
+      className="font-medium! rounded-sm!"
+      size="small"
       disabled={!isAuthed || loading}
       onClick={handleClick}
       icon={<FileDown className="w-4 h-4" />}

@@ -39,18 +39,30 @@ export function RecommendationsFaqPage({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="w-full py-6">
-      <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[300px_1fr]">
-          <aside className="lg:sticky lg:top-6 lg:self-start">
-            <SidebarNav
-              locale={locale}
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-            />
+    <div className="h-full min-h-0 overflow-auto">
+      <div className="px-5 h-full min-h-0 py-5">
+        <div
+          className="
+            h-full min-h-0
+            grid gap-5
+            grid-cols-1
+            lg:grid-cols-[240px_minmax(0,1fr)]
+          "
+        >
+          {/* LEFT */}
+          <aside className="min-h-0">
+            {/* sticky только на lg+ */}
+            <div className="lg:sticky lg:top-20 lg:h-[calc(100dvh-5rem)]">
+              <SidebarNav
+                locale={locale}
+                activeSection={activeSection}
+                onSectionChange={setActiveSection}
+              />
+            </div>
           </aside>
 
-          <main className="min-w-0">
+          {/* RIGHT */}
+          <main className="min-w-0 min-h-0">
             {activeSection === "overview" && (
               <OverviewSection locale={locale} />
             )}

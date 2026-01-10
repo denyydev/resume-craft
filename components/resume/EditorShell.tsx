@@ -115,11 +115,10 @@ const sections: Partial<
 export function EditorShell({ selected }: EditorShellProps) {
   const locale = useCurrentLocale() as Locale;
   const t = messages[locale];
-
   const Section = sections[selected];
 
   return (
-    <div className="h-full min-h-0 overflow-auto bg-white border-l-2 border-r-2 border-gray-200">
+    <div className="min-h-0">
       {Section ? (
         <Section t={t} />
       ) : (

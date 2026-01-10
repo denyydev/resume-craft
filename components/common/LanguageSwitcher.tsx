@@ -33,8 +33,14 @@ export function LanguageSwitcher({
     <button
       type="button"
       onClick={toggle}
-      className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-text2 transition-colors duration-150 hover:text-text"
       aria-label="Toggle language"
+      className="
+        cursor-pointer
+        text-xs font-semibold uppercase tracking-wide
+        text-white!
+        transition-colors duration-150
+        hover:text-white
+      "
     >
       {locale === "ru" ? "RU" : "EN"}
     </button>

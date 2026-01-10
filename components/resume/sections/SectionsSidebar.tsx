@@ -2,7 +2,6 @@
 
 import type { Locale } from "@/lib/useCurrentLocale";
 import type { ResumeSectionKey } from "@/types/resume";
-import { Divider, Typography } from "antd";
 import {
   Activity,
   Award,
@@ -17,8 +16,6 @@ import {
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useMemo, useState } from "react";
-
-const { Text } = Typography;
 
 type Item = {
   key: ResumeSectionKey;
@@ -70,7 +67,13 @@ const messages = {
   },
 } as const;
 
-export function SectionsSidebar({ setSelected }) {
+const ACCENT = "#0A84FF";
+
+export function SectionsSidebar({
+  setSelected,
+}: {
+  setSelected: (key: ResumeSectionKey) => void;
+}) {
   const params = useParams<{ locale: Locale }>();
   const locale: Locale = params?.locale === "en" ? "en" : "ru";
   const dict = messages[locale];
@@ -88,11 +91,36 @@ export function SectionsSidebar({ setSelected }) {
   );
 
   return (
-    <div className="xl:w-[15rem] bg-white h-full py-5">
-      <div>
-        {items.map((item, idx) => (
-          <React.Fragment key={item.key}>
+    <aside
+      className={[
+        // ❌ без w-[15rem]
+        "rounded-2xl border border-white/10 overflow-hidden",
+        "shadow-lg backdrop-blur",
+        "bg-gradient-to-b from-[#0b0b0e] via-[#0f1117] to-[#0b0b0e]",
+        "p-3 relative will-change-transform",
+      ].join(" ")}
+    >
+      {/* premium highlight like capsules */}
+      <div
+        className="
+          pointer-events-none absolute inset-0
+          before:absolute before:inset-0 before:rounded-2xl
+          before:bg-gradient-to-b before:from-white/10 before:to-transparent
+          before:opacity-25
+        "
+      />
+
+      {/* soft blobs for depth */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 -left-24 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
+      </div>
+
+      <div className="relative">
+        <nav className="space-y-1">
+          {items.map((item) => (
             <button
+              key={item.key}
               type="button"
               onClick={() => {
                 setActiveKey(item.key);
@@ -100,21 +128,66 @@ export function SectionsSidebar({ setSelected }) {
               }}
               aria-current={item.isActive ? "true" : undefined}
               className={[
-                "flex w-full items-center gap-2.5 px-2 text-left transition active:scale-[0.99]",
-                "hover:bg-(--ant-colorFillSecondary) cursor-pointer px-5",
+                "group relative flex w-full items-center gap-3 cursor-pointer",
+                "rounded-xl px-3 py-2.5 text-left",
+                "transition-all duration-150",
+                "active:scale-[0.99]",
                 item.isActive
-                  ? "font-medium text-(--ant-colorPrimary)"
-                  : "text-(--ant-colorTextSecondary) hover:text-(--ant-colorText)",
+                  ? "bg-white/10 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
+                  : "text-white/70 hover:text-white hover:bg-white/6",
               ].join(" ")}
             >
-              <span className="flex shrink-0 items-center">{item.icon}</span>
-              <span className="min-w-0 flex-1 truncate">{item.label}</span>
-            </button>
+              {/* active left rail */}
+              <span
+                className={[
+                  "absolute left-0 top-1/2 -translate-y-1/2",
+                  "h-6 w-[3px] rounded-r",
+                  item.isActive ? "opacity-100" : "opacity-0",
+                  "transition-opacity duration-150",
+                ].join(" ")}
+                style={{ backgroundColor: ACCENT }}
+              />
 
-            <Divider className="my-4! border-1 border-gray-200" />
-          </React.Fragment>
-        ))}
+              {/* icon */}
+              <span
+                className={[
+                  "flex h-8 w-8 items-center justify-center rounded-lg",
+                  "bg-white/4 ring-1 ring-white/10",
+                  "transition-all duration-150",
+                  item.isActive ? "bg-white/6" : "group-hover:bg-white/6",
+                ].join(" ")}
+                style={{
+                  color: item.isActive ? ACCENT : "rgba(255,255,255,0.70)",
+                }}
+              >
+                {item.icon}
+              </span>
+
+              {/* label */}
+              <span className="min-w-0 flex-1 truncate text-[13px] leading-5 text-white">
+                {item.label}
+              </span>
+
+              {/* tiny active glow dot */}
+              <span
+                className={[
+                  "ml-auto h-1.5 w-1.5 rounded-full",
+                  item.isActive ? "opacity-100" : "opacity-0",
+                  "transition-opacity duration-150",
+                ].join(" ")}
+                style={{
+                  backgroundColor: ACCENT,
+                  boxShadow: `0 0 0 4px rgba(10,132,255,0.14)`,
+                }}
+              />
+            </button>
+          ))}
+        </nav>
+
+        <div className="mt-3 px-2">
+          <div className="h-px w-full bg-white/5" />
+        </div>
       </div>
-    </div>
+    </aside>
   );
 }

@@ -16,7 +16,7 @@ type ShareStatus = {
 const messages = {
   ru: {
     tooltip: "Войдите, чтобы поделиться резюме",
-    share: "Share",
+    share: "Поделиться",
     modalTitle: "Поделиться резюме",
     hint: "Скопируйте ссылку и поделитесь ею с другими:",
     close: "Закрыть",
@@ -202,8 +202,9 @@ export default function ShareResumeButton() {
 
   const button = (
     <Button
-      type="primary"
-      className="font-medium!"
+      type="dashed"
+      size="small"
+      className="font-medium! rounded-sm!"
       onClick={handleShareClick}
       disabled={!isAuthed || loading}
       loading={loading}

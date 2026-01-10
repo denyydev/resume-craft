@@ -14,7 +14,7 @@ import {
   Tooltip,
   message,
 } from "antd";
-import { Clock, File, Plus, Search, Trash2 } from "lucide-react";
+import { Clock, File, FileText, Plus, Search, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -172,7 +172,7 @@ function ResumeCardSkeleton() {
 
 function ResumesGridSkeleton({ count }: { count: number }) {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {Array.from({ length: count }).map((_, i) => (
         <ResumeCardSkeleton key={i} />
       ))}
@@ -353,52 +353,136 @@ export default function MyResumesPage() {
   }
 
   return (
-    <div className="min-h-screen w-full 0">
-      <div className="mx-auto w-full p-4 pb-14 md:p-6 md:pb-14">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[320px_1fr]">
-          <aside className="sticky top-6 self-start">
-            <Card className="rounded-2xl">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <h1 className="m-0 text-2xl font-semibold">{t.title}</h1>
-                  <p className="m-0 text-sm text-gray-500">{t.subtitle}</p>
+    <div className="h-full min-h-0 overflow-auto">
+      <div className="px-5 h-full min-h-0 py-5">
+        <div
+          className="
+          h-full min-h-0
+          grid gap-5
+          grid-cols-1
+          lg:grid-cols-[240px_minmax(0,1fr)]
+        "
+        >
+          {/* LEFT */}
+          <aside className="min-h-0">
+            {/* sticky только на десктопе */}
+            <div
+              className="
+    relative
+    rounded-2xl border border-white/10 overflow-hidden
+    bg-gradient-to-b from-[#0b0b0e] via-[#0f1117] to-[#0b0b0e]
+    p-5
+    shadow-[0_18px_45px_rgba(0,0,0,0.45)]
+    lg:backdrop-blur
+    will-change-transform
+  "
+            >
+              {/* premium highlight like capsules */}
+              <div
+                className="
+      pointer-events-none absolute inset-0
+      before:absolute before:inset-0 before:rounded-2xl
+      before:bg-gradient-to-b before:from-white/10 before:to-transparent
+      before:opacity-25
+    "
+              />
+
+              {/* soft blobs for depth */}
+              <div className="pointer-events-none absolute inset-0">
+                <div className="absolute -top-24 -left-24 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
+                <div className="absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
+              </div>
+
+              {/* subtle accent rail (ties to other sidebars) */}
+              <span
+                className="
+      pointer-events-none absolute left-0 top-6
+      h-10 w-[3px] rounded-r
+      bg-[#0A84FF]/80
+      shadow-[0_0_0_4px_rgba(10,132,255,0.12)]
+    "
+              />
+
+              <div className="relative flex flex-col gap-4">
+                {/* header */}
+                <div className="flex items-start gap-3">
+                  <span
+                    className="
+          flex h-10 w-10 shrink-0 items-center justify-center rounded-xl
+          bg-white/4 ring-1 ring-white/10
+        "
+                    style={{ color: "#0A84FF" }}
+                  >
+                    <FileText size={18} />
+                  </span>
+
+                  <div className="min-w-0">
+                    <h1 className="m-0 text-2xl font-semibold tracking-tight text-white">
+                      {t.title}
+                    </h1>
+                    <p className="m-0 mt-1 text-sm text-white/60">
+                      {t.subtitle}
+                    </p>
+                  </div>
                 </div>
 
+                {/* primary action */}
                 <Link
                   href={createHref}
                   className={`w-full ${isLoading ? "pointer-events-none" : ""}`}
                   aria-disabled={isLoading}
                 >
                   <Button
-                    type="primary"
                     icon={<Plus size={16} />}
-                    className="w-full !h-10"
+                    className="
+          w-full !h-10
+          !border !border-white/15
+          !bg-white/[0.06]
+          !text-white
+          shadow-sm lg:backdrop-blur
+          hover:!bg-white/[0.1] hover:!border-white/25
+          focus-visible:!ring-2 focus-visible:!ring-[#0A84FF]/40
+          transition-all
+        "
                     disabled={isLoading}
                   >
                     {t.createResume}
                   </Button>
                 </Link>
 
-                <div className="h-px w-full bg-gray-200" />
+                {/* divider */}
+                <div className="h-px w-full bg-white/10" />
 
+                {/* controls */}
                 <div className="flex flex-col gap-3">
                   <Input
                     allowClear
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder={t.searchPlaceholder}
-                    prefix={<Search size={16} className="text-gray-400" />}
-                    className="!h-10"
+                    prefix={<Search size={16} className="text-white/50" />}
                     disabled={isLoading}
+                    className="
+          !h-10
+          !bg-white/[0.04]
+          !border-white/15
+          !text-white
+          placeholder:!text-white/40
+          hover:!border-white/25
+          focus:!border-[#0A84FF]
+          focus:!ring-1 focus:!ring-[#0A84FF]/40
+          lg:backdrop-blur
+        "
                   />
 
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs text-white/60">
                     <span>
                       {t.total}:{" "}
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-white/90">
                         {isLoading ? "—" : total}
                       </span>
                     </span>
+
                     {showPagination ? (
                       <span>
                         {page}/{maxPage}
@@ -415,15 +499,27 @@ export default function MyResumesPage() {
                       size="small"
                       showSizeChanger={false}
                       onChange={(p) => setPage(p)}
-                      className="flex justify-center"
+                      className="
+            flex justify-center
+            [&_.ant-pagination-simple-pager]:text-white/70
+            [&_.ant-pagination-item-link]:text-white/70
+          "
                     />
                   ) : null}
                 </div>
+                <div className="rounded-xl bg-white/4 ring-1 ring-white/10 px-3 py-2">
+                  <div className="text-[12px] leading-5 text-white/60">
+                    {locale === "ru"
+                      ? "Совет: называй резюме по позиции — так проще искать."
+                      : "Tip: name resumes by position — it’s easier to find later."}
+                  </div>
+                </div>
               </div>
-            </Card>
+            </div>
           </aside>
 
-          <main>
+          {/* RIGHT */}
+          <main className="min-w-0 min-h-0">
             {isLoading ? (
               <ResumesGridSkeleton count={6} />
             ) : total === 0 ? (
@@ -445,7 +541,7 @@ export default function MyResumesPage() {
                 </Empty>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {paginated.map((resume) => {
                   const data = (resume.data || {}) as ResumeData;
                   const fullName = [
@@ -459,7 +555,6 @@ export default function MyResumesPage() {
                   const subtitle = data.position || t.noPosition;
                   const date = formatDate(resume.updatedAt, locale);
                   const isDeleting = deletingId === resume.id;
-                  const isDownloading = downloadingId === resume.id;
 
                   return (
                     <Card
