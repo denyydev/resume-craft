@@ -1,5 +1,8 @@
 # Resumify
+
 Live demo: [resumify.space](https://resumify.space)
+
+![Resumify cover](./public/cover.png)
 
 Full-stack web app for creating resumes with real-time preview and PDF export.  
 Built as a public project to showcase production-level skills when commercial work is under NDA.
