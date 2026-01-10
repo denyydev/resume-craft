@@ -1,4 +1,5 @@
 # Resumify
+Live demo: [resumify.space](https://resumify.space)
 
 Full-stack web app for creating resumes with real-time preview and PDF export.  
 Built as a public project to showcase production-level skills when commercial work is under NDA.
@@ -29,5 +30,5 @@ Built as a public project to showcase production-level skills when commercial wo
 - Focus on usability and maintainability
 
 ---
-Deployed: [https://resumify.space](resumify.space)
-Author: [@denyydev](https://github.com/denyydev)
+
+- Author: [@denyydev](https://github.com/denyydev)
