@@ -20,7 +20,7 @@ export function BrandLink({ href }: { href: string }) {
       "
     >
       <span className="text-sm font-semibold tracking-tight text-white/90">
-        ResumeCraft
+        Resumify
       </span>
       <span
         className="

@@ -1,9 +1,9 @@
+import type { Locale } from "@/app/i18n";
 import Hero from "@/components/landing/Hero";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { authOptions } from "@/lib/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import type { Locale } from "@/app/i18n";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -24,4 +24,3 @@ export default async function Page(props: Props) {
     </>
   );
 }
-

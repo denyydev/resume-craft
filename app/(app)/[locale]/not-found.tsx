@@ -108,7 +108,7 @@ export default function NotFound() {
         </Card>
 
         <div className="mt-4 text-center text-xs text-[var(--ant-colorTextSecondary)]">
-          ResumeCraft
+          Resumify
         </div>
       </div>
     </div>

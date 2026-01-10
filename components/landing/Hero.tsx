@@ -5,61 +5,78 @@ import { getLandingMessages } from "@/lib/getLandingMessages";
 import { ArrowRightOutlined } from "@ant-design/icons";
 import { Button, ConfigProvider } from "antd";
 import { motion, type Variants } from "framer-motion";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
+  display: "swap",
+  // variable-версия сама подтянется, но weight можно оставить явным
+  weight: ["400", "500", "600", "700"],
+});
 
 const container: Variants = {
   hidden: {},
   show: {
     transition: {
       staggerChildren: 0.08,
-      delayChildren: 0.1,
+      delayChildren: 0.08,
     },
   },
 };
 
 const item: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
+  hidden: { opacity: 0, y: 18, filter: "blur(6px)" },
   show: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.22, 1, 0.36, 1],
-    },
+    filter: "blur(0px)",
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
-type Props = {
-  locale: Locale;
-};
+type Props = { locale: Locale };
 
 export default function Hero({ locale }: Props) {
   const t = getLandingMessages(locale);
-
   const headlineParts = t.hero.headline.split("{highlight}");
 
   return (
     <ConfigProvider
       theme={{
         token: {
-          borderRadius: 8,
+          borderRadius: 12,
           fontSize: 14,
-          colorPrimary: "#6366f1",
+          colorPrimary: "#0b0b0e",
+          fontFamily: inter.style.fontFamily,
         },
       }}
     >
-      <section className="relative w-full overflow-hidden bg-white min-h-screen flex items-center">
+      <section
+        className={[
+          inter.className,
+          "relative w-full overflow-hidden bg-white min-h-[100svh] flex items-center",
+        ].join(" ")}
+      >
+        {/* BACKDROP (white + glass + dark gloss) */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl h-[600px] bg-gradient-to-b from-indigo-50/50 via-transparent to-transparent" />
-          <div className="absolute right-0 top-1/4 w-[400px] h-[400px] bg-gradient-to-br from-purple-50/30 to-transparent rounded-full blur-3xl" />
-          <div className="absolute left-0 bottom-1/4 w-[300px] h-[300px] bg-gradient-to-tr from-blue-50/20 to-transparent rounded-full blur-3xl" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[860px] w-[860px] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.07),transparent_60%)] blur-2xl" />
+          <div className="absolute right-[-180px] top-[8%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.055),transparent_60%)] blur-3xl" />
+          <div className="absolute left-[-160px] bottom-[6%] h-[460px] w-[460px] rounded-full bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.045),transparent_60%)] blur-3xl" />
+
           <div
-            className="absolute inset-0 opacity-[0.02]"
+            className="absolute inset-0 opacity-[0.03]"
             style={{
-              backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`,
-              backgroundSize: "32px 32px",
+              backgroundImage:
+                "linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)",
+              backgroundSize: "44px 44px",
+            }}
+          />
+
+          <div
+            className="absolute inset-0 opacity-[0.07] mix-blend-soft-light"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E\")",
             }}
           />
         </div>
@@ -72,107 +89,123 @@ export default function Hero({ locale }: Props) {
               animate="show"
               className="text-center"
             >
-              <motion.div variants={item} className="mb-8">
-                <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-slate-50/80 px-4 py-1.5 text-caption text-slate-600 backdrop-blur-sm">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"></span>
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-indigo-500"></span>
-                  </span>
-                  <span className="font-medium">{t.hero.trustSignal}</span>
+              {/* TRUST CHIP */}
+              <motion.div variants={item} className="mb-8 flex justify-center">
+                <div className="relative inline-flex">
+                  <span className="absolute -inset-[1px] rounded-full bg-black/10 blur-[2px]" />
+                  <div className="relative inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-4 py-1.5 text-[12px] leading-5 text-slate-700 backdrop-blur">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#0b0b0e]" />
+                    <span className="font-medium">{t.hero.trustSignal}</span>
+                    <span className="text-slate-400">·</span>
+                    <span className="font-medium text-slate-600">Resumify</span>
+                  </div>
                 </div>
               </motion.div>
 
+              {/* HEADLINE (weights + tracking) */}
               <motion.h1
                 variants={item}
-                className="text-display-lg font-bold text-slate-900 mb-6"
+                className="
+                  text-[44px] leading-[1.04] sm:text-[60px]
+                  font-semibold tracking-[-0.03em]
+                  text-slate-900 mb-6
+                "
               >
-                {headlineParts[0]}
-                <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  {t.hero.headlineHighlight}
+                <span className="font-medium text-slate-900/90">
+                  {headlineParts[0]}
                 </span>
-                {headlineParts[1]}
+                <span className="relative inline-block text-slate-900 font-semibold">
+                  {t.hero.headlineHighlight}
+                  <span className="absolute -bottom-1 left-0 h-[2px] w-full rounded-full bg-slate-900/80" />
+                </span>
+                <span className="font-medium text-slate-900/90">
+                  {headlineParts[1]}
+                </span>
               </motion.h1>
 
+              {/* SUBHEAD (lighter) */}
               <motion.p
                 variants={item}
-                className="mx-auto max-w-2xl text-body-lg text-slate-600 mb-10 font-normal"
+                className="
+                  mx-auto max-w-2xl
+                  text-[18px] sm:text-[19px]
+                  leading-relaxed
+                  text-slate-600
+                  font-normal
+                  tracking-[-0.01em]
+                  mb-10
+                "
               >
                 {t.hero.subheadline}
               </motion.p>
 
-              <motion.div
-                variants={item}
-                className="flex flex-col items-center justify-center gap-4 sm:flex-row mb-14"
-              >
-                <Button
-                  type="primary"
-                  size="large"
-                  icon={<ArrowRightOutlined />}
-                  href={`/${locale}/editor`}
-                  className="!h-14 !w-[400px] !px-8 !text-base !font-semibold shadow-lg shadow-indigo-500/25 hover:!shadow-xl hover:!shadow-indigo-500/30 active:!scale-[0.98] active:!opacity-90 transition-all duration-200 cursor-pointer"
-                >
-                  {t.hero.ctaPrimary}
-                </Button>
+              {/* CTA ONLY (dark gloss) */}
+              <motion.div variants={item} className="mb-12 flex justify-center">
+                <div className="relative w-full max-w-[460px]">
+                  <div className="pointer-events-none absolute -inset-6 rounded-[28px] bg-black/10 blur-2xl opacity-60" />
+
+                  <Button
+                    type="primary"
+                    size="large"
+                    icon={<ArrowRightOutlined />}
+                    href={`/${locale}/editor`}
+                    className={[
+                      "!h-14 !w-full !px-8",
+                      "!rounded-2xl",
+                      "!border !border-white/10",
+                      "!bg-[#0b0b0e] !text-white",
+                      "!text-[15px] !font-semibold",
+                      "shadow-[0_18px_45px_rgba(0,0,0,0.38)]",
+                      "hover:shadow-[0_24px_60px_rgba(0,0,0,0.48)]",
+                      "transition-all duration-200",
+                      "hover:-translate-y-0.5",
+                      "active:!scale-[0.99]",
+                      "focus-visible:!ring-2 focus-visible:!ring-black/20",
+                      "relative overflow-hidden",
+                      // чуть tighter, чтобы выглядело “дороже”
+                      "tracking-[-0.01em]",
+                    ].join(" ")}
+                  >
+                    <span className="relative z-10">{t.hero.ctaPrimary}</span>
+
+                    {/* gloss */}
+                    <span
+                      className="
+                        pointer-events-none absolute inset-0
+                        before:absolute before:inset-0
+                        before:bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_45%)]
+                        before:opacity-80
+                      "
+                    />
+                  </Button>
+                </div>
               </motion.div>
 
+              {/* FEATURE CHIPS */}
               <motion.div
                 variants={item}
-                className="flex flex-wrap items-center justify-center gap-8 text-caption text-slate-500"
+                className="flex flex-wrap items-center justify-center gap-3 text-[12px] text-slate-600"
               >
-                <div className="flex items-center gap-2.5">
-                  <svg
-                    className="h-5 w-5 text-green-500 flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2.5"
-                    stroke="currentColor"
+                {[
+                  t.hero.features.atsOptimized,
+                  t.hero.features.instantExport,
+                  t.hero.features.noSignup,
+                ].map((label) => (
+                  <span
+                    key={label}
+                    className="
+                      inline-flex items-center gap-2
+                      rounded-full border border-black/10
+                      bg-white/70 px-3 py-1.5
+                      backdrop-blur
+                    "
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
-                  </svg>
-                  <span className="font-medium">
-                    {t.hero.features.atsOptimized}
+                    <span className="h-2 w-2 rounded-full bg-slate-900" />
+                    <span className="font-medium tracking-[-0.01em]">
+                      {label}
+                    </span>
                   </span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <svg
-                    className="h-5 w-5 text-green-500 flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
-                  </svg>
-                  <span className="font-medium">
-                    {t.hero.features.instantExport}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <svg
-                    className="h-5 w-5 text-green-500 flex-shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
-                  </svg>
-                  <span className="font-medium">
-                    {t.hero.features.noSignup}
-                  </span>
-                </div>
+                ))}
               </motion.div>
             </motion.div>
           </div>

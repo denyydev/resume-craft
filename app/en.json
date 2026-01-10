@@ -11,16 +11,16 @@
   },
   "landing": {
     "hero": {
-      "trustSignal": "Free to start • No credit card required",
-      "headline": "Resumes that {highlight} in minutes, not hours.",
+      "trustSignal": "Free · No signup · No card",
+      "headline": "Resumes that {highlight} — without extra steps.",
       "headlineHighlight": "pass ATS",
-      "subheadline": "Create professional, ATS-friendly resumes with our editor. Export to PDF instantly. No design skills needed.",
-      "ctaPrimary": "Start building",
+      "subheadline": "Fill in your details, choose a template, and get a resume ready to apply.",
+      "ctaPrimary": "Build resume",
       "ctaSecondary": "View templates",
       "features": {
-        "atsOptimized": "ATS-optimized templates",
+        "atsOptimized": "ATS-ready",
         "instantExport": "Instant PDF export",
-        "noSignup": "No sign-up required"
+        "noSignup": "No signup required"
       }
     }
   }
