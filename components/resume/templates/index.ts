@@ -2,6 +2,7 @@
 
 import { AtsFriendlyTemplate } from "./AtsFriendlyTemplate";
 import { CompactTemplate } from "./CompactTemplate";
+import { CreativeTemplate } from "./CreativeTemplate";
 import { GridTemplate } from "./GridTemplate";
 import { NeoTemplate } from "./NeoTemplate";
 import { SidebarTemplate } from "./SidebarTemplate";
@@ -12,12 +13,10 @@ export const templateMap = {
   classic: SidebarTemplate,
   minimal: NeoTemplate,
   modern: CompactTemplate,
-  neo: NeoTemplate,
-  sidebar: SidebarTemplate,
-  compact: CompactTemplate,
-  simple: AtsFriendlyTemplate,
   timeline: TimelineTemplate,
+  simple: AtsFriendlyTemplate,
   grid: GridTemplate,
+  creative: CreativeTemplate,
 } as const;
 
 export type TemplateKey = keyof typeof templateMap;

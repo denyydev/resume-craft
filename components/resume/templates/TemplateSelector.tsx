@@ -26,6 +26,7 @@ const templateTitles: Record<TemplateKey, Record<LocaleKey, string>> = {
   simple: { ru: "ATS Friendly", en: "ATS Friendly" },
   timeline: { ru: "Таймлайн", en: "Timeline" },
   grid: { ru: "Сетка", en: "Grid" },
+  creative: { ru: "creative", en: "creative" },
 };
 
 // (опционально) микро-подписи как в SaaS меню
@@ -36,6 +37,7 @@ const templateHints: Partial<Record<TemplateKey, Record<LocaleKey, string>>> = {
   classic: { ru: "Традиционный вид", en: "Traditional look" },
   timeline: { ru: "Хронология", en: "Timeline layout" },
   grid: { ru: "Сетка секций", en: "Grid sections" },
+  creative: { ru: "creative", en: "creative" },
 };
 
 export function TemplateSelector() {
@@ -53,6 +55,7 @@ export function TemplateSelector() {
     "modern",
     "timeline",
     "grid",
+    "creative",
   ];
 
   const items: MenuProps["items"] = useMemo(

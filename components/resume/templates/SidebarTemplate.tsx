@@ -1,7 +1,68 @@
 "use client";
 
-import React from "react";
-import { formatPeriod, type ResumeTemplateProps } from "./common";
+import type { ResumeSectionKey } from "@/types/resume";
+import React, { useMemo } from "react";
+import type { ResumeTemplateProps } from "./common";
+import { formatPeriod, hasAnyText, hasText, joinNonEmpty } from "./common";
+
+const messages = {
+  ru: {
+    profile: "Профиль",
+    experience: "Опыт",
+    projects: "Проекты",
+    education: "Образование",
+    languages: "Языки",
+    skills: "Навыки",
+    softSkills: "Soft skills",
+    preferences: "Предпочтения",
+    certifications: "Сертификаты",
+    activities: "Активности",
+    contacts: "Контакты",
+    prefs: {
+      employment: "Занятость",
+      format: "Формат",
+      relocation: "Релокация",
+      timezone: "Часовой пояс",
+      authorization: "Разрешение",
+      yes: "Да",
+      no: "Нет",
+    },
+    activity: {
+      openSource: "Open Source",
+      volunteering: "Волонтёрство",
+      community: "Комьюнити",
+      other: "Активность",
+    },
+  },
+  en: {
+    profile: "Profile",
+    experience: "Experience",
+    projects: "Projects",
+    education: "Education",
+    languages: "Languages",
+    skills: "Skills",
+    softSkills: "Soft Skills",
+    preferences: "Preferences",
+    certifications: "Certifications",
+    activities: "Activities",
+    contacts: "Contacts",
+    prefs: {
+      employment: "Employment",
+      format: "Format",
+      relocation: "Relocation",
+      timezone: "Timezone",
+      authorization: "Authorization",
+      yes: "Yes",
+      no: "No",
+    },
+    activity: {
+      openSource: "Open Source",
+      volunteering: "Volunteering",
+      community: "Community",
+      other: "Activity",
+    },
+  },
+} as const;
 
 function InitialAvatar({
   fullName,
@@ -10,7 +71,7 @@ function InitialAvatar({
   fullName?: string;
   accentColor: string;
 }) {
-  const letter = (fullName || "N").trim().charAt(0).toUpperCase();
+  const letter = (fullName || "").trim().charAt(0).toUpperCase() || "N";
   return (
     <div
       className="w-20 h-20 rounded-2xl bg-slate-950 flex items-center justify-center text-xl font-semibold border"
@@ -76,7 +137,8 @@ function KeyValueRow({
   value?: string;
   tone?: "dark" | "light";
 }) {
-  if (!value) return null;
+  if (!hasText(value)) return null;
+
   const labelCls =
     tone === "dark"
       ? "text-[10px] text-slate-400"
@@ -85,6 +147,7 @@ function KeyValueRow({
     tone === "dark"
       ? "text-[11px] text-slate-100"
       : "text-[11px] text-slate-800";
+
   return (
     <div className="flex items-baseline justify-between gap-3">
       <span className={labelCls}>{label}</span>
@@ -93,7 +156,9 @@ function KeyValueRow({
   );
 }
 
-export function SidebarTemplate({ data }: ResumeTemplateProps) {
+export function SidebarTemplate({ data, locale }: ResumeTemplateProps) {
+  const t = messages[locale === "ru" ? "ru" : "en"];
+
   const {
     lastName,
     firstName,
@@ -113,30 +178,103 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
     employmentPreferences,
     certifications,
     activities,
+    sectionsVisibility,
   } = data;
 
-  const fullName = [lastName, firstName, patronymic].filter(Boolean).join(" ");
+  const visible = (key: ResumeSectionKey) =>
+    sectionsVisibility?.[key] !== false;
+
   const accent = accentColor || "#1677ff";
+  const fullName = [lastName, firstName, patronymic]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 
-  const techTags = techSkills?.tags ?? [];
-  const techNote = techSkills?.note?.trim() ?? "";
-  const softTags = softSkills?.tags ?? [];
-  const softNote = softSkills?.note?.trim() ?? "";
-
-  const hasTech = techTags.length > 0 || techNote.length > 0;
-  const hasSoft = softTags.length > 0 || softNote.length > 0;
-
-  const hasPrimaryContacts = !!(
-    contacts?.email ||
-    contacts?.phone ||
-    contacts?.location
+  // ✅ фильтруем пустые элементы списков (как в ATS)
+  const experienceFilled = useMemo(
+    () =>
+      (experience ?? []).filter((x) =>
+        hasAnyText([
+          x.company,
+          x.position,
+          x.location,
+          x.startDate,
+          x.endDate,
+          x.description,
+          x.isCurrent ? "1" : "",
+        ])
+      ),
+    [experience]
   );
-  const hasLinks = !!(
-    contacts?.telegram ||
-    contacts?.github ||
-    contacts?.linkedin ||
-    contacts?.website
+
+  const projectsFilled = useMemo(
+    () =>
+      (projects ?? []).filter((p) =>
+        hasAnyText([p.name, p.role, p.stack, p.link, p.description])
+      ),
+    [projects]
   );
+
+  const educationFilled = useMemo(
+    () =>
+      (education ?? []).filter((e) =>
+        hasAnyText([e.institution, e.degree, e.field, e.startDate, e.endDate])
+      ),
+    [education]
+  );
+
+  const languagesFilled = useMemo(
+    () => (languages ?? []).filter((l) => hasAnyText([l.name, l.level])),
+    [languages]
+  );
+
+  const certificationsFilled = useMemo(
+    () =>
+      (certifications ?? []).filter((c) =>
+        hasAnyText([c.name, c.issuer, c.year, c.link])
+      ),
+    [certifications]
+  );
+
+  const activitiesFilled = useMemo(
+    () =>
+      (activities ?? []).filter((a) =>
+        hasAnyText([a.name, a.role, a.description, a.link])
+      ),
+    [activities]
+  );
+
+  const techTags = (techSkills?.tags ?? [])
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const techNote = (techSkills?.note ?? "").trim();
+
+  const softTags = (softSkills?.tags ?? [])
+    .map((x) => x.trim())
+    .filter(Boolean);
+  const softNote = (softSkills?.note ?? "").trim();
+
+  const hasTech =
+    visible("techSkills") && (techTags.length > 0 || hasText(techNote));
+  const hasSoft =
+    visible("softSkills") && (softTags.length > 0 || hasText(softNote));
+
+  // ✅ контакты/ссылки — показываем только если реально есть
+  const contactLines = [contacts?.email, contacts?.phone, contacts?.location]
+    .map((x) => (x ?? "").trim())
+    .filter(Boolean);
+
+  const linkLines = [
+    contacts?.telegram,
+    contacts?.github,
+    contacts?.linkedin,
+    contacts?.website,
+  ]
+    .map((x) => (x ?? "").trim())
+    .filter(Boolean);
+
+  const hasPrimaryContacts = visible("contacts") && contactLines.length > 0;
+  const hasLinks = visible("contacts") && linkLines.length > 0;
 
   const pref = employmentPreferences;
   const prefEmploymentType = pref?.employmentType?.length
@@ -146,78 +284,79 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
     ? pref.workFormat.join(" · ")
     : "";
 
-  const hasPreferences = !!(
-    prefEmploymentType ||
-    prefWorkFormat ||
-    pref?.timezone ||
-    pref?.workAuthorization ||
-    typeof pref?.relocation === "boolean"
-  );
-
-  const hasCerts = (certifications?.length ?? 0) > 0;
-  const hasActivities = (activities?.length ?? 0) > 0;
+  const hasPreferences =
+    visible("employmentPreferences") &&
+    hasAnyText([
+      prefEmploymentType,
+      prefWorkFormat,
+      pref?.timezone,
+      pref?.workAuthorization,
+      typeof pref?.relocation === "boolean" ? "1" : "",
+    ]);
 
   const activityLabel = (type?: string) => {
-    if (type === "open-source") return "Open Source";
-    if (type === "volunteering") return "Volunteering";
-    if (type === "community") return "Community";
-    return "Activity";
+    if (type === "open-source") return t.activity.openSource;
+    if (type === "volunteering") return t.activity.volunteering;
+    if (type === "community") return t.activity.community;
+    return t.activity.other;
   };
-
-  const contactLines = [
-    contacts?.email,
-    contacts?.phone,
-    contacts?.location,
-  ].filter((v): v is string => typeof v === "string" && v.length > 0);
-
-  const linkLines = [
-    contacts?.telegram,
-    contacts?.github,
-    contacts?.linkedin,
-    contacts?.website,
-  ].filter((v): v is string => typeof v === "string" && v.length > 0);
 
   return (
     <div
-      className="w-[794px] bg-white text-slate-900 flex"
+      className="w-[794px] bg-white text-slate-900 grid grid-cols-[270px_1fr]"
       style={{
         minHeight: "1123px",
         WebkitPrintColorAdjust: "exact",
         printColorAdjust: "exact",
       }}
     >
+      {/* LEFT */}
       <aside
-        className="w-[270px] bg-slate-950 text-slate-50 px-6 py-8 flex flex-col gap-6"
+        className="bg-slate-950 text-slate-50 px-6 py-8 flex flex-col gap-6 self-stretch"
         style={{
           boxShadow: `inset 4px 0 0 0 ${accent}`,
           WebkitPrintColorAdjust: "exact",
           printColorAdjust: "exact",
         }}
       >
-        <div className="flex flex-col items-start gap-4">
-          {photo && includePhoto !== false ? (
-            <img
-              src={photo}
-              alt={fullName || "Photo"}
-              className="w-20 h-20 rounded-2xl object-cover border"
-              style={{ borderColor: `${accent}55` }}
-            />
-          ) : (
-            <InitialAvatar fullName={fullName} accentColor={accent} />
-          )}
+        {(hasText(fullName) ||
+          hasText(position) ||
+          (visible("photo") && photo && includePhoto !== false)) && (
+          <div className="flex flex-col items-start gap-4">
+            {/* ✅ Фото — только когда есть */}
+            {visible("photo") && photo && includePhoto !== false ? (
+              <img
+                src={photo}
+                alt={fullName || "Photo"}
+                className="w-20 h-20 rounded-2xl object-cover border"
+                style={{ borderColor: `${accent}55` }}
+              />
+            ) : null}
 
-          <div className="space-y-1">
-            <h1 className="text-[16px] font-semibold leading-tight tracking-tight">
-              {fullName || "Your Name"}
-            </h1>
-            <p className="text-[11px] text-slate-300 leading-snug">
-              {position || "Job Title / Position"}
-            </p>
+            {(hasText(fullName) || hasText(position)) && (
+              <div className="space-y-1">
+                {hasText(fullName) ? (
+                  <h1 className="text-[16px] font-semibold leading-tight tracking-tight">
+                    {fullName}
+                  </h1>
+                ) : null}
+
+                {hasText(position) ? (
+                  <p className="text-[11px] text-slate-300 leading-snug">
+                    {position}
+                  </p>
+                ) : null}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {(hasPrimaryContacts || hasLinks) && (
           <section className="space-y-3">
+            <SectionTitle accentColor={accent} tone="dark">
+              {t.contacts}
+            </SectionTitle>
+
             {hasPrimaryContacts && (
               <div className="space-y-1 text-[11px] text-slate-200">
                 {contactLines.map((line, i) => (
@@ -243,34 +382,38 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
         {hasPreferences && (
           <section className="space-y-3">
             <SectionTitle accentColor={accent} tone="dark">
-              Preferences
+              {t.preferences}
             </SectionTitle>
 
             <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-3">
               <KeyValueRow
-                label="Employment"
+                label={t.prefs.employment}
                 value={prefEmploymentType}
                 tone="dark"
               />
-              <KeyValueRow label="Format" value={prefWorkFormat} tone="dark" />
               <KeyValueRow
-                label="Relocation"
+                label={t.prefs.format}
+                value={prefWorkFormat}
+                tone="dark"
+              />
+              <KeyValueRow
+                label={t.prefs.relocation}
                 value={
                   typeof pref?.relocation === "boolean"
                     ? pref.relocation
-                      ? "Yes"
-                      : "No"
+                      ? t.prefs.yes
+                      : t.prefs.no
                     : undefined
                 }
                 tone="dark"
               />
               <KeyValueRow
-                label="Timezone"
+                label={t.prefs.timezone}
                 value={pref?.timezone}
                 tone="dark"
               />
               <KeyValueRow
-                label="Authorization"
+                label={t.prefs.authorization}
                 value={pref?.workAuthorization}
                 tone="dark"
               />
@@ -283,18 +426,18 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             {hasTech && (
               <div className="space-y-2">
                 <SectionTitle accentColor={accent} tone="dark">
-                  Skills
+                  {t.skills}
                 </SectionTitle>
 
                 {techTags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
-                    {techTags.map((t) => (
-                      <TagPill key={`tech-${t}`} label={t} tone="dark" />
+                    {techTags.map((tag) => (
+                      <TagPill key={`tech-${tag}`} label={tag} tone="dark" />
                     ))}
                   </div>
                 )}
 
-                {techNote && (
+                {hasText(techNote) && (
                   <p className="text-[11px] text-slate-100 whitespace-pre-line leading-snug">
                     {techNote}
                   </p>
@@ -305,18 +448,18 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
             {hasSoft && (
               <div className="space-y-2">
                 <SectionTitle accentColor={accent} tone="dark">
-                  Soft Skills
+                  {t.softSkills}
                 </SectionTitle>
 
                 {softTags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5">
-                    {softTags.map((t) => (
-                      <TagPill key={`soft-${t}`} label={t} tone="dark" />
+                    {softTags.map((tag) => (
+                      <TagPill key={`soft-${tag}`} label={tag} tone="dark" />
                     ))}
                   </div>
                 )}
 
-                {softNote && (
+                {hasText(softNote) && (
                   <p className="text-[11px] text-slate-100 whitespace-pre-line leading-snug">
                     {softNote}
                   </p>
@@ -326,32 +469,32 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
           </section>
         )}
 
-        {languages?.length ? (
+        {visible("languages") && languagesFilled.length > 0 ? (
           <section className="space-y-2">
             <SectionTitle accentColor={accent} tone="dark">
-              Languages
+              {t.languages}
             </SectionTitle>
             <ul className="space-y-1 text-[11px] text-slate-100">
-              {languages.map((l) => (
+              {languagesFilled.map((l) => (
                 <li key={l.id} className="leading-snug">
                   {l.name}
-                  {l.level && (
+                  {hasText(l.level) ? (
                     <span className="text-slate-400"> · {l.level}</span>
-                  )}
+                  ) : null}
                 </li>
               ))}
             </ul>
           </section>
         ) : null}
 
-        {hasCerts && (
+        {visible("certifications") && certificationsFilled.length > 0 ? (
           <section className="space-y-2">
             <SectionTitle accentColor={accent} tone="dark">
-              Certifications
+              {t.certifications}
             </SectionTitle>
 
             <div className="space-y-2">
-              {certifications?.slice(0, 4).map((c) => (
+              {certificationsFilled.slice(0, 4).map((c) => (
                 <div
                   key={c.id}
                   className="rounded-2xl border border-white/10 bg-white/5 p-3"
@@ -362,7 +505,7 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
                   <p className="text-[10px] text-slate-300 leading-snug">
                     {[c.issuer, c.year].filter(Boolean).join(" · ")}
                   </p>
-                  {c.link && (
+                  {hasText(c.link) && (
                     <p
                       className="text-[10px] truncate mt-1"
                       style={{ color: accent }}
@@ -374,69 +517,78 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
               ))}
             </div>
 
-            {(certifications?.length ?? 0) > 4 && (
+            {certificationsFilled.length > 4 && (
               <p className="text-[10px] text-slate-400">
-                +{(certifications?.length ?? 0) - 4} more
+                +{certificationsFilled.length - 4} more
               </p>
             )}
           </section>
-        )}
+        ) : null}
       </aside>
 
+      {/* RIGHT */}
       <main
-        className="flex-1 px-9 py-8 space-y-5 text-[11px] leading-snug bg-white"
+        className="px-9 py-8 space-y-5 text-[11px] leading-snug bg-white"
         style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}
       >
-        {summary && (
+        {visible("summary") && hasText(summary) ? (
           <section className="space-y-2 border-b border-slate-200 pb-4">
-            <SectionTitle accentColor={accent}>Profile</SectionTitle>
+            <SectionTitle accentColor={accent}>{t.profile}</SectionTitle>
             <p className="text-slate-800 whitespace-pre-line leading-snug">
               {summary}
             </p>
           </section>
-        )}
+        ) : null}
 
-        {experience?.length ? (
+        {visible("experience") && experienceFilled.length > 0 ? (
           <section className="space-y-3">
-            <SectionTitle accentColor={accent}>Experience</SectionTitle>
+            <SectionTitle accentColor={accent}>{t.experience}</SectionTitle>
 
-            {experience.map((item) => (
-              <div
-                key={item.id}
-                className="space-y-1"
-                style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
-              >
-                <div className="flex justify-between gap-4">
-                  <p className="font-medium text-slate-900">
-                    {item.position || "Position"}
-                    {item.company && (
-                      <span className="text-slate-600"> · {item.company}</span>
-                    )}
-                  </p>
-                  <p className="text-[10px] text-slate-500 whitespace-nowrap">
-                    {formatPeriod(item.startDate, item.endDate, item.isCurrent)}
-                  </p>
+            {experienceFilled.map((item) => {
+              const title = joinNonEmpty([item.position, item.company]);
+              const dates = formatPeriod(
+                item.startDate,
+                item.endDate,
+                item.isCurrent
+              );
+
+              return (
+                <div
+                  key={item.id}
+                  className="space-y-1"
+                  style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
+                >
+                  <div className="flex justify-between gap-4">
+                    <p className="font-medium text-slate-900">{title}</p>
+                    {hasText(dates) ? (
+                      <p className="text-[10px] text-slate-500 whitespace-nowrap">
+                        {dates}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  {hasText(item.location) ? (
+                    <p className="text-[10px] text-slate-500">
+                      {item.location}
+                    </p>
+                  ) : null}
+
+                  {hasText(item.description) ? (
+                    <p className="text-slate-800 whitespace-pre-line leading-snug">
+                      {item.description}
+                    </p>
+                  ) : null}
                 </div>
-
-                {item.location && (
-                  <p className="text-[10px] text-slate-500">{item.location}</p>
-                )}
-
-                {item.description && (
-                  <p className="text-slate-800 whitespace-pre-line leading-snug">
-                    {item.description}
-                  </p>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </section>
         ) : null}
 
-        {projects?.length ? (
+        {visible("projects") && projectsFilled.length > 0 ? (
           <section className="space-y-3">
-            <SectionTitle accentColor={accent}>Projects</SectionTitle>
+            <SectionTitle accentColor={accent}>{t.projects}</SectionTitle>
 
-            {projects.map((p) => (
+            {projectsFilled.map((p) => (
               <div
                 key={p.id}
                 className="space-y-1"
@@ -444,42 +596,37 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
               >
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
-                    {p.name || "Project"}
-                    {p.role && (
-                      <span className="text-slate-600"> · {p.role}</span>
-                    )}
+                    {joinNonEmpty([p.name, p.role])}
                   </p>
-                  {p.link && (
+                  {hasText(p.link) ? (
                     <p
                       className="text-[10px] truncate max-w-[220px] text-right"
                       style={{ color: accent }}
                     >
                       {p.link}
                     </p>
-                  )}
+                  ) : null}
                 </div>
 
-                {p.stack && (
+                {hasText(p.stack) ? (
                   <p className="text-[10px] text-slate-500">{p.stack}</p>
-                )}
+                ) : null}
 
-                {p.description && (
+                {hasText(p.description) ? (
                   <p className="text-slate-800 whitespace-pre-line leading-snug">
                     {p.description}
                   </p>
-                )}
+                ) : null}
               </div>
             ))}
           </section>
         ) : null}
 
-        {hasActivities && (
+        {visible("activities") && activitiesFilled.length > 0 ? (
           <section className="space-y-3">
-            <SectionTitle accentColor={accent}>
-              Open Source & Volunteering
-            </SectionTitle>
+            <SectionTitle accentColor={accent}>{t.activities}</SectionTitle>
 
-            {activities?.map((a) => (
+            {activitiesFilled.map((a) => (
               <div
                 key={a.id}
                 className="space-y-1"
@@ -487,59 +634,56 @@ export function SidebarTemplate({ data }: ResumeTemplateProps) {
               >
                 <div className="flex justify-between gap-4">
                   <p className="font-medium text-slate-900">
-                    {a.name || "Activity"}
-                    {a.role && (
-                      <span className="text-slate-600"> · {a.role}</span>
-                    )}
+                    {joinNonEmpty([a.name, a.role])}
                   </p>
-                  {a.type && (
+                  {a.type ? (
                     <span
                       className="text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border"
                       style={{ borderColor: `${accent}55`, color: accent }}
                     >
                       {activityLabel(a.type)}
                     </span>
-                  )}
+                  ) : null}
                 </div>
 
-                {a.link && (
+                {hasText(a.link) ? (
                   <p className="text-[10px] truncate" style={{ color: accent }}>
                     {a.link}
                   </p>
-                )}
+                ) : null}
 
-                {a.description && (
+                {hasText(a.description) ? (
                   <p className="text-slate-800 whitespace-pre-line leading-snug">
                     {a.description}
                   </p>
-                )}
+                ) : null}
               </div>
             ))}
           </section>
-        )}
+        ) : null}
 
-        {education?.length ? (
+        {visible("education") && educationFilled.length > 0 ? (
           <section className="space-y-3">
-            <SectionTitle accentColor={accent}>Education</SectionTitle>
+            <SectionTitle accentColor={accent}>{t.education}</SectionTitle>
 
-            {education.map((e) => (
+            {educationFilled.map((e) => (
               <div
                 key={e.id}
                 className="space-y-1"
                 style={{ breakInside: "avoid", pageBreakInside: "avoid" }}
               >
                 <p className="font-medium text-slate-900">
-                  {e.degree || e.field || "Education"}
-                  {e.institution && (
-                    <span className="text-slate-600"> · {e.institution}</span>
-                  )}
+                  {joinNonEmpty([e.degree, e.field]) || e.institution}
                 </p>
 
-                {(e.startDate || e.endDate) && (
+                {hasAnyText([e.institution, e.startDate, e.endDate]) ? (
                   <p className="text-[10px] text-slate-500">
-                    {formatPeriod(e.startDate, e.endDate)}
+                    {joinNonEmpty([
+                      e.institution,
+                      formatPeriod(e.startDate, e.endDate, false),
+                    ])}
                   </p>
-                )}
+                ) : null}
               </div>
             ))}
           </section>

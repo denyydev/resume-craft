@@ -15,7 +15,6 @@ export function BrandLink({ href }: { href: string }) {
         backdrop-blur
         shadow-[0_8px_20px_rgba(0,0,0,0.35)]
         transition-all duration-200
-
         select-none no-underline
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25
       "

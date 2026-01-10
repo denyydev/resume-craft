@@ -177,7 +177,6 @@ function A4PreviewFrame({
                 <div
                   style={{
                     width: viewW,
-                    height: viewH,
                   }}
                   className="mx-auto"
                 >

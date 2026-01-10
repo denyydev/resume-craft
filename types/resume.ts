@@ -8,7 +8,8 @@ export type TemplateKey =
   | "compact"
   | "simple"
   | "timeline"
-  | "grid";
+  | "grid"
+  | "creative";
 
 export type Contacts = {
   email: string;
