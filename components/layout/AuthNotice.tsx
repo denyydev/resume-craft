@@ -39,7 +39,7 @@ export function AuthNotice({ locale }: Props) {
         dark:bg-slate-900/80
       "
     >
-      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex w-full items-center justify-between gap-4 px-5 py-3">
         <div className="flex items-start gap-3">
           {/* icon */}
           <div className="mt-0.5 text-blue-600 dark:text-blue-400">
