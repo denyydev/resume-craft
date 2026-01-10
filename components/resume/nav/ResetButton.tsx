@@ -7,7 +7,7 @@ import { RotateCcw } from "lucide-react";
 
 const messages = {
   ru: {
-    button: "Сбросить все поля",
+    button: "Сбросить",
     title: "Сбросить резюме?",
     content:
       "Все данные будут удалены, и резюме вернётся к состоянию по умолчанию.",
@@ -15,7 +15,7 @@ const messages = {
     cancel: "Отмена",
   },
   en: {
-    button: "Reset all fields",
+    button: "Reset",
     title: "Reset resume?",
     content:
       "All data will be removed and the resume will be reset to default.",
@@ -28,9 +28,7 @@ type Locale = keyof typeof messages;
 
 function normalizeLocale(value: unknown): Locale {
   if (typeof value !== "string" || value.length === 0) return "ru";
-
   const base = value.split("-")[0]?.toLowerCase();
-
   return base === "en" ? "en" : "ru";
 }
 
@@ -42,7 +40,7 @@ export function ResetResumeButton({ className }: ResetResumeButtonProps) {
   const reset = useResumeStore((s) => s.reset);
 
   const rawLocale = useCurrentLocale();
-  const locale = normalizeLocale(rawLocale) satisfies Locale;
+  const locale = normalizeLocale(rawLocale);
   const t = messages[locale];
 
   const handleClick = () => {
@@ -52,18 +50,14 @@ export function ResetResumeButton({ className }: ResetResumeButtonProps) {
       okText: t.ok,
       cancelText: t.cancel,
       okButtonProps: { danger: true },
+      centered: true,
       onOk: () => reset(),
     });
   };
 
   return (
-    <Button
-      danger
-      type="text"
-      icon={<RotateCcw size={16} />}
-      className={className}
-      onClick={handleClick}
-    >
+    <Button onClick={handleClick}>
+      <RotateCcw size={15} className="opacity-70" />
       {t.button}
     </Button>
   );

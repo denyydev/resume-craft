@@ -26,10 +26,9 @@ const templateTitles: Record<TemplateKey, Record<LocaleKey, string>> = {
   simple: { ru: "ATS Friendly", en: "ATS Friendly" },
   timeline: { ru: "Таймлайн", en: "Timeline" },
   grid: { ru: "Сетка", en: "Grid" },
-  creative: { ru: "creative", en: "creative" },
+  creative: { ru: "Креативный", en: "Creative" },
 };
 
-// (опционально) микро-подписи как в SaaS меню
 const templateHints: Partial<Record<TemplateKey, Record<LocaleKey, string>>> = {
   simple: { ru: "Максимум ATS", en: "Most ATS-friendly" },
   minimal: { ru: "Чисто и просто", en: "Clean & simple" },
@@ -37,7 +36,10 @@ const templateHints: Partial<Record<TemplateKey, Record<LocaleKey, string>>> = {
   classic: { ru: "Традиционный вид", en: "Traditional look" },
   timeline: { ru: "Хронология", en: "Timeline layout" },
   grid: { ru: "Сетка секций", en: "Grid sections" },
-  creative: { ru: "creative", en: "creative" },
+  creative: {
+    ru: "Для дизайнеров и нестандартных ролей",
+    en: "For designers and creative roles",
+  },
 };
 
 export function TemplateSelector() {

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { EditorShell } from "@/components/resume/EditorShell";
 import AccentColorPicker from "@/components/resume/nav/AccentColorPicker";
 import { DownloadPdfButton } from "@/components/resume/nav/DownloadPdfButton";
+import { ResetResumeButton } from "@/components/resume/nav/ResetButton";
 import { SaveResumeButton } from "@/components/resume/nav/SaveResumeButton";
 import ShareResumeButton from "@/components/resume/nav/ShareResumeButton";
 import { ResumePreview } from "@/components/resume/ResumePreview";
@@ -86,6 +87,7 @@ export default function EditorPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <TemplateSelector />
                     <AccentColorPicker />
+                    <ResetResumeButton />
                   </div>
 
                   <div className="flex items-center gap-2">

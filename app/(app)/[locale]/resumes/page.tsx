@@ -14,7 +14,7 @@ import {
   Tooltip,
   message,
 } from "antd";
-import { Clock, File, FileText, Plus, Search, Trash2 } from "lucide-react";
+import { Clock, File, Plus, Search, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -406,16 +406,6 @@ export default function MyResumesPage() {
               <div className="relative flex flex-col gap-4">
                 {/* header */}
                 <div className="flex items-start gap-3">
-                  <span
-                    className="
-          flex h-10 w-10 shrink-0 items-center justify-center rounded-xl
-          bg-white/4 ring-1 ring-white/10
-        "
-                    style={{ color: "#0A84FF" }}
-                  >
-                    <FileText size={18} />
-                  </span>
-
                   <div className="min-w-0">
                     <h1 className="m-0 text-2xl font-semibold tracking-tight text-white">
                       {t.title}
