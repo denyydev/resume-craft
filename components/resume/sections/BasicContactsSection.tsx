@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { Divider, Flex, Form, Input, Space, Typography } from "antd";
 import {
@@ -15,31 +16,60 @@ import { useMemo } from "react";
 
 const { Title, Text } = Typography;
 
-type LocaleMessages = {
-  position: string;
-  positionPlaceholder: string;
-  email: string;
-  emailPlaceholder: string;
-  phone: string;
-  phonePlaceholder: string;
-  city: string;
-  cityPlaceholder: string;
-  telegram: string;
-  telegramPlaceholder: string;
-  github: string;
-  githubPlaceholder: string;
-  linkedin: string;
-  linkedinPlaceholder: string;
-  summary: string;
-  summaryPlaceholder: string;
-  reset: string;
-  next: string;
-  sectionTitle?: string;
-  sectionSubtitle?: string;
-};
+const messages = {
+  ru: {
+    sectionTitle: "Контакты и заголовок",
+    sectionSubtitle:
+      "Должность, контакты и короткое summary — это первое, что читают рекрутеры.",
 
-export function BasicContactsSection({ t }: { t: LocaleMessages }) {
-  const resume = useResumeStore((s) => s.resume);
+    email: "Email",
+    emailPlaceholder: "you@example.com",
+    phone: "Телефон",
+    phonePlaceholder: "+7 ...",
+    city: "Город",
+    cityPlaceholder: "Москва / Санкт-Петербург / Remote",
+    telegram: "Telegram",
+    telegramPlaceholder: "@username",
+    github: "GitHub",
+    githubPlaceholder: "username",
+    linkedin: "LinkedIn",
+    linkedinPlaceholder: "username",
+  },
+  en: {
+    sectionTitle: "Contacts & header",
+    sectionSubtitle:
+      "Title, contacts and a short summary are the first things recruiters read.",
+
+    email: "Email",
+    emailPlaceholder: "you@example.com",
+    phone: "Phone",
+    phonePlaceholder: "+1 ...",
+    city: "City",
+    cityPlaceholder: "Berlin / Amsterdam / Remote",
+    telegram: "Telegram",
+    telegramPlaceholder: "@username",
+    github: "GitHub",
+    githubPlaceholder: "username",
+    linkedin: "LinkedIn",
+    linkedinPlaceholder: "username",
+  },
+} as const;
+
+type Locale = keyof typeof messages;
+
+function normalizeLocale(value: unknown): Locale {
+  if (typeof value !== "string" || value.length === 0) return "ru";
+  const base = value.split("-")[0]?.toLowerCase();
+  return base === "en" ? "en" : "ru";
+}
+
+export function BasicContactsSection() {
+  const rawLocale = useCurrentLocale();
+  const locale = normalizeLocale(rawLocale) satisfies Locale;
+  const t = messages[locale];
+
+  // ✅ перф: не берём весь resume, только contacts
+  const contacts = useResumeStore((s) => s.resume.contacts);
   const setContacts = useResumeStore((s) => s.setContacts);
 
   const contactItems = useMemo(
@@ -48,7 +78,7 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
         key: "email",
         label: t.email,
         placeholder: t.emailPlaceholder,
-        value: resume.contacts.email,
+        value: contacts.email,
         icon: <Mail size={16} />,
         onChange: (v: string) => setContacts({ email: v }),
       },
@@ -56,7 +86,7 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
         key: "phone",
         label: t.phone,
         placeholder: t.phonePlaceholder,
-        value: resume.contacts.phone,
+        value: contacts.phone,
         icon: <Phone size={16} />,
         onChange: (v: string) => setContacts({ phone: v }),
       },
@@ -64,7 +94,7 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
         key: "location",
         label: t.city,
         placeholder: t.cityPlaceholder,
-        value: resume.contacts.location,
+        value: contacts.location,
         icon: <MapPin size={16} />,
         onChange: (v: string) => setContacts({ location: v }),
       },
@@ -72,7 +102,7 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
         key: "telegram",
         label: t.telegram,
         placeholder: t.telegramPlaceholder,
-        value: resume.contacts.telegram ?? "",
+        value: contacts.telegram ?? "",
         icon: <Send size={16} />,
         onChange: (v: string) => setContacts({ telegram: v }),
       },
@@ -80,7 +110,7 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
         key: "github",
         label: t.github,
         placeholder: t.githubPlaceholder,
-        value: resume.contacts.github ?? "",
+        value: contacts.github ?? "",
         icon: <Github size={16} />,
         onChange: (v: string) => setContacts({ github: v }),
       },
@@ -88,12 +118,12 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
         key: "linkedin",
         label: t.linkedin,
         placeholder: t.linkedinPlaceholder,
-        value: resume.contacts.linkedin ?? "",
+        value: contacts.linkedin ?? "",
         icon: <Linkedin size={16} />,
         onChange: (v: string) => setContacts({ linkedin: v }),
       },
     ],
-    [resume.contacts, setContacts, t]
+    [contacts, setContacts, t]
   );
 
   return (
@@ -105,13 +135,12 @@ export function BasicContactsSection({ t }: { t: LocaleMessages }) {
               <LinkIcon size={18} />
             </span>
             <Title level={4} className="!m-0">
-              {t.sectionTitle ?? "Контакты и заголовок"}
+              {t.sectionTitle}
             </Title>
           </Flex>
 
           <Text type="secondary" className="text-sm">
-            {t.sectionSubtitle ??
-              "Должность, контакты и короткое summary — это первое, что читают рекрутеры."}
+            {t.sectionSubtitle}
           </Text>
 
           <Divider className="my-4" />

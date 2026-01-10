@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import type { UploadProps } from "antd";
 import {
@@ -18,25 +19,54 @@ import { useState } from "react";
 
 const { Title, Text } = Typography;
 
-type LocaleMessages = {
-  position: string;
-  positionPlaceholder: string;
-  lastName: string;
-  firstName: string;
-  patronymic: string;
-  lastNamePlaceholder: string;
-  firstNamePlaceholder: string;
-  patronymicPlaceholder: string;
-  photo: string;
-  photoSubtitle: string;
-  removePhoto: string;
-  dragDrop: string;
-  errorSize: string;
-  errorType: string;
-  replacePhoto?: string;
-  sectionTitle?: string;
-  sectionSubtitle?: string;
-};
+const messages = {
+  ru: {
+    sectionTitle: "Основная информация",
+    sectionSubtitle: "Имя и фото для шапки резюме (по желанию).",
+    position: "Желаемая позиция",
+    positionPlaceholder: "Frontend Developer / React",
+    lastName: "Фамилия",
+    firstName: "Имя",
+    patronymic: "Отчество",
+    lastNamePlaceholder: "Иванов",
+    firstNamePlaceholder: "Иван",
+    patronymicPlaceholder: "Иванович",
+    photo: "Фото",
+    photoSubtitle: "Опционально",
+    removePhoto: "Удалить",
+    dragDrop: "Перетащите фото сюда или нажмите для загрузки",
+    errorSize: "Файл должен быть меньше 5MB",
+    errorType: "Пожалуйста, загрузите изображение",
+    replacePhoto: "Нажмите на фото, чтобы заменить",
+  },
+  en: {
+    sectionTitle: "Basic info",
+    sectionSubtitle: "Name and photo for your resume header (optional).",
+    position: "Desired position",
+    positionPlaceholder: "Frontend Developer / React",
+    lastName: "Last name",
+    firstName: "First name",
+    patronymic: "Middle name",
+    lastNamePlaceholder: "Doe",
+    firstNamePlaceholder: "John",
+    patronymicPlaceholder: "",
+    photo: "Photo",
+    photoSubtitle: "Optional",
+    removePhoto: "Remove",
+    dragDrop: "Drop photo here or click to upload",
+    errorSize: "File must be less than 5MB",
+    errorType: "Please upload an image",
+    replacePhoto: "Click the photo to replace",
+  },
+} as const;
+
+type Locale = keyof typeof messages;
+
+function normalizeLocale(value: unknown): Locale {
+  if (typeof value !== "string" || value.length === 0) return "ru";
+  const base = value.split("-")[0]?.toLowerCase();
+  return base === "en" ? "en" : "ru";
+}
 
 type SectionsVisibility = NonNullable<
   ReturnType<typeof useResumeStore.getState>["resume"]["sectionsVisibility"]
@@ -47,7 +77,7 @@ function useVisible(sectionKey: keyof SectionsVisibility) {
   return sectionsVisibility?.[sectionKey] !== false;
 }
 
-function PhotoBlock({ t }: { t: LocaleMessages }) {
+function PhotoBlock({ t }: { t: (typeof messages)[Locale] }) {
   const [msgApi, contextHolder] = message.useMessage();
   const [hover, setHover] = useState(false);
 
@@ -97,14 +127,14 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
             type="button"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
-            className={[
-              "relative grid place-items-center",
-              "size-24 overflow-hidden rounded-full",
-              "border border-[var(--ant-colorBorderSecondary)]",
-              "bg-[var(--ant-colorFillSecondary)]",
-              "transition hover:brightness-[0.98]",
-              "focus:outline-none focus:ring-2 focus:ring-[var(--ant-colorPrimary)] focus:ring-offset-2 focus:ring-offset-transparent",
-            ].join(" ")}
+            className="
+              relative grid place-items-center
+              size-24 overflow-hidden rounded-full
+              border border-[var(--ant-colorBorderSecondary)]
+              bg-[var(--ant-colorFillSecondary)]
+              transition hover:brightness-[0.98]
+              focus:outline-none focus:ring-2 focus:ring-[var(--ant-colorPrimary)] focus:ring-offset-2 focus:ring-offset-transparent
+            "
             aria-label={photo ? "Change photo" : "Upload photo"}
           >
             {photo ? (
@@ -118,10 +148,11 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
             )}
 
             <div
-              className={[
-                "pointer-events-none absolute inset-0 grid place-items-center transition",
-                hover ? "bg-black/35" : "bg-transparent",
-              ].join(" ")}
+              className={
+                hover
+                  ? "pointer-events-none absolute inset-0 grid place-items-center transition bg-black/35"
+                  : "pointer-events-none absolute inset-0 grid place-items-center transition bg-transparent"
+              }
             >
               <Camera
                 size={18}
@@ -139,11 +170,9 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
             </Text>
           ) : (
             <div className="flex flex-col gap-2">
-              {t.replacePhoto ? (
-                <Text type="secondary" className="text-xs">
-                  {t.replacePhoto}
-                </Text>
-              ) : null}
+              <Text type="secondary" className="text-xs">
+                {t.replacePhoto}
+              </Text>
 
               <Button
                 danger
@@ -166,7 +195,7 @@ function PhotoBlock({ t }: { t: LocaleMessages }) {
   );
 }
 
-function NameInputsBlock({ t }: { t: LocaleMessages }) {
+function NameInputsBlock({ t }: { t: (typeof messages)[Locale] }) {
   const position = useResumeStore((s) => s.resume.position);
   const lastName = useResumeStore((s) => s.resume.lastName);
   const firstName = useResumeStore((s) => s.resume.firstName);
@@ -183,13 +212,12 @@ function NameInputsBlock({ t }: { t: LocaleMessages }) {
     validator(_: unknown, value: string) {
       if (!value) return Promise.resolve();
       if (value.trim().length <= MAX_NAME_LEN) return Promise.resolve();
-      return Promise.reject(new Error(`Максимум ${MAX_NAME_LEN} символов`));
+      return Promise.reject(new Error(`Max ${MAX_NAME_LEN} characters`));
     },
   };
 
   return (
     <Form layout="vertical" colon={false} className="space-y-1">
-      {/* NEW: position перед фамилией */}
       <Form.Item label={t.position} rules={[maxLenRule]}>
         <Input
           prefix={<User size={16} />}
@@ -241,7 +269,11 @@ function NameInputsBlock({ t }: { t: LocaleMessages }) {
   );
 }
 
-export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
+export function BasicIdentitySection() {
+  const rawLocale = useCurrentLocale();
+  const locale = normalizeLocale(rawLocale) satisfies Locale;
+  const t = messages[locale];
+
   const photoVisible = useResumeStore(
     (s) => s.resume.sectionsVisibility?.photo !== false
   );
@@ -255,12 +287,12 @@ export function BasicIdentitySection({ t }: { t: LocaleMessages }) {
               <User size={18} />
             </span>
             <Title level={4} className="!m-0">
-              {t.sectionTitle ?? "Основная информация"}
+              {t.sectionTitle}
             </Title>
           </Flex>
 
           <Text type="secondary" className="text-sm">
-            {t.sectionSubtitle ?? "Имя и фото для шапки резюме (по желанию)."}
+            {t.sectionSubtitle}
           </Text>
 
           <Divider className="my-4" />

@@ -30,36 +30,29 @@ function NavTabs({ items }: { items: NavItem[] }) {
         <Link
           key={key}
           href={href}
-          className={[
-            "relative group inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium",
-            "select-none outline-none transition-all",
-            "focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-0",
-            "no-underline",
-            isActive
-              ? "bg-white/10 !text-white"
-              : "!text-white/80 hover:!text-white hover:bg-white/5",
-          ].join(" ")}
           aria-current={isActive ? "page" : undefined}
+          className={
+            isActive
+              ? "relative group inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium select-none outline-none transition-all focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-0 no-underline bg-white/10 !text-white"
+              : "relative group inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium select-none outline-none transition-all focus-visible:ring-2 focus-visible:ring-white/25 focus-visible:ring-offset-0 no-underline !text-white/80 hover:!text-white hover:bg-white/5"
+          }
         >
           <Icon
             size={16}
-            className={[
-              "transition-colors",
+            className={
               isActive
-                ? "text-white"
-                : "text-white/60 group-hover:text-white/90",
-            ].join(" ")}
+                ? "transition-colors text-white"
+                : "transition-colors text-white/60 group-hover:text-white/90"
+            }
           />
           <span className="relative">
             {label}
             <span
-              className={[
-                "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full rounded-full",
-                "transition-opacity",
+              className={
                 isActive
-                  ? "bg-white/70 opacity-100"
-                  : "bg-white/50 opacity-0 group-hover:opacity-40",
-              ].join(" ")}
+                  ? "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full rounded-full transition-opacity bg-white/70 opacity-100"
+                  : "pointer-events-none absolute -bottom-1 left-0 h-[2px] w-full rounded-full transition-opacity bg-white/50 opacity-0 group-hover:opacity-40"
+              }
             />
           </span>
         </Link>
@@ -87,11 +80,9 @@ function MobileBottomBar({
       "
       style={{ paddingBottom: "max(env(safe-area-inset-bottom), 10px)" }}
     >
-      {/* inner highlight like your cards */}
       <div className="pointer-events-none absolute inset-0 opacity-30 bg-gradient-to-b from-white/10 to-transparent" />
 
       <div className="relative px-4 pt-2">
-        {/* Tabs */}
         <div className="grid grid-cols-5 gap-2">
           {items.map(({ key, href, label, Icon, isActive }) => (
             <Link
@@ -99,16 +90,11 @@ function MobileBottomBar({
               href={href}
               aria-label={label}
               aria-current={isActive ? "page" : undefined}
-              className={[
-                "col-span-1",
-                "flex flex-col items-center justify-center gap-1",
-                "rounded-2xl py-2",
-                "transition-colors outline-none select-none no-underline",
-                "focus-visible:ring-2 focus-visible:ring-white/25",
+              className={
                 isActive
-                  ? "bg-white/10 text-white"
-                  : "text-white/70 hover:bg-white/5 hover:text-white",
-              ].join(" ")}
+                  ? "col-span-1 flex flex-col items-center justify-center gap-1 rounded-2xl py-2 transition-colors outline-none select-none no-underline focus-visible:ring-2 focus-visible:ring-white/25 bg-white/10 text-white"
+                  : "col-span-1 flex flex-col items-center justify-center gap-1 rounded-2xl py-2 transition-colors outline-none select-none no-underline focus-visible:ring-2 focus-visible:ring-white/25 text-white/70 hover:bg-white/5 hover:text-white"
+              }
             >
               <Icon
                 size={20}
@@ -118,14 +104,12 @@ function MobileBottomBar({
             </Link>
           ))}
 
-          {/* Language */}
           <div className="col-span-1 flex items-center justify-center">
             <div className="rounded-2xl bg-white/[0.03] border border-white/10 px-2 py-2">
               <LanguageSwitcher currentLocale={currentLocale} />
             </div>
           </div>
 
-          {/* Auth */}
           <div className="col-span-1 flex items-center justify-center">
             <div className="rounded-2xl bg-white/[0.03] border border-white/10 px-2 py-2">
               <AuthButton />
@@ -177,7 +161,6 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <Layout className="h-screen overflow-hidden">
-      {/* DESKTOP/TABLET HEADER ONLY */}
       <Header
         className="
           hidden md:block
@@ -210,7 +193,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </Header>
 
-      {/* Desktop-only AuthNotice (на мобиле можно не фиксировать вообще) */}
       <div className="hidden md:block fixed left-0 right-0 top-16 z-40 pointer-events-none">
         <div className="pointer-events-auto">
           <AuthNotice locale={currentLocale} />
@@ -218,13 +200,11 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       <Content className="flex-1 min-h-0">
-        {/* добавили padding-bottom под bottom bar */}
         <div className="h-full w-full overflow-auto pb-28 md:pb-0">
           {children}
         </div>
       </Content>
 
-      {/* MOBILE BOTTOM BAR */}
       <MobileBottomBar items={navItems} currentLocale={currentLocale} />
     </Layout>
   );

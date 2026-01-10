@@ -1,133 +1,33 @@
-# ResumeCraft
+# Resumify
 
-Веб-приложение для создания резюме с экспортом в PDF. Pet-project, демонстрирующий работу с полным стеком современных веб-технологий.
+Full-stack web app for creating resumes with real-time preview and PDF export.  
+Built as a public project to showcase production-level skills when commercial work is under NDA.
 
-Пользователь заполняет форму, видит превью в реальном времени, сохраняет резюме в базе данных и экспортирует в PDF. Приложение работает без авторизации (ограниченный функционал) и с авторизацией через Google (полный доступ к сохранению и экспорту).
+## What it does
 
-## Ключевые особенности
+- Resume editor with live preview
+- Save resumes to a database
+- Export to ATS-friendly PDF
+- Multiple resume templates
+- Guest and authenticated modes
 
-- **Архитектура**: Next.js 16 App Router, разделение на route groups `(app)`, `(marketing)`, `(print)`
-- **Типизация**: TypeScript с строгими типами для данных резюме, контактов, секций
-- **State management**: Zustand для клиентского состояния редактора
-- **База данных**: Prisma ORM, PostgreSQL, JSON-хранение структуры резюме
-- **Генерация PDF**: Playwright — рендер HTML-страницы в PDF через headless browser
-- **Аутентификация**: NextAuth.js с JWT-сессиями, OAuth через Google
-- **Интернационализация**: Роутинг через `[locale]`, JSON-файлы переводов, поддержка ru/en
-- **Нормализация данных**: Утилиты для валидации и нормализации URL (GitHub, Telegram, LinkedIn), защита от XSS в PDF
-- **Шаблоны**: 7 шаблонов резюме, разделение логики отображения от данных
-- **Оценка полноты**: Система скоринга заполненности резюме с подсказками
+## Tech
 
-## Стек технологий
+- Next.js (App Router), React, TypeScript
+- Tailwind CSS, Ant Design
+- Zustand
+- PostgreSQL, Prisma
+- NextAuth (JWT, Google OAuth)
+- Playwright (PDF generation)
 
-**Frontend:**
-- Next.js 16 (App Router, Server/Client Components)
-- React 19, TypeScript 5
-- Tailwind CSS 4, Ant Design 6
-- Framer Motion для анимаций
-- Zustand для state management
+## Key points
 
-**Backend:**
-- Next.js API Routes
-- Prisma ORM, PostgreSQL
-- NextAuth.js (JWT sessions)
-- Playwright для PDF-генерации
-
-**Инструменты:**
-- ESLint
-- TypeScript strict mode
-
-## Архитектура и организация кода
-
-**Структура проекта:**
-```
-app/
-  (app)/[locale]/          # Защищенные роуты приложения
-  (marketing)/             # Публичный лендинг
-  (print)/[locale]/print/  # Изолированные страницы для PDF-генерации
-  api/                     # API endpoints
-components/
-  resume/
-    templates/             # Шаблоны резюме (7 вариантов)
-    sections/              # Редакторы секций резюме
-store/                     # Zustand stores
-lib/                       # Утилиты (нормализация, типы, helpers)
-types/                     # TypeScript определения
-prisma/                    # Схема БД и миграции
-```
-
-**Разделение ответственности:**
-- Данные резюме хранятся в Zustand store на клиенте
-- Шаблоны — чистые компоненты, получают данные через props
-- API endpoints отделены от UI-логики
-- Утилиты нормализации вынесены в `lib/normalizeLinks.ts`
-- Типы резюме централизованы в `types/resume.ts`
-
-**Роутинг:**
-- Локализация через URL: `/ru/editor`, `/en/editor`
-- Middleware для редиректа корневого пути на дефолтную локаль
-- Отдельный роут `/print/[id]` для PDF-генерации (без layout, минимальные стили)
-
-## Качество и надёжность
-
-**Типизация:**
-- Строгие TypeScript типы для всех структур данных резюме
-- Типы для контактов, секций, шаблонов
-- Типизация API responses и Prisma models
-
-**Валидация данных:**
-- Нормализация URL-полей (GitHub, Telegram, LinkedIn): проверка доменов, протоколов, формата username
-- Защита от XSS: запрет javascript:, data:, mailto: схем
-- Валидация длины URL (максимум 2048 символов)
-- Невалидные данные не рендерятся в PDF
-
-**Обработка ошибок:**
-- Try-catch блоки в API routes
-- Обработка ошибок Prisma
-- Graceful degradation при ошибках PDF-генерации
-
-**Предсказуемость:**
-- Детерминированная генерация PDF (одинаковый вход → одинаковый выход)
-- Идемпотентные операции сохранения резюме
-- Чистые функции нормализации (без side effects)
-
-## UI / UX
-
-**Подход:**
-- Разделение editor/preview через responsive layout или отдельные страницы
-- Real-time preview: изменения в форме сразу отображаются
-- Компонентная архитектура: переиспользуемые секции редактора
-- Консистентный дизайн через Ant Design + Tailwind
-
-**UX-решения:**
-- Система прогресса заполнения резюме с подсказками
-- Переключение видимости секций
-- Выбор шаблона с превью
-- Темная/светлая тема
-- Адаптивная верстка для мобильных
-
-**Типографика:**
-- Inter (Google Fonts) для всего интерфейса
-- Типографические классы (display, body, caption) для консистентности
-- Настроенные веса шрифтов (400, 500, 600, 700)
-
-## Интеграции и генерация
-
-**PDF-генерация:**
-- Playwright запускает headless Chromium
-- Рендер страницы `/print/[id]` с данными из БД
-- Экспорт в A4 формат с сохранением стилей
-- Оптимизация для ATS: валидные URL, машиночитаемый текст
-
-**Безопасность данных:**
-- Изоляция резюме по userEmail в БД
-- JWT-сессии без хранения чувствительных данных
-- Нормализация пользовательского ввода перед рендерингом
-
-**Хранение:**
-- PostgreSQL для метаданных резюме (id, userEmail, locale, title)
-- JSON-поле для структуры резюме (гибкая схема без миграций)
-- Timestamps для createdAt/updatedAt
+- Strongly typed resume data
+- Flexible JSON-based resume structure
+- Deterministic PDF generation
+- Input validation and basic XSS protection
+- Focus on usability and maintainability
 
 ---
 
-Автор: [@denyydev](https://github.com/denyydev)
+Author: [@denyydev](https://github.com/denyydev)

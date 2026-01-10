@@ -23,6 +23,13 @@ const messages = {
   },
 } as const;
 
+type Messages = typeof messages;
+type LocaleKey = keyof Messages;
+
+function normalizeLocale(value: Locale): LocaleKey {
+  return value === "en" ? "en" : "ru";
+}
+
 export function SidebarNav({
   locale,
   activeSection,
@@ -32,7 +39,7 @@ export function SidebarNav({
   activeSection: SectionKey;
   onSectionChange: (key: SectionKey) => void;
 }) {
-  const t = (messages as any)[locale] ?? messages.en;
+  const t = messages[normalizeLocale(locale)];
 
   const navItems = useMemo(
     () =>
@@ -40,7 +47,7 @@ export function SidebarNav({
         { key: "overview", label: t.nav.overview, Icon: Sparkles },
         { key: "faq", label: t.nav.faq, Icon: BookOpen },
         { key: "checklist", label: t.nav.checklist, Icon: BadgeCheck },
-      ] as Array<{
+      ] as const satisfies ReadonlyArray<{
         key: SectionKey;
         label: string;
         Icon: React.ComponentType<{ size?: number }>;
@@ -50,14 +57,13 @@ export function SidebarNav({
 
   return (
     <aside
-      className={[
-        "rounded-2xl border border-white/10 overflow-hidden",
-        "shadow-lg backdrop-blur",
-        "bg-gradient-to-b from-[#0b0b0e] via-[#0f1117] to-[#0b0b0e]",
-        "p-3 relative will-change-transform",
-      ].join(" ")}
+      className="
+        rounded-2xl border border-white/10 overflow-hidden
+        shadow-lg backdrop-blur
+        bg-gradient-to-b from-[#0b0b0e] via-[#0f1117] to-[#0b0b0e]
+        p-3 relative will-change-transform
+      "
     >
-      {/* premium highlight */}
       <div
         className="
           pointer-events-none absolute inset-0
@@ -67,14 +73,12 @@ export function SidebarNav({
         "
       />
 
-      {/* soft blobs for depth */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-24 -left-24 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
         <div className="absolute -bottom-24 -right-24 h-56 w-56 rounded-full bg-white/5 blur-3xl" />
       </div>
 
       <div className="relative">
-        {/* header */}
         <div className="mb-3 flex items-start gap-3">
           <span
             className="
@@ -96,7 +100,6 @@ export function SidebarNav({
           </div>
         </div>
 
-        {/* nav */}
         <nav className="space-y-1" aria-label="Recommendations navigation">
           {navItems.map(({ key, label, Icon }) => {
             const isActive = activeSection === key;
@@ -107,36 +110,27 @@ export function SidebarNav({
                 type="button"
                 onClick={() => onSectionChange(key)}
                 aria-current={isActive ? "true" : undefined}
-                className={[
-                  "group relative flex w-full items-center gap-3 cursor-pointer",
-                  "rounded-xl px-3 py-2.5 text-left",
-                  "transition-all duration-150",
-                  "active:scale-[0.99] outline-none",
-                  "focus-visible:ring-2 focus-visible:ring-white/20",
+                className={
                   isActive
-                    ? "bg-white/10 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
-                    : "text-white/70 hover:text-white hover:bg-white/6",
-                ].join(" ")}
+                    ? "group relative flex w-full items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 text-left transition-all duration-150 active:scale-[0.99] outline-none focus-visible:ring-2 focus-visible:ring-white/20 bg-white/10 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.06)]"
+                    : "group relative flex w-full items-center gap-3 cursor-pointer rounded-xl px-3 py-2.5 text-left transition-all duration-150 active:scale-[0.99] outline-none focus-visible:ring-2 focus-visible:ring-white/20 text-white/70 hover:text-white hover:bg-white/6"
+                }
               >
-                {/* active left rail */}
                 <span
-                  className={[
-                    "absolute left-0 top-1/2 -translate-y-1/2",
-                    "h-6 w-[3px] rounded-r",
-                    isActive ? "opacity-100" : "opacity-0",
-                    "transition-opacity duration-150",
-                  ].join(" ")}
+                  className={
+                    isActive
+                      ? "absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-r opacity-100 transition-opacity duration-150"
+                      : "absolute left-0 top-1/2 -translate-y-1/2 h-6 w-[3px] rounded-r opacity-0 transition-opacity duration-150"
+                  }
                   style={{ backgroundColor: ACCENT }}
                 />
 
-                {/* icon capsule */}
                 <span
-                  className={[
-                    "flex h-8 w-8 items-center justify-center rounded-lg",
-                    "bg-white/4 ring-1 ring-white/10",
-                    "transition-all duration-150",
-                    isActive ? "bg-white/6" : "group-hover:bg-white/6",
-                  ].join(" ")}
+                  className={
+                    isActive
+                      ? "flex h-8 w-8 items-center justify-center rounded-lg bg-white/6 ring-1 ring-white/10 transition-all duration-150"
+                      : "flex h-8 w-8 items-center justify-center rounded-lg bg-white/4 ring-1 ring-white/10 transition-all duration-150 group-hover:bg-white/6"
+                  }
                   style={{
                     color: isActive ? ACCENT : "rgba(255,255,255,0.70)",
                   }}
@@ -144,18 +138,16 @@ export function SidebarNav({
                   <Icon size={16} />
                 </span>
 
-                {/* label */}
                 <span className="min-w-0 flex-1 truncate text-[13px] leading-5 text-white">
                   {label}
                 </span>
 
-                {/* active glow dot */}
                 <span
-                  className={[
-                    "ml-auto h-1.5 w-1.5 rounded-full",
-                    isActive ? "opacity-100" : "opacity-0",
-                    "transition-opacity duration-150",
-                  ].join(" ")}
+                  className={
+                    isActive
+                      ? "ml-auto h-1.5 w-1.5 rounded-full opacity-100 transition-opacity duration-150"
+                      : "ml-auto h-1.5 w-1.5 rounded-full opacity-0 transition-opacity duration-150"
+                  }
                   style={{
                     backgroundColor: ACCENT,
                     boxShadow: `0 0 0 4px rgba(10,132,255,0.14)`,
@@ -166,12 +158,10 @@ export function SidebarNav({
           })}
         </nav>
 
-        {/* divider */}
         <div className="mt-3 px-2">
           <div className="h-px w-full bg-white/5" />
         </div>
 
-        {/* disclaimer */}
         <div className="mt-3 rounded-xl bg-white/4 ring-1 ring-white/10 px-3 py-2">
           <div className="text-[12px] leading-5 text-white/60">
             {t.disclaimer}
