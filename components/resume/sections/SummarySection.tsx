@@ -40,7 +40,7 @@ const messages = {
     summary: "Краткое описание",
     summaryPlaceholder:
       "2–3 предложения о вашем опыте, сильных сторонах и желаемой роли.",
-    summaryHint: "До 200 символов",
+    summaryHint: "До 300 символов",
   },
   en: {
     sectionTitle: "Basic info",
@@ -63,7 +63,7 @@ const messages = {
     summary: "Summary",
     summaryPlaceholder:
       "2–3 sentences about your experience, strengths and desired role.",
-    summaryHint: "Up to 200 characters",
+    summaryHint: "Up to 300 characters",
   },
 } as const;
 

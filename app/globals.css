@@ -172,3 +172,351 @@ body {
     page-break-inside: auto;
   }
 }
+
+.ant-btn-primary {
+  background: linear-gradient(to right, #0f172a, #334155);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 24px rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(8px);
+}
+
+.ant-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+.ant-btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 12px rgba(15, 23, 42, 0.45);
+}
+
+/* =========================================================
+   Ant Design Buttons — "Slate Glass" theme
+   Matches: bg-gradient-to-r from-[#0f172a] to-[#334155]
+   Goal: product SaaS, soft, modern, consistent across types
+   ========================================================= */
+
+/* You can tweak these once and the whole theme follows */
+:root {
+  --btn-r: 16px;
+
+  --slate-950: #020617;
+  --slate-900: #0f172a;
+  --slate-700: #334155;
+
+  --text-dark: #0f172a;
+  --text-light: #e5e7eb;
+
+  --border-light: rgba(255, 255, 255, 0.12);
+  --border-dark: rgba(15, 23, 42, 0.16);
+
+  --glass-dark: rgba(2, 6, 23, 0.35);
+  --glass-light: rgba(2, 6, 23, 0.06);
+
+  --shadow-dark: 0 12px 28px rgba(2, 6, 23, 0.35);
+  --shadow-light: 0 10px 24px rgba(2, 6, 23, 0.1);
+
+  --ring-dark: rgba(56, 189, 248, 0.18);
+  --ring-light: rgba(2, 6, 23, 0.1);
+
+  --grad-slate: linear-gradient(90deg, var(--slate-900), var(--slate-700));
+  --grad-slate-hover: linear-gradient(90deg, #13223d, #3b506a);
+
+  --danger: #ef4444;
+  --danger-hover: #f87171;
+  --danger-soft: rgba(239, 68, 68, 0.12);
+  --danger-border: rgba(239, 68, 68, 0.35);
+}
+
+/* -----------------------------
+   Base
+------------------------------ */
+:where(.ant-btn) {
+  border-radius: var(--btn-r) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  transition: transform 120ms ease, filter 120ms ease, background 120ms ease,
+    border-color 120ms ease, box-shadow 120ms ease, color 120ms ease !important;
+}
+
+/* Height/spacing baseline (can be overridden by size classes) */
+:where(.ant-btn) {
+  height: 40px !important;
+  padding: 0 14px !important;
+}
+
+/* Focus ring */
+:where(.ant-btn):focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 4px var(--ring-light) !important;
+}
+
+/* Prevent ugly default outline/shadow overrides */
+:where(.ant-btn):focus,
+:where(.ant-btn):active,
+:where(.ant-btn):hover {
+  outline: none !important;
+}
+
+/* Subtle lift on hover, press on active */
+:where(.ant-btn):hover:not(:disabled):not(.ant-btn-disabled) {
+  transform: translateY(-1px) !important;
+}
+:where(.ant-btn):active:not(:disabled):not(.ant-btn-disabled) {
+  transform: translateY(0px) !important;
+}
+
+/* Disabled */
+:where(.ant-btn[disabled]),
+:where(.ant-btn.ant-btn-disabled) {
+  opacity: 0.55 !important;
+  cursor: not-allowed !important;
+  filter: grayscale(0.15) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Loading keeps layout nice */
+:where(.ant-btn.ant-btn-loading) {
+  transform: none !important;
+}
+
+/* -----------------------------
+   PRIMARY
+------------------------------ */
+:where(.ant-btn-primary) {
+  background: var(--grad-slate) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-light) !important;
+
+  backdrop-filter: blur(10px) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--shadow-dark) !important;
+}
+
+:where(.ant-btn-primary):hover:not(:disabled):not(.ant-btn-disabled) {
+  background: var(--grad-slate-hover) !important;
+  filter: brightness(1.06) !important;
+}
+
+:where(.ant-btn-primary):active:not(:disabled):not(.ant-btn-disabled) {
+  filter: brightness(0.98) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 8px 18px rgba(2, 6, 23, 0.45) !important;
+}
+
+:where(.ant-btn-primary):focus-visible {
+  box-shadow: 0 0 0 4px var(--ring-dark),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--shadow-dark) !important;
+}
+
+/* Primary disabled */
+:where(.ant-btn-primary[disabled]),
+:where(.ant-btn-primary.ant-btn-disabled) {
+  background: var(--grad-slate) !important;
+  border-color: var(--border-light) !important;
+  color: rgba(229, 231, 235, 0.75) !important;
+}
+
+/* -----------------------------
+   DEFAULT (Secondary) — light-canvas friendly
+------------------------------ */
+:where(.ant-btn-default) {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid var(--border-dark) !important;
+  color: var(--text-dark) !important;
+
+  backdrop-filter: blur(8px) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), var(--shadow-light) !important;
+}
+
+:where(.ant-btn-default):hover:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(15, 23, 42, 0.22) !important;
+}
+
+:where(.ant-btn-default):active:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 8px 16px rgba(2, 6, 23, 0.12) !important;
+}
+
+/* -----------------------------
+   DASHED — subtle premium dashed
+------------------------------ */
+:where(.ant-btn-dashed) {
+  background: rgba(255, 255, 255, 0.55) !important;
+  border: 1px dashed rgba(15, 23, 42, 0.26) !important;
+  color: var(--text-dark) !important;
+
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 0 8px 18px rgba(2, 6, 23, 0.08) !important;
+}
+
+:where(.ant-btn-dashed):hover:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(15, 23, 42, 0.36) !important;
+}
+
+/* -----------------------------
+   TEXT — clean, modern
+------------------------------ */
+:where(.ant-btn-text) {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-dark) !important;
+  box-shadow: none !important;
+}
+
+:where(.ant-btn-text):hover:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(2, 6, 23, 0.05) !important;
+}
+
+:where(.ant-btn-text):active:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(2, 6, 23, 0.08) !important;
+}
+
+/* Text on dark surfaces */
+:where(.dark .ant-btn-text) {
+  color: var(--text-light) !important;
+}
+:where(.dark .ant-btn-text):hover:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* -----------------------------
+   LINK — not neon, but crisp
+------------------------------ */
+:where(.ant-btn-link) {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: #2563eb !important; /* blue-600 */
+  box-shadow: none !important;
+  padding: 0 8px !important;
+}
+
+:where(.ant-btn-link):hover:not(:disabled):not(.ant-btn-disabled) {
+  color: #1d4ed8 !important; /* blue-700 */
+  background: rgba(37, 99, 235, 0.08) !important;
+}
+
+:where(.ant-btn-link):active:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(37, 99, 235, 0.12) !important;
+}
+
+/* -----------------------------
+   GHOST — glass on dark (perfect for header/sider)
+------------------------------ */
+:where(.ant-btn-background-ghost),
+:where(.ant-btn-ghost) {
+  background: rgba(2, 6, 23, 0.3) !important;
+  border: 1px solid var(--border-light) !important;
+  color: var(--text-light) !important;
+
+  backdrop-filter: blur(10px) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 10px 22px rgba(2, 6, 23, 0.3) !important;
+}
+
+:where(.ant-btn-background-ghost):hover:not(:disabled):not(.ant-btn-disabled),
+:where(.ant-btn-ghost):hover:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  filter: brightness(1.05) !important;
+}
+
+:where(.ant-btn-background-ghost):active:not(:disabled):not(.ant-btn-disabled),
+:where(.ant-btn-ghost):active:not(:disabled):not(.ant-btn-disabled) {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* -----------------------------
+   DANGER — primary danger + default danger
+------------------------------ */
+/* AntD adds .ant-btn-dangerous on multiple types */
+:where(.ant-btn-dangerous.ant-btn-primary) {
+  background: linear-gradient(90deg, #7f1d1d, #ef4444) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: #fff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 28px rgba(127, 29, 29, 0.35) !important;
+}
+
+:where(.ant-btn-dangerous.ant-btn-primary):hover:not(:disabled):not(
+    .ant-btn-disabled
+  ) {
+  filter: brightness(1.06) !important;
+}
+
+:where(.ant-btn-dangerous):not(.ant-btn-primary) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid var(--danger-border) !important;
+  color: #991b1b !important; /* red-800 */
+  box-shadow: 0 10px 22px rgba(127, 29, 29, 0.1) !important;
+}
+
+:where(.ant-btn-dangerous):not(.ant-btn-primary):hover:not(:disabled):not(
+    .ant-btn-disabled
+  ) {
+  background: rgba(255, 255, 255, 0.82) !important;
+  border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+:where(.ant-btn-dangerous.ant-btn-text):hover:not(:disabled):not(
+    .ant-btn-disabled
+  ),
+:where(.ant-btn-dangerous.ant-btn-link):hover:not(:disabled):not(
+    .ant-btn-disabled
+  ) {
+  background: var(--danger-soft) !important;
+}
+
+/* -----------------------------
+   SIZES
+------------------------------ */
+:where(.ant-btn-sm) {
+  height: 32px !important;
+  padding: 0 12px !important;
+  border-radius: 14px !important;
+  font-weight: 600 !important;
+}
+
+:where(.ant-btn-lg) {
+  height: 48px !important;
+  padding: 0 18px !important;
+  border-radius: 18px !important;
+  font-weight: 650 !important;
+}
+
+/* Icon-only buttons */
+:where(.ant-btn-icon-only) {
+  width: 40px !important;
+  padding: 0 !important;
+}
+:where(.ant-btn-icon-only.ant-btn-sm) {
+  width: 32px !important;
+}
+:where(.ant-btn-icon-only.ant-btn-lg) {
+  width: 48px !important;
+}
+
+/* -----------------------------
+   BUTTON GROUP
+------------------------------ */
+:where(.ant-btn-group) > :where(.ant-btn) {
+  box-shadow: none !important; /* prevent double shadows */
+}
+:where(.ant-btn-group) > :where(.ant-btn-primary) {
+  box-shadow: none !important;
+}
+:where(.ant-btn-group) > :where(.ant-btn):not(:first-child) {
+  margin-left: 6px !important;
+}
+
+/* -----------------------------
+   OPTIONAL: make focus ring nicer on dark areas
+   If you wrap header/sider with class "dark", this helps.
+------------------------------ */
+:where(.dark .ant-btn-primary):focus-visible {
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06), var(--shadow-dark) !important;
+}

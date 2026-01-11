@@ -1,6 +1,6 @@
 "use client";
 
-import { formatPeriod, type ResumeTemplateProps } from "./common";
+import { formatPeriod, type ResumeTemplateProps } from "./shared/common";
 
 function hasText(v?: string | null) {
   return Boolean((v ?? "").trim());

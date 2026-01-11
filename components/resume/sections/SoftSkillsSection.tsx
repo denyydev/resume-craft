@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
 import { MessageOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Divider, Flex, Input, Space, Typography } from "antd";
@@ -9,6 +10,32 @@ import { SkillTag } from "../nav/SkillTag";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+
+const messages = {
+  ru: {
+    title: "SOFT SKILLS",
+    subtitle:
+      "Навыки взаимодействия и личные качества, влияющие на эффективность работы",
+    inputPlaceholder: "Добавить навык...",
+    add: "Добавить",
+    notePlaceholder: "Дополнительная информация о soft skills...",
+  },
+  en: {
+    title: "SOFT SKILLS",
+    subtitle: "Interpersonal and personal skills that affect work efficiency",
+    inputPlaceholder: "Add a skill...",
+    add: "Add",
+    notePlaceholder: "Additional information about soft skills...",
+  },
+} as const;
+
+type Locale = keyof typeof messages;
+
+function normalizeLocale(value: unknown): Locale {
+  if (typeof value !== "string" || value.length === 0) return "ru";
+  const base = value.split("-")[0]?.toLowerCase();
+  return base === "en" ? "en" : "ru";
+}
 
 const SOFT_SKILLS_TAGS = [
   "Коммуникация",
@@ -29,6 +56,10 @@ const SOFT_SKILLS_TAGS = [
 ];
 
 export function SoftSkillsSection() {
+  const rawLocale = useCurrentLocale();
+  const locale = normalizeLocale(rawLocale);
+  const t = messages[locale];
+
   const tags = useResumeStore((s) => s.resume.softSkills.tags);
   const note = useResumeStore((s) => s.resume.softSkills.note);
 
@@ -42,7 +73,7 @@ export function SoftSkillsSection() {
   const selectedSet = useMemo(() => new Set(tags.map(norm)), [tags]);
 
   const available = useMemo(
-    () => SOFT_SKILLS_TAGS.filter((t) => !selectedSet.has(norm(t))),
+    () => SOFT_SKILLS_TAGS.filter((tag) => !selectedSet.has(norm(tag))),
     [selectedSet]
   );
 
@@ -62,13 +93,12 @@ export function SoftSkillsSection() {
               <MessageOutlined className="text-base" />
             </span>
             <Title level={4} className="!m-0">
-              SOFT SKILLS
+              {t.title}
             </Title>
           </Flex>
 
           <Text type="secondary" className="text-sm">
-            Навыки взаимодействия и личные качества, влияющие на эффективность
-            работы
+            {t.subtitle}
           </Text>
 
           <Divider className="my-4" />
@@ -103,7 +133,7 @@ export function SoftSkillsSection() {
                     handleAddCustom();
                   }
                 }}
-                placeholder="Добавить навык..."
+                placeholder={t.inputPlaceholder}
                 allowClear
               />
             </div>
@@ -113,7 +143,7 @@ export function SoftSkillsSection() {
               icon={<PlusOutlined />}
               onClick={handleAddCustom}
             >
-              Добавить
+              {t.add}
             </Button>
           </Flex>
 
@@ -135,7 +165,7 @@ export function SoftSkillsSection() {
           <TextArea
             value={note}
             onChange={(e) => setSoftSkillsNote(e.target.value)}
-            placeholder="Дополнительная информация о soft skills..."
+            placeholder={t.notePlaceholder}
             autoSize={{ minRows: 3, maxRows: 8 }}
             allowClear
           />

@@ -8,7 +8,7 @@ import {
 } from "@/lib/normalizeLinks";
 import type { ResumeSectionKey } from "@/types/resume";
 import React from "react";
-import { formatPeriod, type ResumeTemplateProps } from "./common";
+import { formatPeriod, type ResumeTemplateProps } from "./shared/common";
 
 const messages = {
   ru: {
@@ -551,11 +551,7 @@ export function CompactTemplate({ data, locale }: ResumeTemplateProps) {
                     hasText(e.field) ? e.field!.trim() : "",
                   ]);
 
-                  const dates = formatPeriod(
-                    e.startDate,
-                    e.endDate,
-                    false
-                  );
+                  const dates = formatPeriod(e.startDate, e.endDate, false);
                   const meta = joinNonEmpty([
                     hasText(e.institution) ? e.institution!.trim() : "",
                     dates,

@@ -131,8 +131,7 @@ export function AuthButton() {
         trigger={["click"]}
         placement="bottomRight"
         menu={{ items, onClick: onMenuClick }}
-        overlayStyle={{ minWidth: 260 }}
-        dropdownRender={(menu) => (
+        popupRender={(menu) => (
           <div
             style={{
               borderRadius: 16,

@@ -60,7 +60,9 @@ export function SidebarNav({
       className="
         rounded-2xl border border-white/10 overflow-hidden
         shadow-lg backdrop-blur
-        bg-gradient-to-b from-[#0b0b0e] via-[#0f1117] to-[#0b0b0e]
+        bg-gradient-to-r
+from-[#0f172a]
+to-[#334155]
         p-3 relative will-change-transform
       "
     >

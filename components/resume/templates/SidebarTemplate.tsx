@@ -2,8 +2,13 @@
 
 import type { ResumeSectionKey } from "@/types/resume";
 import React, { useMemo } from "react";
-import type { ResumeTemplateProps } from "./common";
-import { formatPeriod, hasAnyText, hasText, joinNonEmpty } from "./common";
+import type { ResumeTemplateProps } from "./shared/common";
+import {
+  formatPeriod,
+  hasAnyText,
+  hasText,
+  joinNonEmpty,
+} from "./shared/common";
 
 const messages = {
   ru: {

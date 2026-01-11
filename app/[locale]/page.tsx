@@ -20,7 +20,7 @@ export default async function Page(props: Props) {
   return (
     <>
       <LandingHeader locale={locale} />
-      <Hero locale={locale} />
+      <Hero />
     </>
   );
 }

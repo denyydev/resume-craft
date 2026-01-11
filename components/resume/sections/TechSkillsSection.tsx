@@ -1,7 +1,8 @@
 "use client";
 
+import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/useResumeStore";
-import { CodeOutlined, PlusOutlined } from "@ant-design/icons";
+import { CodeOutlined } from "@ant-design/icons";
 import { Button, Divider, Flex, Input, Space, Typography } from "antd";
 import { AnimatePresence } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
@@ -9,6 +10,32 @@ import { SkillTag } from "../nav/SkillTag";
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
+
+const messages = {
+  ru: {
+    title: "HARD SKILLS",
+    subtitle:
+      "Технологии, инструменты и фреймворки, с которыми ты работаешь на практике",
+    inputPlaceholder: "Добавить технологию...",
+    add: "Добавить",
+    notePlaceholder: "Дополнительная информация о hard skills...",
+  },
+  en: {
+    title: "HARD SKILLS",
+    subtitle: "Technologies, tools and frameworks you use in real projects",
+    inputPlaceholder: "Add a technology...",
+    add: "Add",
+    notePlaceholder: "Additional information about hard skills...",
+  },
+} as const;
+
+type Locale = keyof typeof messages;
+
+function normalizeLocale(value: unknown): Locale {
+  if (typeof value !== "string" || value.length === 0) return "ru";
+  const base = value.split("-")[0]?.toLowerCase();
+  return base === "en" ? "en" : "ru";
+}
 
 const TECH_SKILLS_TAGS = [
   "React",
@@ -46,6 +73,10 @@ const TECH_SKILLS_TAGS = [
 ];
 
 export function TechSkillsSection() {
+  const rawLocale = useCurrentLocale();
+  const locale = normalizeLocale(rawLocale);
+  const t = messages[locale];
+
   const tags = useResumeStore((s) => s.resume.techSkills.tags);
   const note = useResumeStore((s) => s.resume.techSkills.note);
 
@@ -59,7 +90,7 @@ export function TechSkillsSection() {
   const selectedSet = useMemo(() => new Set(tags.map(norm)), [tags]);
 
   const available = useMemo(
-    () => TECH_SKILLS_TAGS.filter((t) => !selectedSet.has(norm(t))),
+    () => TECH_SKILLS_TAGS.filter((tag) => !selectedSet.has(norm(tag))),
     [selectedSet]
   );
 
@@ -79,13 +110,12 @@ export function TechSkillsSection() {
               <CodeOutlined className="text-base" />
             </span>
             <Title level={4} className="!m-0">
-              HARD SKILLS
+              {t.title}
             </Title>
           </Flex>
 
           <Text type="secondary" className="text-sm">
-            Технологии, инструменты и фреймворки, с которыми ты работаешь на
-            практике
+            {t.subtitle}
           </Text>
 
           <Divider className="my-4" />
@@ -120,18 +150,12 @@ export function TechSkillsSection() {
                     handleAddCustom();
                   }
                 }}
-                placeholder="Добавить технологию..."
+                placeholder={t.inputPlaceholder}
                 allowClear
               />
             </div>
 
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAddCustom}
-            >
-              Добавить
-            </Button>
+            <Button onClick={handleAddCustom}>{t.add}</Button>
           </Flex>
 
           {available.length > 0 ? (
@@ -152,7 +176,7 @@ export function TechSkillsSection() {
           <TextArea
             value={note}
             onChange={(e) => setTechSkillsNote(e.target.value)}
-            placeholder="Дополнительная информация о hard skills..."
+            placeholder={t.notePlaceholder}
             autoSize={{ minRows: 3, maxRows: 8 }}
             allowClear
           />

@@ -8,7 +8,7 @@ import {
 } from "@/lib/normalizeLinks";
 import type { ResumeSectionKey } from "@/types/resume";
 import React from "react";
-import { formatPeriod, type ResumeTemplateProps } from "./common";
+import { formatPeriod, type ResumeTemplateProps } from "./shared/common";
 
 const messages = {
   ru: {

@@ -66,13 +66,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
             paddingLG: 20,
           },
           Button: {
-            borderRadius: 5,
+            borderRadius: 12,
             controlHeight: 40,
-            colorPrimary: "#020617",
-            colorPrimaryHover: "#020617",
-            colorPrimaryActive: "#000000",
-            colorTextLightSolid: "#ffffff",
-            colorText: "#0f172a",
+
+            colorPrimary: "transparent",
+            colorPrimaryHover: "transparent",
+            colorPrimaryActive: "transparent",
+
+            colorTextLightSolid: "#e5e7eb",
+            colorText: "#e5e7eb",
+
+            defaultBorderColor: "rgba(255,255,255,0.12)",
           },
           Input: {
             controlHeight: 40,

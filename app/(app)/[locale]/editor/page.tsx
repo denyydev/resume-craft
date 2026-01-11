@@ -8,7 +8,7 @@ import { SaveResumeButton } from "@/components/resume/nav/SaveResumeButton";
 import ShareResumeButton from "@/components/resume/nav/ShareResumeButton";
 import { ResumePreview } from "@/components/resume/ResumePreview";
 import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
-import { TemplateSelector } from "@/components/resume/templates/TemplateSelector";
+import { TemplateSelector } from "@/components/resume/templates/ui/TemplateSelector";
 import { useResumeStore } from "@/store/useResumeStore";
 import type { Resume, ResumeSectionKey } from "@/types/resume";
 import { Card } from "antd";
@@ -130,7 +130,14 @@ export default function EditorPage() {
             <div className="py-5">
               <div className="flex min-h-0 flex-col gap-5 xl:flex-row">
                 <div className="min-w-0 xl:flex-[0_0_520px]">
-                  <Card className="h-fit">
+                  <Card
+                    className="h-fit"
+                    styles={{
+                      body: {
+                        padding: "10px",
+                      },
+                    }}
+                  >
                     <EditorShell selected={selected} />
                   </Card>
                 </div>

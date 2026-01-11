@@ -14,7 +14,7 @@ import {
   Tooltip,
   message,
 } from "antd";
-import { Clock, File, Plus, Search, Trash2 } from "lucide-react";
+import { Clock, File, Search, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -368,13 +368,12 @@ export default function MyResumesPage() {
             {/* sticky только на десктопе */}
             <div
               className="
-    relative
-    rounded-2xl border border-white/10 overflow-hidden
-    bg-gradient-to-b from-[#0b0b0e] via-[#0f1117] to-[#0b0b0e]
-    p-5
-    shadow-[0_18px_45px_rgba(0,0,0,0.45)]
-    lg:backdrop-blur
-    will-change-transform
+        rounded-2xl border border-white/10 overflow-hidden
+        shadow-lg backdrop-blur
+        bg-gradient-to-r
+from-[#0f172a]
+to-[#334155]
+        p-5 relative will-change-transform
   "
             >
               {/* premium highlight like capsules */}
@@ -416,29 +415,9 @@ export default function MyResumesPage() {
                   </div>
                 </div>
 
-                {/* primary action */}
-                <Link
-                  href={createHref}
-                  className={`w-full ${isLoading ? "pointer-events-none" : ""}`}
-                  aria-disabled={isLoading}
-                >
-                  <Button
-                    icon={<Plus size={16} />}
-                    className="
-          w-full !h-10
-          !border !border-white/15
-          !bg-white/[0.06]
-          !text-white
-          shadow-sm lg:backdrop-blur
-          hover:!bg-white/[0.1] hover:!border-white/25
-          focus-visible:!ring-2 focus-visible:!ring-[#0A84FF]/40
-          transition-all
-        "
-                    disabled={isLoading}
-                  >
-                    {t.createResume}
-                  </Button>
-                </Link>
+                <Button href={createHref} disabled={isLoading}>
+                  {t.createResume}
+                </Button>
 
                 {/* divider */}
                 <div className="h-px w-full bg-white/10" />
@@ -508,7 +487,6 @@ export default function MyResumesPage() {
             </div>
           </aside>
 
-          {/* RIGHT */}
           <main className="min-w-0 min-h-0">
             {isLoading ? (
               <ResumesGridSkeleton count={6} />
@@ -523,11 +501,7 @@ export default function MyResumesPage() {
                     </div>
                   }
                 >
-                  <Link href={createHref}>
-                    <Button type="primary" icon={<Plus size={16} />}>
-                      {t.createResume}
-                    </Button>
-                  </Link>
+                  <Button href={createHref}>{t.createResume}</Button>
                 </Empty>
               </Card>
             ) : (

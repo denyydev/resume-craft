@@ -167,12 +167,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           sticky top-0 z-50
           h-16! leading-16!
           border border-white/10
-          bg-gradient-to-b! from-[#0b0b0e]! via-[#0f1117]! to-[#0b0b0e]!
+          bg-gradient-to-r! from-[#0f172a]!  to-[#334155]!
           backdrop-blur
           shadow-[0_10px_30px_rgba(0,0,0,0.45)]
           relative
           before:absolute before:inset-0 before:rounded-full
-          before:bg-gradient-to-b before:from-white/10 before:to-transparent
+
           before:opacity-30 before:pointer-events-none
           px-5!
         "

@@ -1,6 +1,7 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { Button } from "antd";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
 type Locale = "ru" | "en";
@@ -12,6 +13,7 @@ export function LanguageSwitcher({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const locale: Locale = useMemo(() => {
     if (currentLocale) return currentLocale;
@@ -26,23 +28,11 @@ export function LanguageSwitcher({
     const segments = pathname.split("/");
     segments[1] = nextLocale;
 
-    router.push(segments.join("/") || "/");
+    const qs = searchParams?.toString();
+    const nextPath = segments.join("/") || "/";
+
+    router.push(qs ? `${nextPath}?${qs}` : nextPath);
   };
 
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label="Toggle language"
-      className="
-        cursor-pointer
-        text-xs font-semibold uppercase tracking-wide
-        text-white!
-        transition-colors duration-150
-        hover:text-white
-      "
-    >
-      {locale === "ru" ? "RU" : "EN"}
-    </button>
-  );
+  return <Button onClick={toggle}>{locale === "ru" ? "RU" : "EN"}</Button>;
 }
