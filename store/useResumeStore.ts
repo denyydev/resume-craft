@@ -17,9 +17,11 @@ import {
 import { nanoid } from "nanoid";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist } from "zustand/middleware";
 
 type ResumeState = {
   resume: Resume;
+  hasHydrated: boolean;
 
   setPhoto: (photo?: string) => void;
   loadResume: (resume: Resume) => void;
@@ -198,9 +200,41 @@ const createEmptyResume = (): Resume => ({
   sectionsVisibility: DEFAULT_SECTIONS_VISIBILITY,
 });
 
+function normalizeResume(resume: Partial<Resume>): Resume {
+  const base = createEmptyResume();
+
+  return {
+    ...base,
+    ...resume,
+    accentColor: resume.accentColor ?? DEFAULT_ACCENT_COLOR,
+    includePhoto: resume.includePhoto ?? DEFAULT_INCLUDE_PHOTO,
+    experience: ensureAtLeastOne(resume.experience, emptyExperience),
+    projects: ensureAtLeastOne(resume.projects, emptyProject),
+    education: ensureAtLeastOne(resume.education, emptyEducation),
+    languages: ensureAtLeastOne(resume.languages, emptyLanguage),
+    techSkills: resume.techSkills ?? base.techSkills,
+    softSkills: resume.softSkills ?? base.softSkills,
+    employmentPreferences:
+      resume.employmentPreferences ?? base.employmentPreferences,
+    certifications: ensureAtLeastOne(
+      resume.certifications,
+      emptyCertification
+    ),
+    activities: ensureAtLeastOne(resume.activities, () =>
+      emptyActivity("open-source")
+    ),
+    sectionsVisibility: {
+      ...DEFAULT_SECTIONS_VISIBILITY,
+      ...(resume.sectionsVisibility ?? {}),
+    },
+  };
+}
+
 export const useResumeStore = create<ResumeState>()(
-  immer((set) => ({
-    resume: createEmptyResume(),
+  persist(
+    immer((set) => ({
+      resume: createEmptyResume(),
+      hasHydrated: false,
 
     setPhoto: (photo) =>
       set((state) => {
@@ -517,5 +551,43 @@ export const useResumeStore = create<ResumeState>()(
           state.resume.activities = [emptyActivity("open-source")];
         }
       }),
-  }))
+    })),
+    {
+      name: "resume-draft",
+      version: 1,
+      partialize: (state) => {
+        const { photo, ...resumeWithoutPhoto } = state.resume;
+        return {
+          resume: resumeWithoutPhoto,
+        };
+      },
+      migrate: (persistedState: any, version: number) => {
+        if (version === 0) {
+          const normalized = normalizeResume(
+            persistedState?.resume ?? createEmptyResume()
+          );
+          return {
+            resume: normalized,
+            hasHydrated: false,
+          };
+        }
+        return persistedState;
+      },
+      merge: (persistedState: any, currentState: ResumeState) => {
+        if (persistedState?.resume) {
+          const normalized = normalizeResume(persistedState.resume);
+          return {
+            ...currentState,
+            resume: normalized,
+          };
+        }
+        return currentState;
+      },
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.hasHydrated = true;
+        }
+      },
+    }
+  )
 );
