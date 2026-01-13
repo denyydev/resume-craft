@@ -4,7 +4,6 @@ import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/resume/useResumeStore";
 import { CodeOutlined } from "@ant-design/icons";
 import { Button, Divider, Flex, Input, Space, Typography } from "antd";
-import { AnimatePresence } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 import { SkillTag } from "../nav/SkillTag";
 
@@ -126,16 +125,14 @@ export function TechSkillsSection() {
         <Space orientation="vertical" size={12} className="w-full">
           {tags.length > 0 ? (
             <Flex wrap gap={8}>
-              <AnimatePresence initial={false}>
-                {tags.map((tag) => (
-                  <SkillTag
-                    key={`tech-selected-${tag}`}
-                    kind="tech"
-                    label={tag}
-                    onClose={() => removeTechSkillTag(tag)}
-                  />
-                ))}
-              </AnimatePresence>
+              {tags.map((tag) => (
+                <SkillTag
+                  key={`tech-selected-${tag}`}
+                  kind="tech"
+                  label={tag}
+                  onClose={() => removeTechSkillTag(tag)}
+                />
+              ))}
             </Flex>
           ) : null}
 

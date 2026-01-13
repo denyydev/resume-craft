@@ -56,8 +56,8 @@ export function ResetResumeButton({ className }: ResetResumeButtonProps) {
   };
 
   return (
-    <Button onClick={handleClick}>
-      <RotateCcw size={15} className="opacity-70" />
+    <Button onClick={handleClick} danger>
+      <RotateCcw size={16} className="opacity-70" />
       {t.button}
     </Button>
   );

@@ -124,7 +124,7 @@ export function SectionsSidebar() {
         bg-gradient-to-r
 from-[#0f172a]
 to-[#334155]
-        p-3 relative will-change-transform
+        p-3 relative 
       "
     >
       <div className="pointer-events-none absolute inset-0 before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-b before:from-white/10 before:to-transparent before:opacity-25" />

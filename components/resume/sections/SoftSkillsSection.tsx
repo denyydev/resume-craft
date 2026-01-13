@@ -4,7 +4,6 @@ import { useCurrentLocale } from "@/lib/useCurrentLocale";
 import { useResumeStore } from "@/store/resume/useResumeStore";
 import { MessageOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Divider, Flex, Input, Space, Typography } from "antd";
-import { AnimatePresence } from "framer-motion";
 import { useCallback, useMemo, useState } from "react";
 import { SkillTag } from "../nav/SkillTag";
 
@@ -109,16 +108,14 @@ export function SoftSkillsSection() {
         <Space orientation="vertical" size={12} className="w-full">
           {tags.length > 0 ? (
             <Flex wrap gap={8}>
-              <AnimatePresence initial={false}>
-                {tags.map((tag) => (
-                  <SkillTag
-                    key={`soft-selected-${tag}`}
-                    kind="soft"
-                    label={tag}
-                    onClose={() => removeSoftSkillTag(tag)}
-                  />
-                ))}
-              </AnimatePresence>
+              {tags.map((tag) => (
+                <SkillTag
+                  key={`soft-selected-${tag}`}
+                  kind="soft"
+                  label={tag}
+                  onClose={() => removeSoftSkillTag(tag)}
+                />
+              ))}
             </Flex>
           ) : null}
 

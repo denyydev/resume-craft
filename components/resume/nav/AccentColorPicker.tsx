@@ -29,17 +29,19 @@ export default function AccentColorPicker({
 
   const current = accentColor ?? COLORS[0];
 
-  const items: MenuProps["items"] = useMemo(() => {
-    return [
+  const items: MenuProps["items"] = useMemo(
+    () => [
       {
         key: "palette",
+        disabled: true,
         label: (
           <div className="py-1">
-            <div className="text-xs font-medium opacity-70 mb-2">Accent</div>
+            <div className="mb-2 text-xs font-medium opacity-70">Accent</div>
 
             <div className="grid grid-cols-6 gap-2">
               {COLORS.map((color) => {
                 const active = color === current;
+
                 return (
                   <button
                     key={color}
@@ -49,28 +51,30 @@ export default function AccentColorPicker({
                       e.stopPropagation();
                       setAccentColor(color);
                     }}
-                    className={[
-                      "relative h-7 w-7 rounded-full",
-                      "ring-1 ring-black/10",
-                      "transition-transform",
-                      disabled
-                        ? "opacity-60"
-                        : "hover:scale-[1.06] active:scale-[0.98]",
-                      active ? "ring-2 ring-black/20" : "",
-                    ].join(" ")}
+                    aria-label={`Set accent color ${color}`}
+                    className={`
+                      relative h-7 w-7 rounded-full
+                      ring-1 ring-black/10
+                      transition-transform
+                      ${
+                        disabled
+                          ? "opacity-60"
+                          : "hover:scale-[1.06] active:scale-[0.98]"
+                      }
+                      ${active ? "ring-2 ring-black/20" : ""}
+                    `}
                     style={{
                       backgroundColor: color,
                       boxShadow: active
                         ? `0 0 0 4px ${hexToRgba(color, 0.18)}`
                         : undefined,
                     }}
-                    aria-label={`Set accent color ${color}`}
                   >
-                    {active ? (
+                    {active && (
                       <span className="absolute inset-0 grid place-items-center text-white">
                         <Check size={14} />
                       </span>
-                    ) : null}
+                    )}
                   </button>
                 );
               })}
@@ -81,36 +85,33 @@ export default function AccentColorPicker({
             </div>
           </div>
         ),
-        // Чтобы AntD не пытался “выделять” этот псевдо-элемент как пункт меню
-        disabled: true,
       },
-    ];
-  }, [current, disabled, setAccentColor]);
+    ],
+    [current, disabled, setAccentColor]
+  );
 
   return (
     <Dropdown
       placement="bottomLeft"
       trigger={["click"]}
       disabled={disabled}
-      menu={{
-        items,
-      }}
+      menu={{ items }}
     >
       <Button
         type="default"
         disabled={disabled}
-        className={[
-          "!h-10 !rounded-full",
-          "!border-slate-200/80 !bg-white/80 hover:!bg-white",
-          "shadow-sm backdrop-blur",
-          "!px-3 flex items-center gap-2",
-          className ?? "",
-        ].join(" ")}
+        className={`
+          !h-10 !rounded-full
+          !border-slate-200/80 !bg-white/80 hover:!bg-white
+          shadow-sm backdrop-blur
+          !px-3 flex items-center gap-2
+          ${className ?? ""}
+        `}
       >
         <Palette size={16} className="opacity-80" />
+
         <span className="text-sm font-medium">Accent</span>
 
-        {/* color swatch */}
         <span
           className="ml-1 inline-flex h-4 w-4 rounded-full ring-1 ring-black/10"
           style={{ backgroundColor: current }}
@@ -122,7 +123,6 @@ export default function AccentColorPicker({
   );
 }
 
-// utils
 function hexToRgba(hex: string, alpha: number) {
   const h = hex.replace("#", "").trim();
   const full =

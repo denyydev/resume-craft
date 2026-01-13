@@ -6,6 +6,7 @@ import { DownloadPdfButton } from "@/components/resume/nav/DownloadPdfButton";
 import { ResetResumeButton } from "@/components/resume/nav/ResetButton";
 import { SaveResumeButton } from "@/components/resume/nav/SaveResumeButton";
 import ShareResumeButton from "@/components/resume/nav/ShareResumeButton";
+import { TogglePreviewButton } from "@/components/resume/nav/TogglePreviewButton";
 import { ResumePreview } from "@/components/resume/ResumePreview";
 import { SectionsSidebar } from "@/components/resume/sections/SectionsSidebar";
 import { TemplateSelector } from "@/components/resume/templates/ui/TemplateSelector";
@@ -62,6 +63,7 @@ export default function EditorPage() {
 
   const loadResume = useResumeStore((s) => s.loadResume);
   const [loading, setLoading] = useState<boolean>(!!resumeId);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     if (!resumeId) {
@@ -70,36 +72,36 @@ export default function EditorPage() {
     }
 
     const controller = new AbortController();
+
     setLoading(true);
 
-    (async () => {
-      try {
-        const res = await fetch(`/api/resumes?id=${resumeId}`, {
-          signal: controller.signal,
-        });
-        if (!res.ok) return;
-
-        const json = (await res.json()) as ResumeApiResponse;
+    fetch(`/api/resumes?id=${resumeId}`, { signal: controller.signal })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to load resume");
+        return res.json();
+      })
+      .then((json: ResumeApiResponse) => {
         const data = json.resume?.data;
-        if (!data) return;
-
-        loadResume(data);
-      } catch (err) {
-        if (isAbortError(err)) return;
-      } finally {
+        if (data) loadResume(data);
+      })
+      .catch((err) => {
+        if (err.name !== "AbortError") {
+          console.error(err);
+        }
+      })
+      .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
-      }
-    })();
+      });
 
     return () => controller.abort();
   }, [resumeId, loadResume]);
 
   return (
-    <div className="min-h-screen">
-      <div className="px-5 h-full min-h-0">
+    <div className="h-screen overflow-hidden">
+      <div className="px-5 h-full min-h-0 overflow-y-auto">
         <div className="h-full min-h-0 grid gap-5 grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)]">
           <aside className="hidden lg:block min-h-0">
-            <div className="sticky top-5">
+            <div className="sticky top-5 lg:max-h-[calc(100vh-2.5rem)]">
               <SectionsSidebar />
             </div>
           </aside>
@@ -110,14 +112,18 @@ export default function EditorPage() {
             </div>
           </div>
 
-          <main className="min-w-0 min-h-0">
-            <div className="z-20 pt-5 relative lg:sticky lg:top-0">
+          <main className="min-w-0 min-h-0 flex flex-col">
+            <div className="z-20 pt-5 relative lg:sticky lg:top-0 flex-shrink-0">
               <div className="pointer-events-none absolute -inset-x-4 -inset-y-3 hidden lg:block bg-[#f3f5f9]/70 backdrop-blur-md supports-[backdrop-filter]:bg-[#f3f5f9]/55" />
               <div className="relative">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <TemplateSelector />
                     <AccentColorPicker />
+                    <TogglePreviewButton
+                      showPreview={showPreview}
+                      onToggle={() => setShowPreview((v) => !v)}
+                    />
                     <ResetResumeButton />
                   </div>
 
@@ -133,15 +139,32 @@ export default function EditorPage() {
               </div>
             </div>
 
-            <div className="py-5">
-              <div className="flex min-h-0 flex-col gap-5 xl:flex-row">
-                <div className="min-w-0 xl:flex-[0_0_520px]">
+            <div className="py-5 flex-1 min-h-0">
+              <div
+                className={[
+                  "flex min-h-0 flex-col gap-5",
+                  showPreview ? "xl:flex-row" : "xl:flex-row xl:justify-center",
+                ].join(" ")}
+              >
+                <div
+                  className={[
+                    "min-w-0",
+                    showPreview
+                      ? "xl:flex-[0_0_520px]"
+                      : "xl:w-full xl:max-w-[760px]",
+                  ].join(" ")}
+                >
                   <Spin spinning={loading}>
                     <EditorShell selected={selected} />
                   </Spin>
                 </div>
 
-                <div className="min-w-0 xl:flex-1">
+                <div
+                  className={[
+                    "min-w-0 xl:flex-1",
+                    showPreview ? "" : "hidden",
+                  ].join(" ")}
+                >
                   <A4PreviewFrame>
                     <Spin spinning={loading}>
                       <ResumePreview />

@@ -1,9 +1,5 @@
-"use client"
+"use client";
 
-import React, { useMemo } from "react"
-import { Tag } from "antd"
-import { motion } from "framer-motion"
-import type { PresetColorType } from "antd/es/_util/colors"
 import {
   ApiOutlined,
   CloudOutlined,
@@ -17,16 +13,17 @@ import {
   RadarChartOutlined,
   SafetyCertificateOutlined,
   ToolOutlined,
-} from "@ant-design/icons"
+} from "@ant-design/icons";
+import { Tag } from "antd";
+import type { PresetColorType } from "antd/es/_util/colors";
+import React, { useMemo } from "react";
 
-const MotionTag = motion.create(Tag)
-
-type IconComp = React.ComponentType<{ style?: React.CSSProperties }>
+type IconComp = React.ComponentType<{ style?: React.CSSProperties }>;
 
 type TagMeta = {
-  color?: PresetColorType | "default"
-  Icon?: IconComp
-}
+  color?: PresetColorType | "default";
+  Icon?: IconComp;
+};
 
 const TECH_META: Record<string, TagMeta> = {
   React: { color: "geekblue", Icon: CodeOutlined },
@@ -68,25 +65,25 @@ const TECH_META: Record<string, TagMeta> = {
   "Vue.js": { color: "green", Icon: DesktopOutlined },
   Angular: { color: "red", Icon: DesktopOutlined },
   Svelte: { color: "volcano", Icon: DesktopOutlined },
-}
+};
 
 const SOFT_META: Record<string, TagMeta> = {
-  "Коммуникация": { color: "blue", Icon: ApiOutlined },
+  Коммуникация: { color: "blue", Icon: ApiOutlined },
   "Работа в команде": { color: "geekblue", Icon: RadarChartOutlined },
-  "Лидерство": { color: "volcano", Icon: SafetyCertificateOutlined },
-  "Менторство": { color: "purple", Icon: ToolOutlined },
-  "Ответственность": { color: "green", Icon: SafetyCertificateOutlined },
-  "Адаптивность": { color: "cyan", Icon: ToolOutlined },
-  "Креативность": { color: "magenta", Icon: ExperimentOutlined },
+  Лидерство: { color: "volcano", Icon: SafetyCertificateOutlined },
+  Менторство: { color: "purple", Icon: ToolOutlined },
+  Ответственность: { color: "green", Icon: SafetyCertificateOutlined },
+  Адаптивность: { color: "cyan", Icon: ToolOutlined },
+  Креативность: { color: "magenta", Icon: ExperimentOutlined },
   "Аналитическое мышление": { color: "geekblue", Icon: RadarChartOutlined },
   "Решение проблем": { color: "orange", Icon: ToolOutlined },
   "Тайм-менеджмент": { color: "blue", Icon: SafetyCertificateOutlined },
-  "Стрессоустойчивость": { color: "red", Icon: SafetyCertificateOutlined },
+  Стрессоустойчивость: { color: "red", Icon: SafetyCertificateOutlined },
   "Работа с неопределённостью": { color: "cyan", Icon: GlobalOutlined },
   "Критическое мышление": { color: "geekblue", Icon: RadarChartOutlined },
-  "Эмпатия": { color: "magenta", Icon: ApiOutlined },
-  "Переговоры": { color: "volcano", Icon: GlobalOutlined },
-}
+  Эмпатия: { color: "magenta", Icon: ApiOutlined },
+  Переговоры: { color: "volcano", Icon: GlobalOutlined },
+};
 
 const FALLBACK_COLORS: PresetColorType[] = [
   "blue",
@@ -98,24 +95,25 @@ const FALLBACK_COLORS: PresetColorType[] = [
   "volcano",
   "magenta",
   "purple",
-]
+];
 
 function hashColor(label: string) {
-  let h = 0
-  for (let i = 0; i < label.length; i++) h = (h * 31 + label.charCodeAt(i)) >>> 0
-  return FALLBACK_COLORS[h % FALLBACK_COLORS.length]
+  let h = 0;
+  for (let i = 0; i < label.length; i++)
+    h = (h * 31 + label.charCodeAt(i)) >>> 0;
+  return FALLBACK_COLORS[h % FALLBACK_COLORS.length];
 }
 
-export type SkillTagVariant = "selected" | "pick"
+export type SkillTagVariant = "selected" | "pick";
 
 export type SkillTagProps = {
-  label: string
-  kind?: "tech" | "soft"
-  variant?: SkillTagVariant
-  onClick?: () => void
-  closable?: boolean
-  onClose?: () => void
-}
+  label: string;
+  kind?: "tech" | "soft";
+  variant?: SkillTagVariant;
+  onClick?: () => void;
+  closable?: boolean;
+  onClose?: () => void;
+};
 
 export function SkillTag({
   label,
@@ -125,20 +123,23 @@ export function SkillTag({
   closable,
   onClose,
 }: SkillTagProps) {
-  const meta = (kind === "soft" ? SOFT_META[label] : TECH_META[label]) ?? {}
-  const Icon = meta.Icon
+  const meta = (kind === "soft" ? SOFT_META[label] : TECH_META[label]) ?? {};
+  const Icon = meta.Icon;
 
-  const color = useMemo(() => meta.color ?? hashColor(label), [meta.color, label])
+  const color = useMemo(
+    () => meta.color ?? hashColor(label),
+    [meta.color, label]
+  );
 
-  const isPick = variant === "pick"
+  const isPick = variant === "pick";
 
   return (
-    <MotionTag
+    <Tag
       color={color === "default" ? undefined : color}
       closable={closable ?? !isPick}
       onClose={(e) => {
-        e.preventDefault()
-        onClose?.()
+        e.preventDefault();
+        onClose?.();
       }}
       onClick={onClick}
       style={{
@@ -152,17 +153,11 @@ export function SkillTag({
         cursor: isPick ? "pointer" : "default",
         userSelect: "none",
         opacity: isPick ? 0.9 : 1,
+        transition: "transform 120ms ease, opacity 120ms ease",
       }}
-      initial={{ opacity: 0, scale: 0.92, y: -6 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.92, y: -6 }}
-      transition={{ type: "spring", stiffness: 520, damping: 32 }}
-      whileHover={isPick ? { scale: 1.04, opacity: 1 } : { scale: 1.03 }}
-      whileTap={isPick ? { scale: 0.98 } : { scale: 0.99 }}
-      layout
     >
       {Icon ? <Icon style={{ fontSize: 14 }} /> : null}
       {isPick ? `+ ${label}` : label}
-    </MotionTag>
-  )
+    </Tag>
+  );
 }
